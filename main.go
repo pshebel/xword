@@ -6,7 +6,8 @@ import (
   "strconv"
   "github.com/pshebel/xword/app/models"
   "github.com/pshebel/xword/app/util"
-  "github.com/pshebel/xword/app/generateBruteForce"
+  "github.com/pshebel/xword/app/generate"
+  "github.com/pshebel/xword/app/db"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
   dbPath := "./testdata/"
   xword := &models.Xword{}
   for !(*xword).Valid {
-    xword, _ = generateBruteForce.Generate(width, dbPath)
+    xword, _ = generate.Generate(width, dbPath)
   }
 
   xwordStr := util.PrintXword(*xword)
@@ -29,4 +30,6 @@ func main() {
   for i := 0; i < width; i++ {
     fmt.Println("Across "+strconv.Itoa(i)+" : "+rc[0][i]+"\t Down "+strconv.Itoa(i)+" : "+rc[1][i])
   }
+
+  db.Connect()
 }

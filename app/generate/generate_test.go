@@ -1,9 +1,9 @@
-package generateBruteForce
+package generate
 
 import (
   "testing"
   //"strings"
-  "fmt"
+  // "fmt"
   "github.com/pshebel/xword/app/models"
   "github.com/pshebel/xword/app/util"
 )
@@ -146,7 +146,7 @@ func TestGetNextWord(t *testing.T) {
     dbPath string
     output string
   }{
-    "generate": {goldenLists, 4, 1, "../../testdata/", "t"},
+    "generate": {goldenLists, 4, 1, "../../testdata/", "axis"},
   }
   for name, tx := range cases {
     t.Run(name, func(t *testing.T) {
@@ -158,27 +158,27 @@ func TestGetNextWord(t *testing.T) {
   }
 }
 
-func TestFilterList(t *testing.T){
-  cases := map[string]struct {
-    word string
-    list [][]string
-    index int
-    output [][]string
-  }{
-    "generate": {"axis", goldenLists, 1, goldenLists},
-  }
-  for name, tx := range cases {
-    t.Run(name, func(t *testing.T) {
-      w := filterList(tx.word, tx.list, tx.index)
-      fmt.Print(w)
-      // wStr := strings.Join(strings.Join(w, ","), "\n")
-      // oStr := strings.Join(strings.Join(tx.output, ","), "\n")
-      // if wStr != oStr {
-      //   t.Errorf("expected %q, got %q", oStr, wStr)
-      // }
-    })
-  }
-}
+// func TestFilterList(t *testing.T){
+//   cases := map[string]struct {
+//     word string
+//     list [][]string
+//     index int
+//     output [][]string
+//   }{
+//     "generate": {"axis", goldenLists, 1, goldenLists},
+//   }
+//   for name, tx := range cases {
+//     t.Run(name, func(t *testing.T) {
+//       w := filterList(tx.word, tx.list, tx.index)
+//       fmt.Print(w)
+//       // wStr := strings.Join(strings.Join(w, ","), "\n")
+//       // oStr := strings.Join(strings.Join(tx.output, ","), "\n")
+//       // if wStr != oStr {
+//       //   t.Errorf("expected %q, got %q", oStr, wStr)
+//       // }
+//     })
+//   }
+// }
 
 // func TestGenerate(t *testing.T) {
 //   cases := map[string]struct {
