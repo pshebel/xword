@@ -1,0 +1,139 @@
+swagger: '2.0'
+info:
+  title: api
+  version: 0.0.1
+  description: XWORD DB
+  contact:
+    email: phil.shebel@gmail.com
+basePath: /api
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http
+
+paths:
+  /word:
+    get:
+      tags:
+        - word
+      description: Get words from mongodb
+      parameters:
+        - in: query
+          name: length
+          type: integer
+          description: returns words of a certain length
+        - in: query
+          name: prefix
+          type: string
+          description: returns words that start with a certain prefix
+      responses:
+        '200':
+          description: Successful
+          schema:
+            $ref: '#/definitions/Words'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        default:
+          description: Unexpected recovery response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+    post:
+      tags:
+        - word
+      description: Adds word to mongodb
+      parameters:
+        - in: body
+          name: word
+          description: New word and definition
+          required: true
+          schema:
+            $ref: '#/definitions/Word'
+      responses:
+        '200':
+          description: Post word successful response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '409':
+          description: Post word duplicate response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        default:
+          description: Post word unexpected error response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+  /xword:
+    get:
+      tags:
+        - xword
+      description: Get xword from app
+      responses:
+        '200':
+          description: Successful
+          schema:
+            $ref: '#/definitions/Xword'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        default:
+          description: Unexpected recovery response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+definitions:
+  Word:
+    type: object
+    required:
+      - word
+      - definition
+    properties:
+      word:
+        type: string
+      definition:
+        type: string
+  Words:
+    type: array
+    items:
+      $ref: '#/definitions/Word'
+  Xword:
+    type: object
+    required:
+      - words
+      - definitions
+    properties:
+      words:
+        type: array
+        items:
+          type: string
+      definitions:
+        type: array
+        items:
+          type: string
+  ReturnCode:
+    type: object
+    properties:
+      code:
+        type: integer
+        readOnly: true
+      message:
+        type: string
+        readOnly: true
