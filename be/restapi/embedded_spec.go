@@ -7,8 +7,6 @@ package restapi
 
 import (
 	"encoding/json"
-
-	"github.com/pshebel/xword/be/restapi/operations/word"
 )
 
 var (
@@ -169,6 +167,67 @@ func init() {
             }
           }
         }
+      },
+      "post": {
+        "description": "Adds xword to mongodb",
+        "tags": [
+          "xword"
+        ],
+        "parameters": [
+          {
+            "description": "list of words and definitions in puzzle",
+            "name": "xword",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Xword"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post xword successful response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "409": {
+            "description": "Post word duplicate response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "default": {
+            "description": "Post word unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          }
+        }
       }
     }
   },
@@ -219,6 +278,9 @@ func init() {
           "items": {
             "type": "string"
           }
+        },
+        "id": {
+          "type": "string"
         },
         "words": {
           "type": "array",
@@ -380,6 +442,67 @@ func init() {
             }
           }
         }
+      },
+      "post": {
+        "description": "Adds xword to mongodb",
+        "tags": [
+          "xword"
+        ],
+        "parameters": [
+          {
+            "description": "list of words and definitions in puzzle",
+            "name": "xword",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Xword"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post xword successful response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "409": {
+            "description": "Post word duplicate response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "default": {
+            "description": "Post word unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          }
+        }
       }
     }
   },
@@ -430,6 +553,9 @@ func init() {
           "items": {
             "type": "string"
           }
+        },
+        "id": {
+          "type": "string"
         },
         "words": {
           "type": "array",

@@ -26,7 +26,6 @@ import (
 	"golang.org/x/net/netutil"
 
 	"github.com/pshebel/xword/be/restapi/operations"
-	"github.com/pshebel/xword/be/restapi/operations/word"
 )
 
 const (

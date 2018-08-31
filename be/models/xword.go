@@ -21,6 +21,9 @@ type Xword struct {
 	// Required: true
 	Definitions []string `json:"definitions"`
 
+	// id
+	ID string `json:"id,omitempty"`
+
 	// words
 	// Required: true
 	Words []string `json:"words"`

@@ -1,40 +1,49 @@
-package xword
+package word
 
 import (
-  "github.com/pshebel/xword/app/models"
-  db "github.com/pshebel/xword/app/db"
+  "github.com/pshebel/xword/be/models"
+  db "github.com/pshebel/xword/be/db"
   middleware "github.com/go-openapi/runtime/middleware"
 )
 
+var (
+  collection = "word"
+)
+
 func Get(params GetWordParams) middleware.Responder {
-  c, e := db.connect()
+  c, e := db.Connect()
   if e != nil {
-    status := models.ReturnCode{Code: int64(PostWordInternalServerErrorCode), Message: "failed to connect to db"}
-		response := PostWordInternalServerErrorCode{}
+    status := models.ReturnCode{Code: int64(GetWordNotFoundCode), Message: "failed to connect to db"}
+		response := GetWordNotFound{}
 		return response.WithPayload(&status)
   }
 
   var words models.Words
+  if err := c.DB("xword").C(collection).Find(nil).Sort("-when").Limit(100).All(&words); err != nil {
+    status := models.ReturnCode{Code: int64(GetWordNotFoundCode), Message: "failed to get words"}
+    response := GetWordNotFound{}
+    return response.WithPayload(&status)
+  }
+
+  response := GetWordOK{}
+  return response.WithPayload(words)
 }
 
 func Post(params PostWordParams) middleware.Responder {
-  c, e := db.connect()
+  c, e := db.Connect()
   if e != nil {
     status := models.ReturnCode{Code: int64(PostWordInternalServerErrorCode), Message: "failed to connect to db"}
-		response := PostWordInternalServerErrorCode{}
+		response := PostWordInternalServerError{}
 		return response.WithPayload(&status)
   }
 
-  var word models.Word
-  if err := json.NewDecoder(*params.Word).Decode(&word); err != nil {
-    status := models.ReturnCode{Code: int64(PostWordBadRequestCode), Message: "could not unmarshal word"}
-		response := PostWordBadRequestCode{}
-		return response.WithPayload(&status)
-  }
-
-  if err := c.DB("").C("words").Insert(&word); err != nil {
+  if err := c.DB("xword").C(collection).Insert(params.Word); err != nil {
     status := models.ReturnCode{Code: int64(PostWordInternalServerErrorCode), Message: "failed to insert word"}
-		response := PostWordInternalServerErrorCode{}
+		response := PostWordInternalServerError{}
 		return response.WithPayload(&status)
   }
+
+  status := models.ReturnCode{Code: 200, Message: "post successful"}
+ 	response := PostWordOK{}
+ 	return response.WithPayload(&status)
 }

@@ -99,6 +99,46 @@ paths:
           description: Unexpected recovery response
           schema:
             $ref: '#/definitions/ReturnCode'
+    post:
+      tags:
+        - xword
+      description: Adds xword to mongodb
+      parameters:
+        - in: body
+          name: xword
+          description: list of words and definitions in puzzle
+          required: true
+          schema:
+            $ref: '#/definitions/Xword'
+      responses:
+        '200':
+          description: Post xword successful response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '409':
+          description: Post word duplicate response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        default:
+          description: Post word unexpected error response
+          schema:
+            $ref: '#/definitions/ReturnCode'
 definitions:
   Word:
     type: object
@@ -120,6 +160,8 @@ definitions:
       - words
       - definitions
     properties:
+      id:
+        type: string
       words:
         type: array
         items:

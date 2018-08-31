@@ -49,6 +49,9 @@ func NewAPI(spec *loads.Document) *API {
 		WordPostWordHandler: word.PostWordHandlerFunc(func(params word.PostWordParams) middleware.Responder {
 			return middleware.NotImplemented("operation WordPostWord has not yet been implemented")
 		}),
+		XwordPostXwordHandler: xword.PostXwordHandlerFunc(func(params xword.PostXwordParams) middleware.Responder {
+			return middleware.NotImplemented("operation XwordPostXword has not yet been implemented")
+		}),
 	}
 }
 
@@ -86,6 +89,8 @@ type API struct {
 	XwordGetXwordHandler xword.GetXwordHandler
 	// WordPostWordHandler sets the operation handler for the post word operation
 	WordPostWordHandler word.PostWordHandler
+	// XwordPostXwordHandler sets the operation handler for the post xword operation
+	XwordPostXwordHandler xword.PostXwordHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -159,6 +164,10 @@ func (o *API) Validate() error {
 
 	if o.WordPostWordHandler == nil {
 		unregistered = append(unregistered, "word.PostWordHandler")
+	}
+
+	if o.XwordPostXwordHandler == nil {
+		unregistered = append(unregistered, "xword.PostXwordHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -273,6 +282,11 @@ func (o *API) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/word"] = word.NewPostWord(o.context, o.WordPostWordHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/xword"] = xword.NewPostXword(o.context, o.XwordPostXwordHandler)
 
 }
 

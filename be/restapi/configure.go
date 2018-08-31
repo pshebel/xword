@@ -11,8 +11,8 @@ import (
 	middleware "github.com/go-openapi/runtime/middleware"
 
 	"github.com/pshebel/xword/be/restapi/operations"
-	"github.com/pshebel/xword/be/restapi/operations/get"
-	"github.com/pshebel/xword/be/restapi/operations/post"
+	"github.com/pshebel/xword/be/restapi/operations/word"
+	"github.com/pshebel/xword/be/restapi/operations/xword"
 )
 
 //go:generate swagger generate server --target .. --name API --spec ../swagger.yml
@@ -35,11 +35,20 @@ func configureAPI(api *operations.API) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.GetGetXwordHandler = get.GetXwordHandlerFunc(func(params get.GetXwordParams) middleware.Responder {
-		return middleware.NotImplemented("operation get.GetXword has not yet been implemented")
+	api.XwordGetXwordHandler = xword.GetXwordHandlerFunc(func(params xword.GetXwordParams) middleware.Responder {
+		return xword.Get(params)
 	})
-	api.PostPostWordHandler = post.PostWordHandlerFunc(func(params post.PostWordParams) middleware.Responder {
-		return middleware.NotImplemented("operation post.PostWord has not yet been implemented")
+
+	api.XwordPostXwordHandler = xword.PostXwordHandlerFunc(func(params xword.PostXwordParams) middleware.Responder {
+		return xword.Post(params)
+	})
+
+	api.WordGetWordHandler = word.GetWordHandlerFunc(func(params word.GetWordParams) middleware.Responder {
+		return word.Get(params)
+	})
+
+	api.WordPostWordHandler = word.PostWordHandlerFunc(func(params word.PostWordParams) middleware.Responder {
+		return word.Post(params)
 	})
 
 	api.ServerShutdown = func() {}
