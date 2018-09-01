@@ -1,6 +1,7 @@
 package word
 
 import (
+  "fmt"
   "github.com/pshebel/xword/be/models"
   db "github.com/pshebel/xword/be/db"
   middleware "github.com/go-openapi/runtime/middleware"
@@ -11,6 +12,8 @@ var (
 )
 
 func Get(params GetWordParams) middleware.Responder {
+  fmt.Println("GETTING WORD", params)
+
   c, e := db.Connect()
   if e != nil {
     status := models.ReturnCode{Code: int64(GetWordNotFoundCode), Message: "failed to connect to db"}
@@ -30,6 +33,8 @@ func Get(params GetWordParams) middleware.Responder {
 }
 
 func Post(params PostWordParams) middleware.Responder {
+  fmt.Println("POSTING WORD", params)
+
   c, e := db.Connect()
   if e != nil {
     status := models.ReturnCode{Code: int64(PostWordInternalServerErrorCode), Message: "failed to connect to db"}
