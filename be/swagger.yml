@@ -13,7 +13,7 @@ produces:
 schemes:
   - http
 
-paths:
+paths:  
   /word:
     get:
       tags:
@@ -46,6 +46,11 @@ paths:
         - word
       description: Adds word to mongodb
       parameters:
+        - in: query
+          name: user
+          description: Username
+          required: false
+          type: string
         - in: body
           name: word
           description: New word and definition
@@ -86,6 +91,12 @@ paths:
       tags:
         - xword
       description: Get xword from app
+      parameters:
+        - in: query
+          name: user
+          description: Username
+          required: false
+          type: string
       responses:
         '200':
           description: Successful

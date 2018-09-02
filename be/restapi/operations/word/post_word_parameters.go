@@ -13,6 +13,8 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	models "github.com/pshebel/xword/be/models"
 )
 
@@ -32,6 +34,10 @@ type PostWordParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
+	/*Username
+	  In: query
+	*/
+	User *string
 	/*New word and definition
 	  Required: true
 	  In: body
@@ -47,6 +53,13 @@ func (o *PostWordParams) BindRequest(r *http.Request, route *middleware.MatchedR
 	var res []error
 
 	o.HTTPRequest = r
+
+	qs := runtime.Values(r.URL.Query())
+
+	qUser, qhkUser, _ := qs.GetOK("user")
+	if err := o.bindUser(qUser, qhkUser, route.Formats); err != nil {
+		res = append(res, err)
+	}
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
@@ -73,5 +86,23 @@ func (o *PostWordParams) BindRequest(r *http.Request, route *middleware.MatchedR
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindUser binds and validates parameter User from query.
+func (o *PostWordParams) bindUser(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	o.User = &raw
+
 	return nil
 }

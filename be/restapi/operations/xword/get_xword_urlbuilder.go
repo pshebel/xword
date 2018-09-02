@@ -13,7 +13,11 @@ import (
 
 // GetXwordURL generates an URL for the get xword operation
 type GetXwordURL struct {
+	User *string
+
 	_basePath string
+	// avoid unkeyed usage
+	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
@@ -42,6 +46,18 @@ func (o *GetXwordURL) Build() (*url.URL, error) {
 		_basePath = "/api"
 	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
+
+	qs := make(url.Values)
+
+	var user string
+	if o.User != nil {
+		user = *o.User
+	}
+	if user != "" {
+		qs.Set("user", user)
+	}
+
+	result.RawQuery = qs.Encode()
 
 	return &result, nil
 }

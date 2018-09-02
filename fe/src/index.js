@@ -33,6 +33,10 @@ class App extends React.Component {
         this.setState({
           view: "user"
         })
+      } else {
+        this.setState({
+          user: u
+        })
       }
     }
   }
@@ -68,8 +72,19 @@ class App extends React.Component {
     });
   }
 
-  postWord = (word) => {
-    fetch(beHost+bePort+bePostPath, {
+  updateUser = (val) => {
+    if (this.state.user !== null){
+      let url = beHost+bePort+"/api/user?user="+this.state.user+"&value="+val
+      
+    }
+  }
+  postWord = (word, cb) => {
+    let url = beHost+bePort+bePostPath
+    console.log(this.state.user)
+    if (this.state.user !== null) {
+      url = url+"?user="+this.state.user
+    }
+    fetch(url, {
       method: "POST",
       headers: {
         "Content-type": "application/json"
@@ -80,16 +95,20 @@ class App extends React.Component {
       return response.json();
     })
     .then((data) => {
-      console.log(data)
-      if (data.code === "200") {
+      console.log(data.code)
+      if (data.code === 200) {
         console.log("succesful post to db")
+        return cb(200)
       } else {
         console.log("post to db failed")
+        return cb(400)
       }
     })
     .catch((error) => {
       console.log(error)
+      return cb(400)
     });
+
   }
 
   setUser = (user) => {

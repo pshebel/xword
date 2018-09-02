@@ -9,8 +9,16 @@ class Words extends React.Component {
     }
   }
 
-  submit = () => {
-    this.props.postWord(this.state)
+  handleSubmit = () => {
+    this.props.postWord(this.state, ((res) => {
+      console.log("made it to cb", res)
+      if (res === 200) {
+        alert("success")
+        this.setState({ word: '', definition: ''})
+      } else {
+        alert("failed to post word")
+      }
+    }))
   }
 
   render() {
@@ -18,12 +26,11 @@ class Words extends React.Component {
       <div>
         <h1>Add a Word</h1>
         <h4>Word</h4>
-        <input type="text" onChange={(e) => this.setState({word: e.target.value})} />
+        <input type="text" value={this.state.word} onChange={(e) => this.setState({word: e.target.value})} />
 
         <h4>Definition</h4>
-        <textarea onChange={(e) => this.setState({definition: e.target.value})}/>
-        <input type="button" onClick={this.submit} value="Submit"/>
-
+        <textarea value={this.state.definition} onChange={(e) => this.setState({definition: e.target.value})}/>
+        <input type="button" onClick={this.handleSubmit} value="Submit"/>
       </div>
     )
   }

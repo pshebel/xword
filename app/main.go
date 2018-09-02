@@ -2,7 +2,7 @@ package main
 
 import (
   "fmt"
-  // "time"
+  "time"
   "bytes"
   "encoding/json"
   "net/http"
@@ -18,17 +18,17 @@ import (
 )
 
 var (
-  url = "http://localhost:3000/api"
+  url = "http://localhost:4000/api"
 )
 
-func getWord(length string) (*bm.Words, error) {
+func getWord(length string, client *http.Client) (*bm.Words, error) {
   requestUrl := url + "/word?length=" + length
+  // requestUrl := url+"/word"
+  fmt.Println(requestUrl)
   req, err := http.NewRequest("GET", requestUrl, nil)
 	if err != nil {
     return nil, err
 	}
-
-  client := &http.Client{}
 
   resp, err := client.Do(req)
   if err != nil {
@@ -36,16 +36,17 @@ func getWord(length string) (*bm.Words, error) {
   }
 
   defer resp.Body.Close()
-
+  fmt.Println(resp.Body)
   var words bm.Words
 
   if err := json.NewDecoder(resp.Body).Decode(&words); err != nil {
     return nil, err
   }
+
   return &words, nil
 }
 
-func postXword(words []string, definitions []string) (*bm.ReturnCode, error) {
+func postXword(words []string, definitions []string, client *http.Client) (*bm.ReturnCode, error) {
   requestUrl := url + "/xword"
   xword := bm.Xword{Words: words, Definitions: definitions}
   x, err := json.Marshal(xword)
@@ -58,8 +59,6 @@ func postXword(words []string, definitions []string) (*bm.ReturnCode, error) {
   }
   req.Header.Set("Content-Type", "application/json")
 
-  client := &http.Client{}
-
   resp, err := client.Do(req)
   if err != nil {
     return nil, err
@@ -70,10 +69,12 @@ func postXword(words []string, definitions []string) (*bm.ReturnCode, error) {
   if err := json.NewDecoder(resp.Body).Decode(&rc); err != nil {
     return nil, err
   }
+
   return &rc, nil
 }
 
 func main() {
+  client := &http.Client{}
   // for start := time.Now(); time.Since(start) < time.Minute; {
   //     words, err := getWord("3")
   //     if err != nil {
@@ -92,22 +93,26 @@ func main() {
   //       break
   //     }
   // }
-  words, err := getWord("3")
+  words, err := getWord("3", client)
   if err != nil {
     fmt.Println(err)
+    return
   } else {
-    fmt.Println(words)
+    fmt.Println(*words)
   }
-  xword, defs, _ := generate.Generate(3, *words)
-  if err == nil {
-    _, err := postXword(*xword, *defs)
-    if err != nil {
-      fmt.Println(err)
-    }
-  } else {
-    fmt.Println(err)
+
+  for start := time.Now(); time.Since(start) < time.Minute; {
+      xword, defs, err := generate.Generate(3, *words)
+      if err == nil {
+        fmt.Println(xword)
+        _, err := postXword(*xword, *defs, client)
+        if err != nil {
+          fmt.Println(err)
+        }
+      } else {
+        fmt.Println(err)
+      }
   }
-  fmt.Println(xword, defs)
 
   return
 }

@@ -86,6 +86,12 @@ func init() {
         ],
         "parameters": [
           {
+            "type": "string",
+            "description": "Username",
+            "name": "user",
+            "in": "query"
+          },
+          {
             "description": "New word and definition",
             "name": "word",
             "in": "body",
@@ -146,6 +152,14 @@ func init() {
         "description": "Get xword from app",
         "tags": [
           "xword"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Username",
+            "name": "user",
+            "in": "query"
+          }
         ],
         "responses": {
           "200": {
@@ -361,6 +375,12 @@ func init() {
         ],
         "parameters": [
           {
+            "type": "string",
+            "description": "Username",
+            "name": "user",
+            "in": "query"
+          },
+          {
             "description": "New word and definition",
             "name": "word",
             "in": "body",
@@ -421,6 +441,14 @@ func init() {
         "description": "Get xword from app",
         "tags": [
           "xword"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Username",
+            "name": "user",
+            "in": "query"
+          }
         ],
         "responses": {
           "200": {
