@@ -3,7 +3,7 @@ import '../../index.css';
 
 function Square(props) {
   return (
-    <input type="text" className="square" onChange={props.onChange} maxLength="1">
+    <input type="text" className="square" onChange={props.onChange} onClick={props.onClick} maxLength="1">
       {props.value}
     </input>
   );
@@ -19,7 +19,8 @@ class Board extends React.Component {
         id={(row*this.props.sideLength + col)}
         currentValue={this.props.squares[(row*this.props.sideLength + col)][2]}
         realValue={this.props.squares[(row*this.props.sideLength + col)][3]}
-        onChange={(e) => this.props.onChange(e.target.value, square)}
+        onChange={(e) => this.props.onChange(e, square)}
+        onClick={(e) => this.props.onClick(e, square)}
       />
     );
   }
@@ -51,11 +52,16 @@ class Board extends React.Component {
 class Xword extends React.Component {
   constructor(props) {
     super(props);
+    // for orientation
+    // true: across
+    // false: down
     this.state = {
         data: props.data,
         sideLength: props.data.words.length,
         squares: this.createSquares(props.data),
-        solved: false
+        solved: false,
+        orientation: true,
+        focus: 0
     }
   };
 
@@ -82,23 +88,43 @@ class Xword extends React.Component {
   }
 
   handleChange(e, square) {
-    console.log(e)
-    // let ele = e.nativeEvent.srcElement.nextElementSibling
-    // ele.focus()
+    console.log(Object.values(e), Object.keys(e))
+    if (e.target.value !== "") {
+      let ele = e.currentTarget.nextElementSibling
+      console.log(ele)
+      if (ele !== null) {
+        ele.focus()
+      } else {
+        ele = e.currentTarget.parentElement.nextElementSibling
 
+        console.log(ele)
+        if (ele !== null) {
+          ele.firstElementChild.focus()
+        } else {
+          // TODO
+        }
+      }
+    }
+    
     const squares = this.state.squares.slice();
     let row = square[0];
     let col = square[1];
-    squares[(row*this.state.sideLength + col)][2] = e
-    console.log(squares[(row*this.state.sideLength + col)][2])
-    if (squares[(row*this.state.sideLength + col)][2] === squares[(row*this.state.sideLength + col)][3]) {
-      console.log("correct")
-    }
-    // squares[(row*this.state.sideLength + col)][2] = getDir(row, col, this.state.treasure);
-    //alert(squares[(i*10 + j)]);
+
+
+    squares[(row*this.state.sideLength + col)][2] = e.target.value
     this.setState({
       squares: squares
     });
+  }
+
+  handleClick(square) {
+    let row = square[0];
+    let col = square[1];
+
+    this.setState({
+      orientation: !this.state.orientation,
+      focus: row*this.props.sideLength + col
+    })
   }
 
   handleNewPuzzle = () => {
@@ -108,7 +134,8 @@ class Xword extends React.Component {
       squares: null,
       solved: false
     })
-    this.props.getNewXword()
+
+    this.props.getXword()
   }
 
   handleSubmit = () => {
@@ -124,6 +151,15 @@ class Xword extends React.Component {
     }
     if (solved) {
       alert("success!")
+      this.props.putUser("puzzle", ((res) => {
+        console.log("made it to cb", res)
+        if (res === 200) {
+          alert("success")
+          this.setState({ word: '', definition: ''})
+        } else {
+          alert("failed to post word")
+        }
+      }))
     }
     this.setState({ solved })
   }
@@ -135,6 +171,7 @@ class Xword extends React.Component {
           <Board
             {...this.state}
             onChange={(e, square) => this.handleChange(e, square)}
+            onClick={(square) => this.handleClick(square)}
           />
         </div>
         <div className="game-status">

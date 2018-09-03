@@ -4,8 +4,9 @@ class User extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      ui: this.userInput(),
-      user: ["-", "-", "-"]
+      user: ["", "", ""],
+      words: 0,
+      puzzles: 0
     }
   }
 
@@ -23,12 +24,21 @@ class User extends React.Component {
 
   }
 
-  userInput = () => {
-    let u = []
-    for (let i = 0; i < 3; i++) {
-      u.push(<input className="user" id={i} key={i} type="text" maxLength={1} onChange={(e) => this.handleChange(e)}></input>)
-    }
-    return u
+  handleSubmit = () => {
+    let u = this.state.user.join("")
+    this.props.getUser(u, ((res) => {
+      if (res === null) {
+        this.props.postUser(u, ((res) => {
+          if (res === 200) {
+            alert("added new user")
+          } else {
+            alert("failed to create exists")
+          }
+        }))
+      } else {
+        alert("user exists", res)
+      }
+    }))
   }
 
   render() {
@@ -36,13 +46,11 @@ class User extends React.Component {
       <div>
         <h1>User Profile</h1>
         <div >
-          {
-            this.state.ui.map((e) => {
-              return e
-            })
-          }
+          <input className="user" id={0} key={0} value={this.state.user[0]} type="text" maxLength={1} onChange={(e) => this.handleChange(e)}/>
+          <input className="user" id={1} key={1} value={this.state.user[1]} type="text" maxLength={1} onChange={(e) => this.handleChange(e)}/>
+          <input className="user" id={2} key={2} value={this.state.user[2]} type="text" maxLength={1} onChange={(e) => this.handleChange(e)}/>
         </div>
-        <button onClick={() => this.props.setUser((this.state.user.join("")))}>Check</button>
+        <input type="button" onClick={this.handleSubmit} value="Check"/>
       </div>
     )
   }

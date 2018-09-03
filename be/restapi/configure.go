@@ -13,6 +13,8 @@ import (
 
 	"github.com/pshebel/xword/be/restapi/operations"
 	"github.com/pshebel/xword/be/restapi/operations/word"
+	"github.com/pshebel/xword/be/restapi/operations/user"
+	"github.com/pshebel/xword/be/restapi/operations/users"
 	"github.com/pshebel/xword/be/restapi/operations/xword"
 )
 
@@ -32,12 +34,11 @@ func configureAPI(api *operations.API) http.Handler {
 	// Example:
 	// api.Logger = log.Printf
 
-
-
 	api.JSONConsumer = runtime.JSONConsumer()
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	// Xword functions
 	api.XwordGetXwordHandler = xword.GetXwordHandlerFunc(func(params xword.GetXwordParams) middleware.Responder {
 		return xword.Get(params)
 	})
@@ -46,12 +47,31 @@ func configureAPI(api *operations.API) http.Handler {
 		return xword.Post(params)
 	})
 
+	// Word functions
 	api.WordGetWordHandler = word.GetWordHandlerFunc(func(params word.GetWordParams) middleware.Responder {
 		return word.Get(params)
 	})
 
 	api.WordPostWordHandler = word.PostWordHandlerFunc(func(params word.PostWordParams) middleware.Responder {
 		return word.Post(params)
+	})
+
+	// User functions
+	api.UserGetUserHandler = user.GetUserHandlerFunc(func(params user.GetUserParams) middleware.Responder {
+		return user.Get(params)
+	})
+
+	api.UserPostUserHandler = user.PostUserHandlerFunc(func(params user.PostUserParams) middleware.Responder {
+		return user.Post(params)
+	})
+
+	api.UserPutUserHandler = user.PutUserHandlerFunc(func(params user.PutUserParams) middleware.Responder {
+		return user.Put(params)
+	})
+
+	// Users function
+	api.UsersGetUsersHandler = users.GetUsersHandlerFunc(func(params users.GetUsersParams) middleware.Responder {
+		return users.Get(params)
 	})
 
 	api.ServerShutdown = func() {}

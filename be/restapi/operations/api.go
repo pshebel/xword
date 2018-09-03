@@ -19,6 +19,8 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"github.com/pshebel/xword/be/restapi/operations/user"
+	"github.com/pshebel/xword/be/restapi/operations/users"
 	"github.com/pshebel/xword/be/restapi/operations/word"
 	"github.com/pshebel/xword/be/restapi/operations/xword"
 )
@@ -40,11 +42,20 @@ func NewAPI(spec *loads.Document) *API {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
+		UserGetUserHandler: user.GetUserHandlerFunc(func(params user.GetUserParams) middleware.Responder {
+			return middleware.NotImplemented("operation UserGetUser has not yet been implemented")
+		}),
+		UsersGetUsersHandler: users.GetUsersHandlerFunc(func(params users.GetUsersParams) middleware.Responder {
+			return middleware.NotImplemented("operation UsersGetUsers has not yet been implemented")
+		}),
 		WordGetWordHandler: word.GetWordHandlerFunc(func(params word.GetWordParams) middleware.Responder {
 			return middleware.NotImplemented("operation WordGetWord has not yet been implemented")
 		}),
 		XwordGetXwordHandler: xword.GetXwordHandlerFunc(func(params xword.GetXwordParams) middleware.Responder {
 			return middleware.NotImplemented("operation XwordGetXword has not yet been implemented")
+		}),
+		UserPostUserHandler: user.PostUserHandlerFunc(func(params user.PostUserParams) middleware.Responder {
+			return middleware.NotImplemented("operation UserPostUser has not yet been implemented")
 		}),
 		WordPostWordHandler: word.PostWordHandlerFunc(func(params word.PostWordParams) middleware.Responder {
 			return middleware.NotImplemented("operation WordPostWord has not yet been implemented")
@@ -52,10 +63,13 @@ func NewAPI(spec *loads.Document) *API {
 		XwordPostXwordHandler: xword.PostXwordHandlerFunc(func(params xword.PostXwordParams) middleware.Responder {
 			return middleware.NotImplemented("operation XwordPostXword has not yet been implemented")
 		}),
+		UserPutUserHandler: user.PutUserHandlerFunc(func(params user.PutUserParams) middleware.Responder {
+			return middleware.NotImplemented("operation UserPutUser has not yet been implemented")
+		}),
 	}
 }
 
-/*API XWORD DB */
+/*API XWORD */
 type API struct {
 	spec            *loads.Document
 	context         *middleware.Context
@@ -83,14 +97,22 @@ type API struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
+	// UserGetUserHandler sets the operation handler for the get user operation
+	UserGetUserHandler user.GetUserHandler
+	// UsersGetUsersHandler sets the operation handler for the get users operation
+	UsersGetUsersHandler users.GetUsersHandler
 	// WordGetWordHandler sets the operation handler for the get word operation
 	WordGetWordHandler word.GetWordHandler
 	// XwordGetXwordHandler sets the operation handler for the get xword operation
 	XwordGetXwordHandler xword.GetXwordHandler
+	// UserPostUserHandler sets the operation handler for the post user operation
+	UserPostUserHandler user.PostUserHandler
 	// WordPostWordHandler sets the operation handler for the post word operation
 	WordPostWordHandler word.PostWordHandler
 	// XwordPostXwordHandler sets the operation handler for the post xword operation
 	XwordPostXwordHandler xword.PostXwordHandler
+	// UserPutUserHandler sets the operation handler for the put user operation
+	UserPutUserHandler user.PutUserHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -154,6 +176,14 @@ func (o *API) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.UserGetUserHandler == nil {
+		unregistered = append(unregistered, "user.GetUserHandler")
+	}
+
+	if o.UsersGetUsersHandler == nil {
+		unregistered = append(unregistered, "users.GetUsersHandler")
+	}
+
 	if o.WordGetWordHandler == nil {
 		unregistered = append(unregistered, "word.GetWordHandler")
 	}
@@ -162,12 +192,20 @@ func (o *API) Validate() error {
 		unregistered = append(unregistered, "xword.GetXwordHandler")
 	}
 
+	if o.UserPostUserHandler == nil {
+		unregistered = append(unregistered, "user.PostUserHandler")
+	}
+
 	if o.WordPostWordHandler == nil {
 		unregistered = append(unregistered, "word.PostWordHandler")
 	}
 
 	if o.XwordPostXwordHandler == nil {
 		unregistered = append(unregistered, "xword.PostXwordHandler")
+	}
+
+	if o.UserPutUserHandler == nil {
+		unregistered = append(unregistered, "user.PutUserHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -271,6 +309,16 @@ func (o *API) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/user"] = user.NewGetUser(o.context, o.UserGetUserHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/users"] = users.NewGetUsers(o.context, o.UsersGetUsersHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/word"] = word.NewGetWord(o.context, o.WordGetWordHandler)
 
 	if o.handlers["GET"] == nil {
@@ -281,12 +329,22 @@ func (o *API) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
+	o.handlers["POST"]["/user"] = user.NewPostUser(o.context, o.UserPostUserHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
 	o.handlers["POST"]["/word"] = word.NewPostWord(o.context, o.WordPostWordHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/xword"] = xword.NewPostXword(o.context, o.XwordPostXwordHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/user"] = user.NewPutUser(o.context, o.UserPutUserHandler)
 
 }
 

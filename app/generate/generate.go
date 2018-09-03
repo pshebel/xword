@@ -1,13 +1,13 @@
 package generate
 
 import (
-  // "fmt"
+  "fmt"
   "math/rand"
   // "io/ioutil"
 	"strconv"
   "strings"
   "errors"
-  // "time"
+  "time"
   // am "github.com/pshebel/xword/app/models"
   bm "github.com/pshebel/xword/be/models"
   // "github.com/pshebel/xword/app/util"
@@ -59,14 +59,14 @@ func getListsOfLetters(lists [][]string, width, index int) ([][]string) {
   return letters
 }
 
-func isValidPrefix(prefix string, width int, words []*bm.Word) bool {
+func isValidPrefix(prefix string, width int, words []string) bool {
   for _, word := range words {
     // checking for whitespace or garbage
     if len(words) < width {
       continue
     }
     // fmt.Println((*word.Word)[0:len(prefix)])
-    if string((*word.Word)[0:len(prefix)]) == prefix {
+    if string((word)[0:len(prefix)]) == prefix {
       return true
     }
   }
@@ -76,7 +76,8 @@ func isValidPrefix(prefix string, width int, words []*bm.Word) bool {
 // prefix
 // letters
 // width
-func addLetter(prefix []string, letters [][]string, width int, index int, words []*bm.Word) string {
+func addLetter(prefix []string, letters [][]string, width int, index int, words []string) string {
+  fmt.Println(prefix)
   currentWidth := len(prefix)
   // base case
   if currentWidth == width {
@@ -92,14 +93,13 @@ func addLetter(prefix []string, letters [][]string, width int, index int, words 
     if !isValid {
       continue
     }
-
     return addLetter(newPrefix, letters, width, index, words)
   }
 
   return ""
 }
 
-func buildWord(letters [][]string, width int, index int, words []*bm.Word) (string, error) {
+func buildWord(letters [][]string, width int, index int, words []string) (string, error) {
   // aye there's the rub
   // To solve it we must build tree, which means recursion
   prefix := make([]string, 0)
@@ -110,7 +110,7 @@ func buildWord(letters [][]string, width int, index int, words []*bm.Word) (stri
   return "", errors.New("could not build word")
 }
 
-func getNextWord(lists [][]string, width int, index int, words []*bm.Word) (string, [][]string, error) {
+func getNextWord(lists [][]string, width int, index int, words []string) (string, [][]string, error) {
   // lists is a initially a list of lists for all words that match the seed word
   // for example if the seed word is test, the list would look like
   // [["tail", "taxi", ...],
@@ -120,6 +120,7 @@ func getNextWord(lists [][]string, width int, index int, words []*bm.Word) (stri
   // 1) we need to turn this into a list of letters that are available for the next
   // word across
   letters := getListsOfLetters(lists, width, index)
+  fmt.Println(letters)
   // [[a i r ... ] [x y d ... ] [n m i ... ] [a i r ... ]]
   // 2) build a word from these lists
   // "axis"
@@ -140,10 +141,10 @@ func getNextWord(lists [][]string, width int, index int, words []*bm.Word) (stri
   return word, newList, nil
 }
 
-func getLists(seed string, words []*bm.Word) [][]string {
+func getLists(seed string, words []string) [][]string {
   lists := make([][]string, len(seed))
   for i := 0; i < len(words); i++ {
-    word := *words[i].Word
+    word := words[i]
     for j := 0; j < len(seed); j++ {
       if word[0] == seed[j] && word != seed {
         lists[j] = append(lists[j], word)
@@ -184,21 +185,31 @@ func getDefs(rows []string, cols []string, words []*bm.Word) []string {
 // width: size of puzzle, dbPath: path to testdata
 func Generate(width int, words []*bm.Word) (*[]string, *[]string, error) {
   rows := make([]string, width)
+  rand.Seed(time.Now().UTC().UnixNano())
   rand.Shuffle(len(words), func(i, j int) {
     words[i], words[j] = words[j], words[i]
   })
 
-  // seed := *words[rand.Intn(len(words))].Word
-  seed := "bug"
+  strWords := make([]string, len(words))
+  for i := 0; i < len(words); i++ {
+    strWords[i] = *words[i].Word
+  }
+  fmt.Println(strWords)
+
+  seed := strWords[rand.Intn(len(words))]
+  // seed := "bug"
+  fmt.Println(seed)
   rows[0] = seed
-  lists := getLists(seed, words)
+  lists := getLists(seed, strWords)
 
   count := 1
   for count != width {
-    word, newLists, err := getNextWord(lists, width, count, words)
+    word, newLists, err := getNextWord(lists, width, count, strWords)
     if err != nil {
       return nil, nil, err
     }
+
+    fmt.Println(word)
 
     if len(word) != width {
       return nil, nil, errors.New("could not build xword")
@@ -208,6 +219,7 @@ func Generate(width int, words []*bm.Word) (*[]string, *[]string, error) {
     rows[count] = word
     count += 1
   }
+
   cols := getCols(rows)
   defs := getDefs(rows, cols, words)
   return &rows, &defs, nil

@@ -2,7 +2,7 @@
 
 /*
 Package restapi api
-XWORD DB
+XWORD
 
 
     Schemes:
