@@ -75,33 +75,19 @@ func postXword(words []string, definitions []string, client *http.Client) (*bm.R
 
 func main() {
   client := &http.Client{}
-  // for start := time.Now(); time.Since(start) < time.Minute; {
-  //     words, err := getWord("3")
-  //     if err != nil {
-  //       fmt.Println(err)
-  //       break
-  //     }
-  //     xword, defs, err := generate.Generate(3, *words)
-  //     if err == nil {
-  //       _, err := postXword(*xword, *defs)
-  //       if err != nil {
-  //         fmt.Println(err)
-  //         break
-  //       }
-  //     } else {
-  //       fmt.Println(err)
-  //       break
-  //     }
-  // }
+  
   words, err := getWord("3", client)
   if err != nil {
     fmt.Println(err)
+    return
+  } else if len(*words) == 0 {
+    fmt.Println("no words found")
     return
   } else {
     fmt.Println(*words)
   }
 
-  for start := time.Now(); time.Since(start) < time.Minute; {
+  for start := time.Now(); time.Since(start) < time.Second; {
       xword, defs, err := generate.Generate(3, *words)
       if err == nil {
         fmt.Println(xword)

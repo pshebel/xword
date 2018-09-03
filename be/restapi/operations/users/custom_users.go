@@ -8,7 +8,7 @@ import (
 )
 
 var (
-  collection = "user"
+  collection = "users"
   database = "xword"
 )
 

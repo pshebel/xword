@@ -89,33 +89,29 @@ class Xword extends React.Component {
 
   handleChange(e, square) {
     console.log(Object.values(e), Object.keys(e))
-
-    let ele = e.currentTarget.nextElementSibling
-    console.log(ele)
-    if (ele !== null) {
-      ele.focus()
-    } else {
-      ele = e.currentTarget.parentElement.nextElementSibling
-
+    if (e.target.value !== "") {
+      let ele = e.currentTarget.nextElementSibling
       console.log(ele)
       if (ele !== null) {
-        ele.firstElementChild.focus()
+        ele.focus()
       } else {
-        // TODO
+        ele = e.currentTarget.parentElement.nextElementSibling
+
+        console.log(ele)
+        if (ele !== null) {
+          ele.firstElementChild.focus()
+        } else {
+          // TODO
+        }
       }
     }
-
-
+    
     const squares = this.state.squares.slice();
     let row = square[0];
     let col = square[1];
 
 
     squares[(row*this.state.sideLength + col)][2] = e.target.value
-    if (squares[(row*this.state.sideLength + col)][2] === squares[(row*this.state.sideLength + col)][3]) {
-      console.log("correct")
-    }
-
     this.setState({
       squares: squares
     });
@@ -155,7 +151,7 @@ class Xword extends React.Component {
     }
     if (solved) {
       alert("success!")
-      this.props.updateUser("puzzle", ((res) => {
+      this.props.putUser("puzzle", ((res) => {
         console.log("made it to cb", res)
         if (res === 200) {
           alert("success")

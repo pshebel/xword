@@ -9,7 +9,7 @@ import (
 )
 
 var (
-  collection = "word"
+  collection = "words"
   database = "xword"
 )
 

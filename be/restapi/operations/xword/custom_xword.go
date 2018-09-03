@@ -10,7 +10,7 @@ import (
 
 var (
   database = "xword"
-  collection = "xword"
+  collection = "xwords"
 )
 
 
@@ -24,14 +24,12 @@ func Get(params GetXwordParams) middleware.Responder {
   }
   defer c.Close()
 
-  var xword *models.Xword
+  var xword models.Xword
   if err := c.DB(database).C(collection).Find(nil).One(&xword); err != nil {
     status := models.ReturnCode{Code: int64(GetXwordNotFoundCode), Message: "failed to get from db"}
     response := GetXwordNotFound{}
     return response.WithPayload(&status)
   }
-
-  // NEED TO UNCOMMENT THIS FOR PROD
 
   if err := c.DB(database).C(collection).Remove(bson.M{"id": xword.ID}); err != nil {
     status := models.ReturnCode{Code: int64(GetXwordNotFoundCode), Message: "failed to remove from db"}
@@ -40,7 +38,7 @@ func Get(params GetXwordParams) middleware.Responder {
   }
 
   response := GetXwordOK{}
-  return response.WithPayload(xword)
+  return response.WithPayload(&xword)
 }
 
 func Post(params PostXwordParams) middleware.Responder {

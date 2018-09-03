@@ -9,7 +9,7 @@ import (
 )
 
 var (
-  collection = "user"
+  collection = "users"
   database = "xword"
 )
 
@@ -24,7 +24,7 @@ func Get(params GetUserParams) middleware.Responder {
   }
   defer c.Close()
 
-  query := bson.M{ "user": params.Username, }
+  query := bson.M{ "username": params.Username, }
 
   fmt.Println(query)
   var user models.User
@@ -49,9 +49,14 @@ func Post(params PostUserParams) middleware.Responder {
   }
   defer c.Close()
 
-  var user models.User
-  if err := c.DB(database).C(collection).Find(nil).One(&user); err != nil {
-    status := models.ReturnCode{Code: int64(PostUserNotFoundCode), Message: "failed to get Users"}
+  user := bson.M {
+    "username": params.Username,
+    "puzzles": 0,
+    "words": 0,
+  }
+
+  if err := c.DB(database).C(collection).Insert(user); err != nil {
+    status := models.ReturnCode{Code: int64(PostUserNotFoundCode), Message: "failed to insert user"}
     response := PostUserNotFound{}
     return response.WithPayload(&status)
   }
@@ -62,7 +67,7 @@ func Post(params PostUserParams) middleware.Responder {
 }
 
 func Put(params PutUserParams) middleware.Responder {
-  fmt.Println("POSTING USER", params)
+  fmt.Println("PUTTING USER", params)
 
   c, e := db.Connect()
   if e != nil {
@@ -79,7 +84,7 @@ func Put(params PutUserParams) middleware.Responder {
 
   defer c.Close()
   if err := c.DB(database).C(collection).Update(selector, update); err != nil {
-    status := models.ReturnCode{Code: int64(PutUserInternalServerErrorCode), Message: "failed to insert User"}
+    status := models.ReturnCode{Code: int64(PutUserInternalServerErrorCode), Message: "failed to update User"}
 		response := PutUserInternalServerError{}
 		return response.WithPayload(&status)
   }

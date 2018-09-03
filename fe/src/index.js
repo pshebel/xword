@@ -23,7 +23,7 @@ class App extends React.Component {
       this.getXword()
     }
     if (this.state.user === null) {
-      let u = this.getUser()
+      let u = this.getLocalUser()
       if (u === null) {
         this.setState({
           view: "user"
@@ -36,20 +36,17 @@ class App extends React.Component {
     }
   }
 
-  handleOnClick = (e) => {
-    this.setState({
-      view: e
-    })
-  }
-
+  // xword functions
   getXword = () => {
-    fetch(process.env.beHost+process.env.bePort+'/api/word', {
+    fetch(process.env.REACT_APP_DEV_API_HOST+'/api/xword', {
       method: "GET",
       headers: {
         "Content-type": "application/json"
       }
     })
-    .then((response) => { return response.json(); })
+    .then((response) => {
+      return response.json();
+    })
     .then((data) => {
       console.log(data)
       if (data.code) {
@@ -67,11 +64,68 @@ class App extends React.Component {
     });
   }
 
+  // user functions
+  getUser = (username, cb) => {
+    let url = process.env.REACT_APP_DEV_API_HOST+"/api/user?username="+username
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json"
+      },
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data)
+      if (data.code) {
+        this.setState({ user: null })
+        return cb(null)
+      } else {
+        this.setState({ user: data })
+        return cb(data)
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+      this.setState({ user: null })
+      return cb(null)
+    })
+  }
+
+  postUser = (username, cb) => {
+    let url = process.env.REACT_APP_DEV_API_HOST+"/api/user?username="+username
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json"
+      },
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data.code)
+      if (data.code === 200) {
+        console.log("succesful post to db")
+        return cb(200)
+      } else {
+        console.log("post to db failed")
+        return cb(400)
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+      return cb(400)
+    });
+    return cb(400)
+  }
+
   putUser = (val, cb) => {
     if (this.state.user !== null) {
-      let url = process.env.beHost+process.env.bePort+"/api/user?user="+this.state.user+"&value="+val
+      let url = process.env.REACT_APP_DEV_API_HOST+"/api/user?username="+this.state.user+"&value="+val
       fetch(url, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-type": "application/json"
         },
@@ -80,25 +134,26 @@ class App extends React.Component {
         return response.json();
       })
       .then((data) => {
-        console.log(data.code)
+        console.log(data)
         if (data.code === 200) {
           console.log("succesful post to db")
-          return cb(200)
         } else {
           console.log("post to db failed")
-          return cb(400)
         }
+        return cb(data.code)
       })
       .catch((error) => {
         console.log(error)
         return cb(400)
       });
+    } else {
+      return cb(400)
     }
-    return cb(400)
   }
 
+  // word functions
   postWord = (word, cb) => {
-    let url = process.env.beHost+process.env.bePort+'/api/word'
+    let url = process.env.REACT_APP_DEV_API_HOST+'/api/word'
     console.log(url)
     fetch(url, {
       method: "POST",
@@ -127,6 +182,7 @@ class App extends React.Component {
 
   }
 
+  // localStorage
   setLocalUser = (user) => {
     console.log("User", user)
     localStorage.setItem("user", user)
@@ -137,19 +193,25 @@ class App extends React.Component {
     return localStorage.getItem("user")
   }
 
+  handleOnClick = (e) => {
+    this.setState({
+      view: e
+    })
+  }
+
   render() {
     return (
       <div className="app">
         <Header handleOnClick={this.handleOnClick} />
         {this.state.view === "xword" && this.state.data !== null &&
-            <Xword data={this.state.data} getXword={this.getXword}/>
+            <Xword data={this.state.data} getXword={this.getXword} putUser={this.putUser}/>
         }
         {this.state.view === "xword" && this.state.data === null &&
             <div>No more xwords for now, but come back soon</div>
         }
-        {this.state.view === "user" && <User setLocalUser={this.setLocalUser}/>}
+        {this.state.view === "user" && <User setLocalUser={this.setLocalUser} getUser={this.getUser} postUser={this.postUser}/>}
         {this.state.view === "boards" && <Leaderboards />}
-        {this.state.view === "words" && <Words postWord={this.postWord}/>}
+        {this.state.view === "words" && <Words getWord={this.getWord} postWord={this.postWord}/>}
       </div>
     )
   }
