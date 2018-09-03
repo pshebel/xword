@@ -13,6 +13,7 @@ import (
 
 	"github.com/pshebel/xword/be/restapi/operations"
 	"github.com/pshebel/xword/be/restapi/operations/word"
+	"github.com/pshebel/xword/be/restapi/operations/user"
 	"github.com/pshebel/xword/be/restapi/operations/xword"
 )
 
@@ -32,12 +33,11 @@ func configureAPI(api *operations.API) http.Handler {
 	// Example:
 	// api.Logger = log.Printf
 
-
-
 	api.JSONConsumer = runtime.JSONConsumer()
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	// Xword functions
 	api.XwordGetXwordHandler = xword.GetXwordHandlerFunc(func(params xword.GetXwordParams) middleware.Responder {
 		return xword.Get(params)
 	})
@@ -46,6 +46,7 @@ func configureAPI(api *operations.API) http.Handler {
 		return xword.Post(params)
 	})
 
+	// Word functions
 	api.WordGetWordHandler = word.GetWordHandlerFunc(func(params word.GetWordParams) middleware.Responder {
 		return word.Get(params)
 	})

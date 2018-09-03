@@ -42,7 +42,7 @@ class User extends React.Component {
             })
           }
         </div>
-        <button onClick={() => this.props.setUser((this.state.user.join("")))}>Check</button>
+        <button onClick={() => this.props.setLocalUser((this.state.user.join("")))}>Check</button>
       </div>
     )
   }

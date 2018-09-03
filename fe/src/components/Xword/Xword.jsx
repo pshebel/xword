@@ -105,10 +105,6 @@ class Xword extends React.Component {
       }
     }
 
-    // getNextElement(currentLocation, orientation) {
-    //
-    // }
-
 
     const squares = this.state.squares.slice();
     let row = square[0];
@@ -142,8 +138,8 @@ class Xword extends React.Component {
       squares: null,
       solved: false
     })
-    // this.props.updateUser("puzzle")
-    this.props.getNewXword()
+
+    this.props.getXword()
   }
 
   handleSubmit = () => {
@@ -159,6 +155,15 @@ class Xword extends React.Component {
     }
     if (solved) {
       alert("success!")
+      this.props.updateUser("puzzle", ((res) => {
+        console.log("made it to cb", res)
+        if (res === 200) {
+          alert("success")
+          this.setState({ word: '', definition: ''})
+        } else {
+          alert("failed to post word")
+        }
+      }))
     }
     this.setState({ solved })
   }

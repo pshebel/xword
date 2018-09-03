@@ -29,7 +29,7 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "XWORD DB",
+    "description": "XWORD",
     "title": "api",
     "contact": {
       "email": "phil.shebel@gmail.com"
@@ -38,6 +38,204 @@ func init() {
   },
   "basePath": "/api",
   "paths": {
+    "/user": {
+      "get": {
+        "description": "Get User from mongodb",
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "returns a certain user",
+            "name": "username",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "default": {
+            "description": "Unexpected recovery response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Increments value of user",
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "what user to update",
+            "name": "username",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "what feature to increment",
+            "name": "value",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Put user successful response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "409": {
+            "description": "Post word duplicate response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "default": {
+            "description": "Post word unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Insert user into db",
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "defining value of users",
+            "name": "username",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post user successful response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "409": {
+            "description": "Post word duplicate response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "default": {
+            "description": "Post word unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "description": "Gets top 5 users by number of puzzles done or number of words",
+        "tags": [
+          "users"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "determines whether we get puzzle or word score",
+            "name": "value",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "default": {
+            "description": "Unexpected recovery response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          }
+        }
+      }
+    },
     "/word": {
       "get": {
         "description": "Get words from mongodb",
@@ -85,12 +283,6 @@ func init() {
           "word"
         ],
         "parameters": [
-          {
-            "type": "string",
-            "description": "Username",
-            "name": "user",
-            "in": "query"
-          },
           {
             "description": "New word and definition",
             "name": "word",
@@ -152,14 +344,6 @@ func init() {
         "description": "Get xword from app",
         "tags": [
           "xword"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Username",
-            "name": "user",
-            "in": "query"
-          }
         ],
         "responses": {
           "200": {
@@ -257,6 +441,29 @@ func init() {
           "type": "string",
           "readOnly": true
         }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": [
+        "username"
+      ],
+      "properties": {
+        "puzzles": {
+          "type": "integer"
+        },
+        "username": {
+          "type": "string"
+        },
+        "words": {
+          "type": "integer"
+        }
+      }
+    },
+    "Users": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/User"
       }
     },
     "Word": {
@@ -318,7 +525,7 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "XWORD DB",
+    "description": "XWORD",
     "title": "api",
     "contact": {
       "email": "phil.shebel@gmail.com"
@@ -327,6 +534,204 @@ func init() {
   },
   "basePath": "/api",
   "paths": {
+    "/user": {
+      "get": {
+        "description": "Get User from mongodb",
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "returns a certain user",
+            "name": "username",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "default": {
+            "description": "Unexpected recovery response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Increments value of user",
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "what user to update",
+            "name": "username",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "what feature to increment",
+            "name": "value",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Put user successful response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "409": {
+            "description": "Post word duplicate response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "default": {
+            "description": "Post word unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Insert user into db",
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "defining value of users",
+            "name": "username",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post user successful response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "409": {
+            "description": "Post word duplicate response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "default": {
+            "description": "Post word unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "description": "Gets top 5 users by number of puzzles done or number of words",
+        "tags": [
+          "users"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "determines whether we get puzzle or word score",
+            "name": "value",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          },
+          "default": {
+            "description": "Unexpected recovery response",
+            "schema": {
+              "$ref": "#/definitions/ReturnCode"
+            }
+          }
+        }
+      }
+    },
     "/word": {
       "get": {
         "description": "Get words from mongodb",
@@ -374,12 +779,6 @@ func init() {
           "word"
         ],
         "parameters": [
-          {
-            "type": "string",
-            "description": "Username",
-            "name": "user",
-            "in": "query"
-          },
           {
             "description": "New word and definition",
             "name": "word",
@@ -441,14 +840,6 @@ func init() {
         "description": "Get xword from app",
         "tags": [
           "xword"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Username",
-            "name": "user",
-            "in": "query"
-          }
         ],
         "responses": {
           "200": {
@@ -546,6 +937,29 @@ func init() {
           "type": "string",
           "readOnly": true
         }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": [
+        "username"
+      ],
+      "properties": {
+        "puzzles": {
+          "type": "integer"
+        },
+        "username": {
+          "type": "string"
+        },
+        "words": {
+          "type": "integer"
+        }
+      }
+    },
+    "Users": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/User"
       }
     },
     "Word": {

@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: api
   version: 0.0.1
-  description: XWORD DB
+  description: XWORD
   contact:
     email: phil.shebel@gmail.com
 basePath: /api
@@ -13,7 +13,7 @@ produces:
 schemes:
   - http
 
-paths:  
+paths:
   /word:
     get:
       tags:
@@ -46,11 +46,6 @@ paths:
         - word
       description: Adds word to mongodb
       parameters:
-        - in: query
-          name: user
-          description: Username
-          required: false
-          type: string
         - in: body
           name: word
           description: New word and definition
@@ -86,17 +81,141 @@ paths:
           description: Post word unexpected error response
           schema:
             $ref: '#/definitions/ReturnCode'
+  /user:
+    get:
+      tags:
+        - user
+      description: Get User from mongodb
+      parameters:
+        - in: query
+          name: username
+          type: string
+          description: returns a certain user
+          required: true
+      responses:
+        '200':
+          description: Successful
+          schema:
+            $ref: '#/definitions/User'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        default:
+          description: Unexpected recovery response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+    post:
+      tags:
+        - user
+      description: Insert user into db
+      parameters:
+        - in: query
+          name: username
+          description: defining value of users
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Post user successful response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '409':
+          description: Post word duplicate response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        default:
+          description: Post word unexpected error response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+    put:
+      tags:
+        - user
+      description: Increments value of user
+      parameters:
+        - in: query
+          name: username
+          description: what user to update
+          required: true
+          type: string
+        - in: query
+          name: value
+          description: what feature to increment
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Put user successful response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '409':
+          description: Post word duplicate response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        default:
+          description: Post word unexpected error response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+  /users:
+    get:
+      tags:
+        - users
+      description: Gets top 5 users by number of puzzles done or number of words
+      parameters:
+        - in: query
+          name: value
+          type: string
+          description: determines whether we get puzzle or word score
+      responses:
+        '200':
+          description: Successful
+          schema:
+            $ref: '#/definitions/Users'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        default:
+          description: Unexpected recovery response
+          schema:
+            $ref: '#/definitions/ReturnCode'
   /xword:
     get:
       tags:
         - xword
       description: Get xword from app
-      parameters:
-        - in: query
-          name: user
-          description: Username
-          required: false
-          type: string
       responses:
         '200':
           description: Successful
@@ -165,6 +284,21 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Word'
+  User:
+    type: object
+    required:
+      - username
+    properties:
+      username:
+        type: string
+      puzzles:
+        type: integer
+      words:
+        type: integer
+  Users:
+    type: array
+    items:
+      $ref: '#/definitions/User'
   Xword:
     type: object
     required:

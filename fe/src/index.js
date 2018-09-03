@@ -8,11 +8,6 @@ import Words from './components/Words/Words';
 import './index.css';
 
 
-const beHost = 'http://localhost:'
-const bePort = 4000
-const beGetPath = '/api/xword'
-const bePostPath = '/api/word'
-
 class App extends React.Component {
   constructor() {
     super();
@@ -25,7 +20,7 @@ class App extends React.Component {
 
   componentDidMount() {
     if (this.state.data === null) {
-      this.getNewXword()
+      this.getXword()
     }
     if (this.state.user === null) {
       let u = this.getUser()
@@ -47,8 +42,8 @@ class App extends React.Component {
     })
   }
 
-  getNewXword = () => {
-    fetch(beHost+bePort+beGetPath, {
+  getXword = () => {
+    fetch(process.env.beHost+process.env.bePort+'/api/word', {
       method: "GET",
       headers: {
         "Content-type": "application/json"
@@ -72,18 +67,39 @@ class App extends React.Component {
     });
   }
 
-  updateUser = (val) => {
-    if (this.state.user !== null){
-      let url = beHost+bePort+"/api/user?user="+this.state.user+"&value="+val
-      
-    }
-  }
-  postWord = (word, cb) => {
-    let url = beHost+bePort+bePostPath
-    console.log(this.state.user)
+  putUser = (val, cb) => {
     if (this.state.user !== null) {
-      url = url+"?user="+this.state.user
+      let url = process.env.beHost+process.env.bePort+"/api/user?user="+this.state.user+"&value="+val
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json"
+        },
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data.code)
+        if (data.code === 200) {
+          console.log("succesful post to db")
+          return cb(200)
+        } else {
+          console.log("post to db failed")
+          return cb(400)
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+        return cb(400)
+      });
     }
+    return cb(400)
+  }
+
+  postWord = (word, cb) => {
+    let url = process.env.beHost+process.env.bePort+'/api/word'
+    console.log(url)
     fetch(url, {
       method: "POST",
       headers: {
@@ -111,13 +127,13 @@ class App extends React.Component {
 
   }
 
-  setUser = (user) => {
+  setLocalUser = (user) => {
     console.log("User", user)
     localStorage.setItem("user", user)
     this.setState({ user })
   }
 
-  getUser = () => {
+  getLocalUser = () => {
     return localStorage.getItem("user")
   }
 
@@ -126,12 +142,12 @@ class App extends React.Component {
       <div className="app">
         <Header handleOnClick={this.handleOnClick} />
         {this.state.view === "xword" && this.state.data !== null &&
-            <Xword data={this.state.data} getNewXword={this.getNewXword}/>
+            <Xword data={this.state.data} getXword={this.getXword}/>
         }
         {this.state.view === "xword" && this.state.data === null &&
             <div>No more xwords for now, but come back soon</div>
         }
-        {this.state.view === "user" && <User setUser={this.setUser}/>}
+        {this.state.view === "user" && <User setLocalUser={this.setLocalUser}/>}
         {this.state.view === "boards" && <Leaderboards />}
         {this.state.view === "words" && <Words postWord={this.postWord}/>}
       </div>
