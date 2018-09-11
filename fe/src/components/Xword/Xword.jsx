@@ -105,13 +105,13 @@ class Xword extends React.Component {
         }
       }
     }
-    
+
     const squares = this.state.squares.slice();
     let row = square[0];
     let col = square[1];
 
 
-    squares[(row*this.state.sideLength + col)][2] = e.target.value
+    squares[(row*this.state.sideLength + col)][2] = e.target.value.toLowerCase()
     this.setState({
       squares: squares
     });
@@ -151,13 +151,12 @@ class Xword extends React.Component {
     }
     if (solved) {
       alert("success!")
-      this.props.putUser("puzzle", ((res) => {
+      this.props.putUser("puzzles", ((res) => {
         console.log("made it to cb", res)
         if (res === 200) {
-          alert("success")
-          this.setState({ word: '', definition: ''})
+          alert("successfully update user")
         } else {
-          alert("failed to post word")
+          alert("failed to update user")
         }
       }))
     }

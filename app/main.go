@@ -75,7 +75,7 @@ func postXword(words []string, definitions []string, client *http.Client) (*bm.R
 
 func main() {
   client := &http.Client{}
-  
+
   words, err := getWord("3", client)
   if err != nil {
     fmt.Println(err)
@@ -87,7 +87,7 @@ func main() {
     fmt.Println(*words)
   }
 
-  for start := time.Now(); time.Since(start) < time.Second; {
+  for start := time.Now(); time.Since(start) < 5*time.Second; {
       xword, defs, err := generate.Generate(3, *words)
       if err == nil {
         fmt.Println(xword)

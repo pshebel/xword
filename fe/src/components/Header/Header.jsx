@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../index.css';
 
 class Header extends React.Component {
 
@@ -7,8 +8,8 @@ class Header extends React.Component {
       <div>
         <button onClick={(e) => this.props.handleOnClick(e.target.value)} value="xword">xword</button>
         <button onClick={(e) => this.props.handleOnClick(e.target.value)} value="words">+word</button>
-        <button onClick={(e) => this.props.handleOnClick(e.target.value)} value="user">User</button>
-        <button onClick={(e) => this.props.handleOnClick(e.target.value)} value="boards">Leaderboards</button>
+        <button onClick={(e) => this.props.handleOnClick(e.target.value)} value="user">user</button>
+        <button onClick={(e) => this.props.handleOnClick(e.target.value)} value="boards">leaderboards</button>
       </div>
     )
   }

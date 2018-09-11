@@ -14,7 +14,8 @@ class App extends React.Component {
     this.state = {
       view: "xword",
       data: null,
-      user: null
+      user: null,
+      leaderboard: null
     }
   };
 
@@ -22,17 +23,8 @@ class App extends React.Component {
     if (this.state.data === null) {
       this.getXword()
     }
-    if (this.state.user === null) {
-      let u = this.getLocalUser()
-      if (u === null) {
-        this.setState({
-          view: "user"
-        })
-      } else {
-        this.setState({
-          user: u
-        })
-      }
+    if (this.state.leaderboard === null) {
+      this.getUsers()
     }
   }
 
@@ -122,8 +114,9 @@ class App extends React.Component {
   }
 
   putUser = (val, cb) => {
-    if (this.state.user !== null) {
-      let url = process.env.REACT_APP_DEV_API_HOST+"/api/user?username="+this.state.user+"&value="+val
+    let username = this.getLocalUser()
+    if (username!== null) {
+      let url = process.env.REACT_APP_DEV_API_HOST+"/api/user?username="+username+"&value="+val
       fetch(url, {
         method: "PUT",
         headers: {
@@ -150,6 +143,33 @@ class App extends React.Component {
       return cb(400)
     }
   }
+
+
+  // Users functions
+  getUsers = () => {
+    let url = process.env.REACT_APP_DEV_API_HOST+"/api/users"
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json"
+      },
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      // console.log(data)
+      if (!data.code) {
+        this.setState({
+          leaderboard: data
+        })
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
+
 
   // word functions
   postWord = (word, cb) => {
@@ -202,6 +222,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="app">
+        <h1>xword</h1>
         <Header handleOnClick={this.handleOnClick} />
         {this.state.view === "xword" && this.state.data !== null &&
             <Xword data={this.state.data} getXword={this.getXword} putUser={this.putUser}/>
@@ -209,9 +230,9 @@ class App extends React.Component {
         {this.state.view === "xword" && this.state.data === null &&
             <div>No more xwords for now, but come back soon</div>
         }
-        {this.state.view === "user" && <User setLocalUser={this.setLocalUser} getUser={this.getUser} postUser={this.postUser}/>}
-        {this.state.view === "boards" && <Leaderboards />}
-        {this.state.view === "words" && <Words getWord={this.getWord} postWord={this.postWord}/>}
+        {this.state.view === "user" && <User setLocalUser={this.setLocalUser} getLocalUser={this.getLocalUser} getUser={this.getUser} postUser={this.postUser}/>}
+        {this.state.view === "boards" && <Leaderboards data={this.state.leaderboard} getUsers={this.getUsers}/>}
+        {this.state.view === "words" && <Words postWord={this.postWord} putUser={this.putUser}/>}
       </div>
     )
   }
