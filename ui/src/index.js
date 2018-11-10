@@ -172,7 +172,7 @@ class App extends React.Component {
 
   // word functions
   postWord = (word, cb) => {
-    let url = API_HOST+'/api/words'
+    let url = API_HOST+'/api/word'
     console.log(url)
     fetch(url, {
       method: "POST",
