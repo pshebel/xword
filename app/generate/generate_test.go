@@ -5,7 +5,7 @@ import (
   "strings"
   "strconv"
   // "fmt"
-  bm "github.com/pshebel/xword/be/models"
+  bm "github.com/pshebel/xword/api/models"
   // "github.com/pshebel/xword/app/util"
 )
 
