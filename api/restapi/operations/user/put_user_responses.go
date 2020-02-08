@@ -25,7 +25,7 @@ type PutUserOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.ReturnCode `json:"body,omitempty"`
+	Payload *models.User `json:"body,omitempty"`
 }
 
 // NewPutUserOK creates PutUserOK with default headers values
@@ -35,13 +35,13 @@ func NewPutUserOK() *PutUserOK {
 }
 
 // WithPayload adds the payload to the put user o k response
-func (o *PutUserOK) WithPayload(payload *models.ReturnCode) *PutUserOK {
+func (o *PutUserOK) WithPayload(payload *models.User) *PutUserOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the put user o k response
-func (o *PutUserOK) SetPayload(payload *models.ReturnCode) {
+func (o *PutUserOK) SetPayload(payload *models.User) {
 	o.Payload = payload
 }
 
@@ -49,182 +49,6 @@ func (o *PutUserOK) SetPayload(payload *models.ReturnCode) {
 func (o *PutUserOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
-}
-
-// PutUserBadRequestCode is the HTTP code returned for type PutUserBadRequest
-const PutUserBadRequestCode int = 400
-
-/*PutUserBadRequest Bad Request
-
-swagger:response putUserBadRequest
-*/
-type PutUserBadRequest struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *models.ReturnCode `json:"body,omitempty"`
-}
-
-// NewPutUserBadRequest creates PutUserBadRequest with default headers values
-func NewPutUserBadRequest() *PutUserBadRequest {
-
-	return &PutUserBadRequest{}
-}
-
-// WithPayload adds the payload to the put user bad request response
-func (o *PutUserBadRequest) WithPayload(payload *models.ReturnCode) *PutUserBadRequest {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the put user bad request response
-func (o *PutUserBadRequest) SetPayload(payload *models.ReturnCode) {
-	o.Payload = payload
-}
-
-// WriteResponse to the client
-func (o *PutUserBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(400)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
-}
-
-// PutUserUnauthorizedCode is the HTTP code returned for type PutUserUnauthorized
-const PutUserUnauthorizedCode int = 401
-
-/*PutUserUnauthorized Unauthorized
-
-swagger:response putUserUnauthorized
-*/
-type PutUserUnauthorized struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *models.ReturnCode `json:"body,omitempty"`
-}
-
-// NewPutUserUnauthorized creates PutUserUnauthorized with default headers values
-func NewPutUserUnauthorized() *PutUserUnauthorized {
-
-	return &PutUserUnauthorized{}
-}
-
-// WithPayload adds the payload to the put user unauthorized response
-func (o *PutUserUnauthorized) WithPayload(payload *models.ReturnCode) *PutUserUnauthorized {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the put user unauthorized response
-func (o *PutUserUnauthorized) SetPayload(payload *models.ReturnCode) {
-	o.Payload = payload
-}
-
-// WriteResponse to the client
-func (o *PutUserUnauthorized) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(401)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
-}
-
-// PutUserNotFoundCode is the HTTP code returned for type PutUserNotFound
-const PutUserNotFoundCode int = 404
-
-/*PutUserNotFound Not Found
-
-swagger:response putUserNotFound
-*/
-type PutUserNotFound struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *models.ReturnCode `json:"body,omitempty"`
-}
-
-// NewPutUserNotFound creates PutUserNotFound with default headers values
-func NewPutUserNotFound() *PutUserNotFound {
-
-	return &PutUserNotFound{}
-}
-
-// WithPayload adds the payload to the put user not found response
-func (o *PutUserNotFound) WithPayload(payload *models.ReturnCode) *PutUserNotFound {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the put user not found response
-func (o *PutUserNotFound) SetPayload(payload *models.ReturnCode) {
-	o.Payload = payload
-}
-
-// WriteResponse to the client
-func (o *PutUserNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(404)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
-}
-
-// PutUserConflictCode is the HTTP code returned for type PutUserConflict
-const PutUserConflictCode int = 409
-
-/*PutUserConflict Post word duplicate response
-
-swagger:response putUserConflict
-*/
-type PutUserConflict struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *models.ReturnCode `json:"body,omitempty"`
-}
-
-// NewPutUserConflict creates PutUserConflict with default headers values
-func NewPutUserConflict() *PutUserConflict {
-
-	return &PutUserConflict{}
-}
-
-// WithPayload adds the payload to the put user conflict response
-func (o *PutUserConflict) WithPayload(payload *models.ReturnCode) *PutUserConflict {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the put user conflict response
-func (o *PutUserConflict) SetPayload(payload *models.ReturnCode) {
-	o.Payload = payload
-}
-
-// WriteResponse to the client
-func (o *PutUserConflict) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(409)
 	if o.Payload != nil {
 		payload := o.Payload
 		if err := producer.Produce(rw, payload); err != nil {

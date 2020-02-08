@@ -13,37 +13,19 @@ produces:
 schemes:
   - http
 
+securityDefinitions:
+   user:
+     type: apiKey
+     in: header
+     name: user
+
 paths:
   /word:
-    get:
-      tags:
-        - word
-      description: Get words from mongodb
-      parameters:
-        - in: query
-          name: length
-          type: integer
-          description: returns words of a certain length
-        - in: query
-          name: prefix
-          type: string
-          description: returns words that start with a certain prefix
-      responses:
-        '200':
-          description: Successful
-          schema:
-            $ref: '#/definitions/Words'
-        '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        default:
-          description: Unexpected recovery response
-          schema:
-            $ref: '#/definitions/ReturnCode'
     post:
       tags:
         - word
+      security:
+         - user: []
       description: Adds word to mongodb
       parameters:
         - in: body
@@ -57,28 +39,35 @@ paths:
           description: Post word successful response
           schema:
             $ref: '#/definitions/ReturnCode'
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '409':
-          description: Post word duplicate response
-          schema:
-            $ref: '#/definitions/ReturnCode'
         '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ReturnCode'
         default:
           description: Post word unexpected error response
+          schema:
+            $ref: '#/definitions/ReturnCode'
+  /words:
+    get:
+      tags:
+        - words
+      description: Get words from db
+      parameters:
+        - in: query
+          name: length
+          type: integer
+          description: returns words of a certain length
+      responses:
+        '200':
+          description: Successful
+          schema:
+            $ref: '#/definitions/Words'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ReturnCode'
+        default:
+          description: Unexpected recovery response
           schema:
             $ref: '#/definitions/ReturnCode'
   /user:
@@ -97,8 +86,8 @@ paths:
           description: Successful
           schema:
             $ref: '#/definitions/User'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ReturnCode'
         default:
@@ -120,22 +109,6 @@ paths:
           description: Post user successful response
           schema:
             $ref: '#/definitions/ReturnCode'
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '409':
-          description: Post word duplicate response
-          schema:
-            $ref: '#/definitions/ReturnCode'
         '500':
           description: Internal Server Error
           schema:
@@ -147,39 +120,18 @@ paths:
     put:
       tags:
         - user
-      description: Increments value of user
+      description: Creates a cookie for user and gets user data
       parameters:
         - in: query
           name: username
-          description: what user to update
-          required: true
-          type: string
-        - in: query
-          name: value
-          description: what feature to increment
+          description: name identifying the user
           required: true
           type: string
       responses:
         '200':
           description: Put user successful response
           schema:
-            $ref: '#/definitions/ReturnCode'
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '409':
-          description: Post word duplicate response
-          schema:
-            $ref: '#/definitions/ReturnCode'
+            $ref: '#/definitions/User'
         '500':
           description: Internal Server Error
           schema:
@@ -203,8 +155,8 @@ paths:
           description: Successful
           schema:
             $ref: '#/definitions/Users'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ReturnCode'
         default:
@@ -221,8 +173,8 @@ paths:
           description: Successful
           schema:
             $ref: '#/definitions/Xword'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ReturnCode'
         default:
@@ -245,22 +197,6 @@ paths:
           description: Post xword successful response
           schema:
             $ref: '#/definitions/ReturnCode'
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '409':
-          description: Post word duplicate response
-          schema:
-            $ref: '#/definitions/ReturnCode'
         '500':
           description: Internal Server Error
           schema:
@@ -269,6 +205,34 @@ paths:
           description: Post word unexpected error response
           schema:
             $ref: '#/definitions/ReturnCode'
+  /xword/solve/puzzle:
+    put:
+      tags:
+        - xword_solve
+      security:
+        - user: []
+      description: Checks if user has solved the xword and updates there count
+      parameters:
+        - in: body
+          name: xword
+          description: puzzle definition
+          required: true
+          schema:
+            $ref: '#/definitions/CheckXword'
+      responses:
+          '200':
+            description: Check xword successful response
+            schema:
+              $ref: '#/definitions/ReturnCode'
+          '500':
+            description: Internal Server Error
+            schema:
+              $ref: '#/definitions/ReturnCode'
+          default:
+            description: Post word unexpected error response
+            schema:
+              $ref: '#/definitions/ReturnCode'
+
 definitions:
   Word:
     type: object
@@ -278,6 +242,8 @@ definitions:
     properties:
       word:
         type: string
+      wordLength:
+        type: integer
       definition:
         type: string
   Words:
@@ -299,22 +265,62 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/User'
+  CheckWord:
+    type: object
+    required:
+      - word_id
+      - input
+      - idx
+      - dir
+    properties:
+      word_id:
+        type: integer
+      idx:
+        type: integer
+      dir:
+        type: integer
+      input:
+        type: string
+  CheckXword:
+    type: object
+    properties:
+      xword_id:
+        type: integer
+      words:
+        type: array
+        items:
+          $ref: '#/definitions/CheckWord'
+  XwordWord:
+    type: object
+    required:
+      - word_id
+      - idx
+      - dir
+    properties:
+      word_id:
+        type: integer
+      word_len:
+        type: integer
+      definition:
+        type: string 
+      idx:
+        type: integer
+      dir:
+        type: integer
   Xword:
     type: object
     required:
       - words
-      - definitions
+      - size
     properties:
       id:
-        type: string
+        type: integer
+      size:
+        type: integer
       words:
         type: array
         items:
-          type: string
-      definitions:
-        type: array
-        items:
-          type: string
+          $ref: '#/definitions/XwordWord'
   ReturnCode:
     type: object
     properties:

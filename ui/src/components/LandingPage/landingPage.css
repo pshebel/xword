@@ -1,0 +1,18 @@
+div.container {
+  margin: 0;
+}
+
+div.landing {
+  margin-top: 40vh;
+  margin-left: 30vw;
+  width: 40vw;
+  text-align: center;
+  border-radius: 15px;
+  background-color:rgba(255, 255, 255, .5);
+}
+
+h1 {
+  font-family: Avenir;
+  font-size: 60px;
+}
+

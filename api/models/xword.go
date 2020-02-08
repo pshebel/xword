@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -17,23 +19,23 @@ import (
 // swagger:model Xword
 type Xword struct {
 
-	// definitions
-	// Required: true
-	Definitions []string `json:"definitions"`
-
 	// id
-	ID string `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
+
+	// size
+	// Required: true
+	Size *int64 `json:"size"`
 
 	// words
 	// Required: true
-	Words []string `json:"words"`
+	Words []*XwordWord `json:"words"`
 }
 
 // Validate validates this xword
 func (m *Xword) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateDefinitions(formats); err != nil {
+	if err := m.validateSize(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -47,9 +49,9 @@ func (m *Xword) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Xword) validateDefinitions(formats strfmt.Registry) error {
+func (m *Xword) validateSize(formats strfmt.Registry) error {
 
-	if err := validate.Required("definitions", "body", m.Definitions); err != nil {
+	if err := validate.Required("size", "body", m.Size); err != nil {
 		return err
 	}
 
@@ -60,6 +62,22 @@ func (m *Xword) validateWords(formats strfmt.Registry) error {
 
 	if err := validate.Required("words", "body", m.Words); err != nil {
 		return err
+	}
+
+	for i := 0; i < len(m.Words); i++ {
+		if swag.IsZero(m.Words[i]) { // not required
+			continue
+		}
+
+		if m.Words[i] != nil {
+			if err := m.Words[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("words" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

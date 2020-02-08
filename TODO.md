@@ -1,0 +1,3 @@
+- only works for perfect squares. find ways to pad
+- do not passwords to frontend, add backend auth
+- archive xwords after get (make get xword a put or create trigger on SELECT)

@@ -57,14 +57,14 @@ func (o *GetXwordOK) WriteResponse(rw http.ResponseWriter, producer runtime.Prod
 	}
 }
 
-// GetXwordNotFoundCode is the HTTP code returned for type GetXwordNotFound
-const GetXwordNotFoundCode int = 404
+// GetXwordInternalServerErrorCode is the HTTP code returned for type GetXwordInternalServerError
+const GetXwordInternalServerErrorCode int = 500
 
-/*GetXwordNotFound Not Found
+/*GetXwordInternalServerError Internal Server Error
 
-swagger:response getXwordNotFound
+swagger:response getXwordInternalServerError
 */
-type GetXwordNotFound struct {
+type GetXwordInternalServerError struct {
 
 	/*
 	  In: Body
@@ -72,27 +72,27 @@ type GetXwordNotFound struct {
 	Payload *models.ReturnCode `json:"body,omitempty"`
 }
 
-// NewGetXwordNotFound creates GetXwordNotFound with default headers values
-func NewGetXwordNotFound() *GetXwordNotFound {
+// NewGetXwordInternalServerError creates GetXwordInternalServerError with default headers values
+func NewGetXwordInternalServerError() *GetXwordInternalServerError {
 
-	return &GetXwordNotFound{}
+	return &GetXwordInternalServerError{}
 }
 
-// WithPayload adds the payload to the get xword not found response
-func (o *GetXwordNotFound) WithPayload(payload *models.ReturnCode) *GetXwordNotFound {
+// WithPayload adds the payload to the get xword internal server error response
+func (o *GetXwordInternalServerError) WithPayload(payload *models.ReturnCode) *GetXwordInternalServerError {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the get xword not found response
-func (o *GetXwordNotFound) SetPayload(payload *models.ReturnCode) {
+// SetPayload sets the payload to the get xword internal server error response
+func (o *GetXwordInternalServerError) SetPayload(payload *models.ReturnCode) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *GetXwordNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *GetXwordInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(404)
+	rw.WriteHeader(500)
 	if o.Payload != nil {
 		payload := o.Payload
 		if err := producer.Produce(rw, payload); err != nil {

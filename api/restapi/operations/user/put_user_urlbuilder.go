@@ -14,7 +14,6 @@ import (
 // PutUserURL generates an URL for the put user operation
 type PutUserURL struct {
 	Username string
-	Value    string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -38,7 +37,7 @@ func (o *PutUserURL) SetBasePath(bp string) {
 
 // Build a url path and query string
 func (o *PutUserURL) Build() (*url.URL, error) {
-	var result url.URL
+	var _result url.URL
 
 	var _path = "/user"
 
@@ -46,23 +45,18 @@ func (o *PutUserURL) Build() (*url.URL, error) {
 	if _basePath == "" {
 		_basePath = "/api"
 	}
-	result.Path = golangswaggerpaths.Join(_basePath, _path)
+	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)
 
-	username := o.Username
-	if username != "" {
-		qs.Set("username", username)
+	usernameQ := o.Username
+	if usernameQ != "" {
+		qs.Set("username", usernameQ)
 	}
 
-	value := o.Value
-	if value != "" {
-		qs.Set("value", value)
-	}
+	_result.RawQuery = qs.Encode()
 
-	result.RawQuery = qs.Encode()
-
-	return &result, nil
+	return &_result, nil
 }
 
 // Must is a helper function to panic when the url builder returns an error

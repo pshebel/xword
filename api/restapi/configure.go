@@ -5,17 +5,23 @@ package restapi
 import (
 	"crypto/tls"
 	"net/http"
+	"os"
 
-	"github.com/rs/cors"
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/pshebel/xword/util/db"
+	"github.com/pshebel/xword/util/log"
+	"github.com/rs/cors"
 
+	"github.com/pshebel/xword/api/constant"
 	"github.com/pshebel/xword/api/restapi/operations"
-	"github.com/pshebel/xword/api/restapi/operations/word"
 	"github.com/pshebel/xword/api/restapi/operations/user"
 	"github.com/pshebel/xword/api/restapi/operations/users"
+	"github.com/pshebel/xword/api/restapi/operations/word"
+	"github.com/pshebel/xword/api/restapi/operations/words"
 	"github.com/pshebel/xword/api/restapi/operations/xword"
+	"github.com/pshebel/xword/api/restapi/operations/xword_solve"
 )
 
 //go:generate swagger generate server --target .. --name API --spec ../swagger.yml
@@ -37,6 +43,16 @@ func configureAPI(api *operations.API) http.Handler {
 	api.JSONConsumer = runtime.JSONConsumer()
 
 	api.JSONProducer = runtime.JSONProducer()
+	log.InitLogger(os.Stdout, true)
+	db.InitDBPool()
+
+	api.UserAuth = func(header string) (interface{}, error) {
+		return &constant.Username{Value: header}, nil
+	}
+
+	api.APIAuthorizer = runtime.AuthorizerFunc(func(req *http.Request, principal interface{}) error {
+		return nil
+	})
 
 	// Xword functions
 	api.XwordGetXwordHandler = xword.GetXwordHandlerFunc(func(params xword.GetXwordParams) middleware.Responder {
@@ -48,12 +64,13 @@ func configureAPI(api *operations.API) http.Handler {
 	})
 
 	// Word functions
-	api.WordGetWordHandler = word.GetWordHandlerFunc(func(params word.GetWordParams) middleware.Responder {
-		return word.Get(params)
+	api.WordPostWordHandler = word.PostWordHandlerFunc(func(params word.PostWordParams, principal interface{}) middleware.Responder {
+		return word.Post(params, principal)
 	})
 
-	api.WordPostWordHandler = word.PostWordHandlerFunc(func(params word.PostWordParams) middleware.Responder {
-		return word.Post(params)
+	// Words functions
+	api.WordsGetWordsHandler = words.GetWordsHandlerFunc(func(params words.GetWordsParams) middleware.Responder {
+		return words.Get(params)
 	})
 
 	// User functions
@@ -72,6 +89,11 @@ func configureAPI(api *operations.API) http.Handler {
 	// Users function
 	api.UsersGetUsersHandler = users.GetUsersHandlerFunc(func(params users.GetUsersParams) middleware.Responder {
 		return users.Get(params)
+	})
+
+	// xword solve puzzles
+	api.XwordSolvePutXwordSolvePuzzleHandler = xword_solve.PutXwordSolvePuzzleHandlerFunc(func(params xword_solve.PutXwordSolvePuzzleParams, principal interface{}) middleware.Responder {
+		return xword_solve.Put(params, principal)
 	})
 
 	api.ServerShutdown = func() {}

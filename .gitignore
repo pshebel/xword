@@ -2,13 +2,15 @@
 
 # dependencies
 /ui/node_modules
-/vendor
+/ui/vendor
+/ui/build
+/ui/data
 
 # testing
-/coverage
+/ui/coverage
 
 # production
-/build
+/ui/build
 
 # misc
 .DS_Store
@@ -20,3 +22,5 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+/devops/**/.terraform

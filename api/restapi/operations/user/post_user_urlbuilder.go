@@ -37,7 +37,7 @@ func (o *PostUserURL) SetBasePath(bp string) {
 
 // Build a url path and query string
 func (o *PostUserURL) Build() (*url.URL, error) {
-	var result url.URL
+	var _result url.URL
 
 	var _path = "/user"
 
@@ -45,18 +45,18 @@ func (o *PostUserURL) Build() (*url.URL, error) {
 	if _basePath == "" {
 		_basePath = "/api"
 	}
-	result.Path = golangswaggerpaths.Join(_basePath, _path)
+	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)
 
-	username := o.Username
-	if username != "" {
-		qs.Set("username", username)
+	usernameQ := o.Username
+	if usernameQ != "" {
+		qs.Set("username", usernameQ)
 	}
 
-	result.RawQuery = qs.Encode()
+	_result.RawQuery = qs.Encode()
 
-	return &result, nil
+	return &_result, nil
 }
 
 // Must is a helper function to panic when the url builder returns an error

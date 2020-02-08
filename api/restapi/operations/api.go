@@ -22,7 +22,9 @@ import (
 	"github.com/pshebel/xword/api/restapi/operations/user"
 	"github.com/pshebel/xword/api/restapi/operations/users"
 	"github.com/pshebel/xword/api/restapi/operations/word"
+	"github.com/pshebel/xword/api/restapi/operations/words"
 	"github.com/pshebel/xword/api/restapi/operations/xword"
+	"github.com/pshebel/xword/api/restapi/operations/xword_solve"
 )
 
 // NewAPI creates a new  instance
@@ -48,8 +50,8 @@ func NewAPI(spec *loads.Document) *API {
 		UsersGetUsersHandler: users.GetUsersHandlerFunc(func(params users.GetUsersParams) middleware.Responder {
 			return middleware.NotImplemented("operation UsersGetUsers has not yet been implemented")
 		}),
-		WordGetWordHandler: word.GetWordHandlerFunc(func(params word.GetWordParams) middleware.Responder {
-			return middleware.NotImplemented("operation WordGetWord has not yet been implemented")
+		WordsGetWordsHandler: words.GetWordsHandlerFunc(func(params words.GetWordsParams) middleware.Responder {
+			return middleware.NotImplemented("operation WordsGetWords has not yet been implemented")
 		}),
 		XwordGetXwordHandler: xword.GetXwordHandlerFunc(func(params xword.GetXwordParams) middleware.Responder {
 			return middleware.NotImplemented("operation XwordGetXword has not yet been implemented")
@@ -57,7 +59,7 @@ func NewAPI(spec *loads.Document) *API {
 		UserPostUserHandler: user.PostUserHandlerFunc(func(params user.PostUserParams) middleware.Responder {
 			return middleware.NotImplemented("operation UserPostUser has not yet been implemented")
 		}),
-		WordPostWordHandler: word.PostWordHandlerFunc(func(params word.PostWordParams) middleware.Responder {
+		WordPostWordHandler: word.PostWordHandlerFunc(func(params word.PostWordParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation WordPostWord has not yet been implemented")
 		}),
 		XwordPostXwordHandler: xword.PostXwordHandlerFunc(func(params xword.PostXwordParams) middleware.Responder {
@@ -66,6 +68,17 @@ func NewAPI(spec *loads.Document) *API {
 		UserPutUserHandler: user.PutUserHandlerFunc(func(params user.PutUserParams) middleware.Responder {
 			return middleware.NotImplemented("operation UserPutUser has not yet been implemented")
 		}),
+		XwordSolvePutXwordSolvePuzzleHandler: xword_solve.PutXwordSolvePuzzleHandlerFunc(func(params xword_solve.PutXwordSolvePuzzleParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation XwordSolvePutXwordSolvePuzzle has not yet been implemented")
+		}),
+
+		// Applies when the "user" header is set
+		UserAuth: func(token string) (interface{}, error) {
+			return nil, errors.NotImplemented("api key auth (user) user from header param [user] has not yet been implemented")
+		},
+
+		// default authorizer is authorized meaning no requests are blocked
+		APIAuthorizer: security.Authorized(),
 	}
 }
 
@@ -82,13 +95,13 @@ type API struct {
 	Middleware      func(middleware.Builder) http.Handler
 
 	// BasicAuthenticator generates a runtime.Authenticator from the supplied basic auth function.
-	// It has a default implemention in the security package, however you can replace it for your particular usage.
+	// It has a default implementation in the security package, however you can replace it for your particular usage.
 	BasicAuthenticator func(security.UserPassAuthentication) runtime.Authenticator
 	// APIKeyAuthenticator generates a runtime.Authenticator from the supplied token auth function.
-	// It has a default implemention in the security package, however you can replace it for your particular usage.
+	// It has a default implementation in the security package, however you can replace it for your particular usage.
 	APIKeyAuthenticator func(string, string, security.TokenAuthentication) runtime.Authenticator
 	// BearerAuthenticator generates a runtime.Authenticator from the supplied bearer token auth function.
-	// It has a default implemention in the security package, however you can replace it for your particular usage.
+	// It has a default implementation in the security package, however you can replace it for your particular usage.
 	BearerAuthenticator func(string, security.ScopedTokenAuthentication) runtime.Authenticator
 
 	// JSONConsumer registers a consumer for a "application/json" mime type
@@ -97,12 +110,19 @@ type API struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
+	// UserAuth registers a function that takes a token and returns a principal
+	// it performs authentication based on an api key user provided in the header
+	UserAuth func(string) (interface{}, error)
+
+	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
+	APIAuthorizer runtime.Authorizer
+
 	// UserGetUserHandler sets the operation handler for the get user operation
 	UserGetUserHandler user.GetUserHandler
 	// UsersGetUsersHandler sets the operation handler for the get users operation
 	UsersGetUsersHandler users.GetUsersHandler
-	// WordGetWordHandler sets the operation handler for the get word operation
-	WordGetWordHandler word.GetWordHandler
+	// WordsGetWordsHandler sets the operation handler for the get words operation
+	WordsGetWordsHandler words.GetWordsHandler
 	// XwordGetXwordHandler sets the operation handler for the get xword operation
 	XwordGetXwordHandler xword.GetXwordHandler
 	// UserPostUserHandler sets the operation handler for the post user operation
@@ -113,6 +133,8 @@ type API struct {
 	XwordPostXwordHandler xword.PostXwordHandler
 	// UserPutUserHandler sets the operation handler for the put user operation
 	UserPutUserHandler user.PutUserHandler
+	// XwordSolvePutXwordSolvePuzzleHandler sets the operation handler for the put xword solve puzzle operation
+	XwordSolvePutXwordSolvePuzzleHandler xword_solve.PutXwordSolvePuzzleHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -176,6 +198,10 @@ func (o *API) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.UserAuth == nil {
+		unregistered = append(unregistered, "UserAuth")
+	}
+
 	if o.UserGetUserHandler == nil {
 		unregistered = append(unregistered, "user.GetUserHandler")
 	}
@@ -184,8 +210,8 @@ func (o *API) Validate() error {
 		unregistered = append(unregistered, "users.GetUsersHandler")
 	}
 
-	if o.WordGetWordHandler == nil {
-		unregistered = append(unregistered, "word.GetWordHandler")
+	if o.WordsGetWordsHandler == nil {
+		unregistered = append(unregistered, "words.GetWordsHandler")
 	}
 
 	if o.XwordGetXwordHandler == nil {
@@ -208,6 +234,10 @@ func (o *API) Validate() error {
 		unregistered = append(unregistered, "user.PutUserHandler")
 	}
 
+	if o.XwordSolvePutXwordSolvePuzzleHandler == nil {
+		unregistered = append(unregistered, "xword_solve.PutXwordSolvePuzzleHandler")
+	}
+
 	if len(unregistered) > 0 {
 		return fmt.Errorf("missing registration: %s", strings.Join(unregistered, ", "))
 	}
@@ -223,14 +253,25 @@ func (o *API) ServeErrorFor(operationID string) func(http.ResponseWriter, *http.
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *API) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 
-	return nil
+	result := make(map[string]runtime.Authenticator)
+	for name := range schemes {
+		switch name {
+
+		case "user":
+
+			scheme := schemes[name]
+			result[name] = o.APIKeyAuthenticator(scheme.Name, scheme.In, o.UserAuth)
+
+		}
+	}
+	return result
 
 }
 
 // Authorizer returns the registered authorizer
 func (o *API) Authorizer() runtime.Authorizer {
 
-	return nil
+	return o.APIAuthorizer
 
 }
 
@@ -319,7 +360,7 @@ func (o *API) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/word"] = word.NewGetWord(o.context, o.WordGetWordHandler)
+	o.handlers["GET"]["/words"] = words.NewGetWords(o.context, o.WordsGetWordsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -345,6 +386,11 @@ func (o *API) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/user"] = user.NewPutUser(o.context, o.UserPutUserHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/xword/solve/puzzle"] = xword_solve.NewPutXwordSolvePuzzle(o.context, o.XwordSolvePutXwordSolvePuzzleHandler)
 
 }
 

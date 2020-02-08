@@ -51,23 +51,23 @@ func (o *GetUsersOK) WriteResponse(rw http.ResponseWriter, producer runtime.Prod
 	rw.WriteHeader(200)
 	payload := o.Payload
 	if payload == nil {
-		payload = make(models.Users, 0, 50)
+		// return empty array
+		payload = models.Users{}
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {
 		panic(err) // let the recovery middleware deal with this
 	}
-
 }
 
-// GetUsersNotFoundCode is the HTTP code returned for type GetUsersNotFound
-const GetUsersNotFoundCode int = 404
+// GetUsersInternalServerErrorCode is the HTTP code returned for type GetUsersInternalServerError
+const GetUsersInternalServerErrorCode int = 500
 
-/*GetUsersNotFound Not Found
+/*GetUsersInternalServerError Internal Server Error
 
-swagger:response getUsersNotFound
+swagger:response getUsersInternalServerError
 */
-type GetUsersNotFound struct {
+type GetUsersInternalServerError struct {
 
 	/*
 	  In: Body
@@ -75,27 +75,27 @@ type GetUsersNotFound struct {
 	Payload *models.ReturnCode `json:"body,omitempty"`
 }
 
-// NewGetUsersNotFound creates GetUsersNotFound with default headers values
-func NewGetUsersNotFound() *GetUsersNotFound {
+// NewGetUsersInternalServerError creates GetUsersInternalServerError with default headers values
+func NewGetUsersInternalServerError() *GetUsersInternalServerError {
 
-	return &GetUsersNotFound{}
+	return &GetUsersInternalServerError{}
 }
 
-// WithPayload adds the payload to the get users not found response
-func (o *GetUsersNotFound) WithPayload(payload *models.ReturnCode) *GetUsersNotFound {
+// WithPayload adds the payload to the get users internal server error response
+func (o *GetUsersInternalServerError) WithPayload(payload *models.ReturnCode) *GetUsersInternalServerError {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the get users not found response
-func (o *GetUsersNotFound) SetPayload(payload *models.ReturnCode) {
+// SetPayload sets the payload to the get users internal server error response
+func (o *GetUsersInternalServerError) SetPayload(payload *models.ReturnCode) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *GetUsersNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *GetUsersInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(404)
+	rw.WriteHeader(500)
 	if o.Payload != nil {
 		payload := o.Payload
 		if err := producer.Produce(rw, payload); err != nil {

@@ -32,16 +32,11 @@ type PutUserParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*what user to update
+	/*name identifying the user
 	  Required: true
 	  In: query
 	*/
 	Username string
-	/*what feature to increment
-	  Required: true
-	  In: query
-	*/
-	Value string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -57,11 +52,6 @@ func (o *PutUserParams) BindRequest(r *http.Request, route *middleware.MatchedRo
 
 	qUsername, qhkUsername, _ := qs.GetOK("username")
 	if err := o.bindUsername(qUsername, qhkUsername, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
-	qValue, qhkValue, _ := qs.GetOK("value")
-	if err := o.bindValue(qValue, qhkValue, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -88,27 +78,6 @@ func (o *PutUserParams) bindUsername(rawData []string, hasKey bool, formats strf
 	}
 
 	o.Username = raw
-
-	return nil
-}
-
-// bindValue binds and validates parameter Value from query.
-func (o *PutUserParams) bindValue(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	if !hasKey {
-		return errors.Required("value", "query")
-	}
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: true
-	// AllowEmptyValue: false
-	if err := validate.RequiredString("value", "query", raw); err != nil {
-		return err
-	}
-
-	o.Value = raw
 
 	return nil
 }

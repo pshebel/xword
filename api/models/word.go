@@ -24,6 +24,9 @@ type Word struct {
 	// word
 	// Required: true
 	Word *string `json:"word"`
+
+	// word length
+	WordLength int64 `json:"wordLength,omitempty"`
 }
 
 // Validate validates this word

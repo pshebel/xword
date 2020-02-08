@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --no-include-email --region us-east-1)
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...          
+      - docker-compose -f ./docker/docker-compose.yml build
+      - docker tag xword-ui:latest 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-ui:latest      
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-ui:latest

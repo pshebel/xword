@@ -31,7 +31,7 @@ func NewPutUser(ctx *middleware.Context, handler PutUserHandler) *PutUser {
 
 /*PutUser swagger:route PUT /user user putUser
 
-Increments value of user
+Creates a cookie for user and gets user data
 
 */
 type PutUser struct {

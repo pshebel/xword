@@ -12,16 +12,16 @@ import (
 )
 
 // PostWordHandlerFunc turns a function with the right signature into a post word handler
-type PostWordHandlerFunc func(PostWordParams) middleware.Responder
+type PostWordHandlerFunc func(PostWordParams, interface{}) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn PostWordHandlerFunc) Handle(params PostWordParams) middleware.Responder {
-	return fn(params)
+func (fn PostWordHandlerFunc) Handle(params PostWordParams, principal interface{}) middleware.Responder {
+	return fn(params, principal)
 }
 
 // PostWordHandler interface for that can handle valid post word params
 type PostWordHandler interface {
-	Handle(PostWordParams) middleware.Responder
+	Handle(PostWordParams, interface{}) middleware.Responder
 }
 
 // NewPostWord creates a new http.Handler for the post word operation
@@ -46,12 +46,25 @@ func (o *PostWord) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 	var Params = NewPostWordParams()
 
+	uprinc, aCtx, err := o.Context.Authorize(r, route)
+	if err != nil {
+		o.Context.Respond(rw, r, route.Produces, route, err)
+		return
+	}
+	if aCtx != nil {
+		r = aCtx
+	}
+	var principal interface{}
+	if uprinc != nil {
+		principal = uprinc
+	}
+
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	res := o.Handler.Handle(Params, principal) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

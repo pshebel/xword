@@ -60,8 +60,8 @@ func init() {
               "$ref": "#/definitions/User"
             }
           },
-          "404": {
-            "description": "Not Found",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -75,22 +75,15 @@ func init() {
         }
       },
       "put": {
-        "description": "Increments value of user",
+        "description": "Creates a cookie for user and gets user data",
         "tags": [
           "user"
         ],
         "parameters": [
           {
             "type": "string",
-            "description": "what user to update",
+            "description": "name identifying the user",
             "name": "username",
-            "in": "query",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "what feature to increment",
-            "name": "value",
             "in": "query",
             "required": true
           }
@@ -99,31 +92,7 @@ func init() {
           "200": {
             "description": "Put user successful response",
             "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "409": {
-            "description": "Post word duplicate response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
+              "$ref": "#/definitions/User"
             }
           },
           "500": {
@@ -157,30 +126,6 @@ func init() {
         "responses": {
           "200": {
             "description": "Post user successful response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "409": {
-            "description": "Post word duplicate response",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -221,8 +166,8 @@ func init() {
               "$ref": "#/definitions/Users"
             }
           },
-          "404": {
-            "description": "Not Found",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -237,47 +182,12 @@ func init() {
       }
     },
     "/word": {
-      "get": {
-        "description": "Get words from mongodb",
-        "tags": [
-          "word"
-        ],
-        "parameters": [
-          {
-            "type": "integer",
-            "description": "returns words of a certain length",
-            "name": "length",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "returns words that start with a certain prefix",
-            "name": "prefix",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "schema": {
-              "$ref": "#/definitions/Words"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "default": {
-            "description": "Unexpected recovery response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          }
-        }
-      },
       "post": {
+        "security": [
+          {
+            "user": []
+          }
+        ],
         "description": "Adds word to mongodb",
         "tags": [
           "word"
@@ -300,28 +210,40 @@ func init() {
               "$ref": "#/definitions/ReturnCode"
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "default": {
+            "description": "Post word unexpected error response",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
-          },
-          "404": {
-            "description": "Not Found",
+          }
+        }
+      }
+    },
+    "/words": {
+      "get": {
+        "description": "Get words from db",
+        "tags": [
+          "words"
+        ],
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "returns words of a certain length",
+            "name": "length",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
             "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "409": {
-            "description": "Post word duplicate response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
+              "$ref": "#/definitions/Words"
             }
           },
           "500": {
@@ -331,7 +253,7 @@ func init() {
             }
           },
           "default": {
-            "description": "Post word unexpected error response",
+            "description": "Unexpected recovery response",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -352,8 +274,8 @@ func init() {
               "$ref": "#/definitions/Xword"
             }
           },
-          "404": {
-            "description": "Not Found",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -389,26 +311,46 @@ func init() {
               "$ref": "#/definitions/ReturnCode"
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "default": {
+            "description": "Post word unexpected error response",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
-          },
-          "404": {
-            "description": "Not Found",
+          }
+        }
+      }
+    },
+    "/xword/solve/puzzle": {
+      "put": {
+        "security": [
+          {
+            "user": []
+          }
+        ],
+        "description": "Checks if user has solved the xword and updates there count",
+        "tags": [
+          "xword_solve"
+        ],
+        "parameters": [
+          {
+            "description": "puzzle definition",
+            "name": "xword",
+            "in": "body",
+            "required": true,
             "schema": {
-              "$ref": "#/definitions/ReturnCode"
+              "$ref": "#/definitions/CheckXword"
             }
-          },
-          "409": {
-            "description": "Post word duplicate response",
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Check xword successful response",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -430,6 +372,43 @@ func init() {
     }
   },
   "definitions": {
+    "CheckWord": {
+      "type": "object",
+      "required": [
+        "word_id",
+        "input",
+        "idx",
+        "dir"
+      ],
+      "properties": {
+        "dir": {
+          "type": "integer"
+        },
+        "idx": {
+          "type": "integer"
+        },
+        "input": {
+          "type": "string"
+        },
+        "word_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "CheckXword": {
+      "type": "object",
+      "properties": {
+        "words": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CheckWord"
+          }
+        },
+        "xword_id": {
+          "type": "integer"
+        }
+      }
+    },
     "ReturnCode": {
       "type": "object",
       "properties": {
@@ -478,6 +457,9 @@ func init() {
         },
         "word": {
           "type": "string"
+        },
+        "wordLength": {
+          "type": "integer"
         }
       }
     },
@@ -491,25 +473,54 @@ func init() {
       "type": "object",
       "required": [
         "words",
-        "definitions"
+        "size"
       ],
       "properties": {
-        "definitions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "id": {
-          "type": "string"
+          "type": "integer"
+        },
+        "size": {
+          "type": "integer"
         },
         "words": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/XwordWord"
           }
         }
       }
+    },
+    "XwordWord": {
+      "type": "object",
+      "required": [
+        "word_id",
+        "idx",
+        "dir"
+      ],
+      "properties": {
+        "definition": {
+          "type": "string"
+        },
+        "dir": {
+          "type": "integer"
+        },
+        "idx": {
+          "type": "integer"
+        },
+        "word_id": {
+          "type": "integer"
+        },
+        "word_len": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "user": {
+      "type": "apiKey",
+      "name": "user",
+      "in": "header"
     }
   }
 }`))
@@ -556,8 +567,8 @@ func init() {
               "$ref": "#/definitions/User"
             }
           },
-          "404": {
-            "description": "Not Found",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -571,22 +582,15 @@ func init() {
         }
       },
       "put": {
-        "description": "Increments value of user",
+        "description": "Creates a cookie for user and gets user data",
         "tags": [
           "user"
         ],
         "parameters": [
           {
             "type": "string",
-            "description": "what user to update",
+            "description": "name identifying the user",
             "name": "username",
-            "in": "query",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "what feature to increment",
-            "name": "value",
             "in": "query",
             "required": true
           }
@@ -595,31 +599,7 @@ func init() {
           "200": {
             "description": "Put user successful response",
             "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "409": {
-            "description": "Post word duplicate response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
+              "$ref": "#/definitions/User"
             }
           },
           "500": {
@@ -653,30 +633,6 @@ func init() {
         "responses": {
           "200": {
             "description": "Post user successful response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "409": {
-            "description": "Post word duplicate response",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -717,8 +673,8 @@ func init() {
               "$ref": "#/definitions/Users"
             }
           },
-          "404": {
-            "description": "Not Found",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -733,47 +689,12 @@ func init() {
       }
     },
     "/word": {
-      "get": {
-        "description": "Get words from mongodb",
-        "tags": [
-          "word"
-        ],
-        "parameters": [
-          {
-            "type": "integer",
-            "description": "returns words of a certain length",
-            "name": "length",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "returns words that start with a certain prefix",
-            "name": "prefix",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "schema": {
-              "$ref": "#/definitions/Words"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "default": {
-            "description": "Unexpected recovery response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          }
-        }
-      },
       "post": {
+        "security": [
+          {
+            "user": []
+          }
+        ],
         "description": "Adds word to mongodb",
         "tags": [
           "word"
@@ -796,28 +717,40 @@ func init() {
               "$ref": "#/definitions/ReturnCode"
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "default": {
+            "description": "Post word unexpected error response",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
-          },
-          "404": {
-            "description": "Not Found",
+          }
+        }
+      }
+    },
+    "/words": {
+      "get": {
+        "description": "Get words from db",
+        "tags": [
+          "words"
+        ],
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "returns words of a certain length",
+            "name": "length",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
             "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "409": {
-            "description": "Post word duplicate response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
+              "$ref": "#/definitions/Words"
             }
           },
           "500": {
@@ -827,7 +760,7 @@ func init() {
             }
           },
           "default": {
-            "description": "Post word unexpected error response",
+            "description": "Unexpected recovery response",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -848,8 +781,8 @@ func init() {
               "$ref": "#/definitions/Xword"
             }
           },
-          "404": {
-            "description": "Not Found",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -885,26 +818,46 @@ func init() {
               "$ref": "#/definitions/ReturnCode"
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "default": {
+            "description": "Post word unexpected error response",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
-          },
-          "404": {
-            "description": "Not Found",
+          }
+        }
+      }
+    },
+    "/xword/solve/puzzle": {
+      "put": {
+        "security": [
+          {
+            "user": []
+          }
+        ],
+        "description": "Checks if user has solved the xword and updates there count",
+        "tags": [
+          "xword_solve"
+        ],
+        "parameters": [
+          {
+            "description": "puzzle definition",
+            "name": "xword",
+            "in": "body",
+            "required": true,
             "schema": {
-              "$ref": "#/definitions/ReturnCode"
+              "$ref": "#/definitions/CheckXword"
             }
-          },
-          "409": {
-            "description": "Post word duplicate response",
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Check xword successful response",
             "schema": {
               "$ref": "#/definitions/ReturnCode"
             }
@@ -926,6 +879,43 @@ func init() {
     }
   },
   "definitions": {
+    "CheckWord": {
+      "type": "object",
+      "required": [
+        "word_id",
+        "input",
+        "idx",
+        "dir"
+      ],
+      "properties": {
+        "dir": {
+          "type": "integer"
+        },
+        "idx": {
+          "type": "integer"
+        },
+        "input": {
+          "type": "string"
+        },
+        "word_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "CheckXword": {
+      "type": "object",
+      "properties": {
+        "words": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CheckWord"
+          }
+        },
+        "xword_id": {
+          "type": "integer"
+        }
+      }
+    },
     "ReturnCode": {
       "type": "object",
       "properties": {
@@ -974,6 +964,9 @@ func init() {
         },
         "word": {
           "type": "string"
+        },
+        "wordLength": {
+          "type": "integer"
         }
       }
     },
@@ -987,25 +980,54 @@ func init() {
       "type": "object",
       "required": [
         "words",
-        "definitions"
+        "size"
       ],
       "properties": {
-        "definitions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "id": {
-          "type": "string"
+          "type": "integer"
+        },
+        "size": {
+          "type": "integer"
         },
         "words": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/XwordWord"
           }
         }
       }
+    },
+    "XwordWord": {
+      "type": "object",
+      "required": [
+        "word_id",
+        "idx",
+        "dir"
+      ],
+      "properties": {
+        "definition": {
+          "type": "string"
+        },
+        "dir": {
+          "type": "integer"
+        },
+        "idx": {
+          "type": "integer"
+        },
+        "word_id": {
+          "type": "integer"
+        },
+        "word_len": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "user": {
+      "type": "apiKey",
+      "name": "user",
+      "in": "header"
     }
   }
 }`))
