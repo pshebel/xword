@@ -71,52 +71,6 @@ paths:
           schema:
             $ref: '#/definitions/ReturnCode'
   /user:
-    get:
-      tags:
-        - user
-      description: Get User from mongodb
-      parameters:
-        - in: query
-          name: username
-          type: string
-          description: returns a certain user
-          required: true
-      responses:
-        '200':
-          description: Successful
-          schema:
-            $ref: '#/definitions/User'
-        '500':
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        default:
-          description: Unexpected recovery response
-          schema:
-            $ref: '#/definitions/ReturnCode'
-    post:
-      tags:
-        - user
-      description: Insert user into db
-      parameters:
-        - in: query
-          name: username
-          description: defining value of users
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Post user successful response
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        '500':
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ReturnCode'
-        default:
-          description: Post word unexpected error response
-          schema:
-            $ref: '#/definitions/ReturnCode'
     put:
       tags:
         - user

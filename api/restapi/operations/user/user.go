@@ -10,29 +10,6 @@ import (
 	"github.com/pshebel/xword/api/models"
 )
 
-func Get(params GetUserParams) middleware.Responder {
-	ctx := context.Background()
-	u, err := user.GetUser(ctx, params.Username)
-	if err != nil {
-		log.Debug("failed to get user: %v", err)
-		status := models.ReturnCode{Code: int64(GetUserInternalServerErrorCode), Message: err.Error()}
-		return NewGetUserInternalServerError().WithPayload(&status)
-	}
-	return NewGetUserOK().WithPayload(&u)
-}
-
-func Post(params PostUserParams) middleware.Responder {
-	ctx := context.Background()
-	err := user.PostUser(ctx, params.Username)
-	if err != nil {
-		log.Debug("failed to insert user: %v", err)
-		status := models.ReturnCode{Code: int64(GetUserInternalServerErrorCode), Message: err.Error()}
-		return NewGetUserInternalServerError().WithPayload(&status)
-	}
-	status := models.ReturnCode{Code: 200, Message: "post successful"}
-	return NewPostUserOK().WithPayload(&status)
-}
-
 func Put(params PutUserParams) middleware.Responder {
 	ctx := context.Background()
 	user, err := user.PutUser(ctx, params.Username)

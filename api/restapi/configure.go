@@ -74,14 +74,6 @@ func configureAPI(api *operations.API) http.Handler {
 	})
 
 	// User functions
-	api.UserGetUserHandler = user.GetUserHandlerFunc(func(params user.GetUserParams) middleware.Responder {
-		return user.Get(params)
-	})
-
-	api.UserPostUserHandler = user.PostUserHandlerFunc(func(params user.PostUserParams) middleware.Responder {
-		return user.Post(params)
-	})
-
 	api.UserPutUserHandler = user.PutUserHandlerFunc(func(params user.PutUserParams) middleware.Responder {
 		return user.Put(params)
 	})

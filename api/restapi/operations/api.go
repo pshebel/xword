@@ -44,9 +44,6 @@ func NewAPI(spec *loads.Document) *API {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
-		UserGetUserHandler: user.GetUserHandlerFunc(func(params user.GetUserParams) middleware.Responder {
-			return middleware.NotImplemented("operation UserGetUser has not yet been implemented")
-		}),
 		UsersGetUsersHandler: users.GetUsersHandlerFunc(func(params users.GetUsersParams) middleware.Responder {
 			return middleware.NotImplemented("operation UsersGetUsers has not yet been implemented")
 		}),
@@ -55,9 +52,6 @@ func NewAPI(spec *loads.Document) *API {
 		}),
 		XwordGetXwordHandler: xword.GetXwordHandlerFunc(func(params xword.GetXwordParams) middleware.Responder {
 			return middleware.NotImplemented("operation XwordGetXword has not yet been implemented")
-		}),
-		UserPostUserHandler: user.PostUserHandlerFunc(func(params user.PostUserParams) middleware.Responder {
-			return middleware.NotImplemented("operation UserPostUser has not yet been implemented")
 		}),
 		WordPostWordHandler: word.PostWordHandlerFunc(func(params word.PostWordParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation WordPostWord has not yet been implemented")
@@ -117,16 +111,12 @@ type API struct {
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
 
-	// UserGetUserHandler sets the operation handler for the get user operation
-	UserGetUserHandler user.GetUserHandler
 	// UsersGetUsersHandler sets the operation handler for the get users operation
 	UsersGetUsersHandler users.GetUsersHandler
 	// WordsGetWordsHandler sets the operation handler for the get words operation
 	WordsGetWordsHandler words.GetWordsHandler
 	// XwordGetXwordHandler sets the operation handler for the get xword operation
 	XwordGetXwordHandler xword.GetXwordHandler
-	// UserPostUserHandler sets the operation handler for the post user operation
-	UserPostUserHandler user.PostUserHandler
 	// WordPostWordHandler sets the operation handler for the post word operation
 	WordPostWordHandler word.PostWordHandler
 	// XwordPostXwordHandler sets the operation handler for the post xword operation
@@ -202,10 +192,6 @@ func (o *API) Validate() error {
 		unregistered = append(unregistered, "UserAuth")
 	}
 
-	if o.UserGetUserHandler == nil {
-		unregistered = append(unregistered, "user.GetUserHandler")
-	}
-
 	if o.UsersGetUsersHandler == nil {
 		unregistered = append(unregistered, "users.GetUsersHandler")
 	}
@@ -216,10 +202,6 @@ func (o *API) Validate() error {
 
 	if o.XwordGetXwordHandler == nil {
 		unregistered = append(unregistered, "xword.GetXwordHandler")
-	}
-
-	if o.UserPostUserHandler == nil {
-		unregistered = append(unregistered, "user.PostUserHandler")
 	}
 
 	if o.WordPostWordHandler == nil {
@@ -350,11 +332,6 @@ func (o *API) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/user"] = user.NewGetUser(o.context, o.UserGetUserHandler)
-
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
 	o.handlers["GET"]["/users"] = users.NewGetUsers(o.context, o.UsersGetUsersHandler)
 
 	if o.handlers["GET"] == nil {
@@ -366,11 +343,6 @@ func (o *API) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/xword"] = xword.NewGetXword(o.context, o.XwordGetXwordHandler)
-
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/user"] = user.NewPostUser(o.context, o.UserPostUserHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)

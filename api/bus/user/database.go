@@ -10,23 +10,6 @@ import (
 	"github.com/pshebel/xword/util/log"
 )
 
-func GetUser(ctx context.Context, name string) (models.User, error) {
-	log.Debug("getting user %v", name)
-	var user models.User
-
-	conn := db.MysqlConnect()
-	query := `SELECT name, words, puzzles FROM ` + constant.Users +
-		` WHERE name=?`
-	row := conn.QueryRowContext(ctx, query, name)
-	err := row.Scan(&user.Username, &user.Words, &user.Puzzles)
-	if err != nil {
-		log.Debug("failed to get user: %v", err)
-		return user, err
-	}
-	log.Debug("got user %v", user)
-	return user, nil
-}
-
 func GetUsers(ctx context.Context) (models.Users, error) {
 	log.Debug("getting all users")
 	var users models.Users
@@ -47,31 +30,6 @@ func GetUsers(ctx context.Context) (models.Users, error) {
 		users = append(users, &user)
 	}
 	return users, nil
-}
-
-func PostUser(ctx context.Context, name string) error {
-	log.Debug("inserting user")
-	conn := db.MysqlConnect()
-	query := `INSERT INTO ` + constant.Users +
-		`(name) VALUES (?)`
-
-	res, err := conn.ExecContext(ctx, query, name)
-	if err != nil {
-		log.Debug("failed to insert user: %v", err)
-		return err
-	}
-
-	count, err := res.RowsAffected()
-	if err != nil {
-		log.Debug("failed to get row affected count: %v", err)
-		return err
-	}
-
-	if count != 1 {
-		log.Debug("incorrect number of rows effected: %v", err)
-		return err
-	}
-	return nil
 }
 
 func PutUser(ctx context.Context, username string) (models.User, error) {

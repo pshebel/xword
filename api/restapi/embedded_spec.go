@@ -39,41 +39,6 @@ func init() {
   "basePath": "/api",
   "paths": {
     "/user": {
-      "get": {
-        "description": "Get User from mongodb",
-        "tags": [
-          "user"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "description": "returns a certain user",
-            "name": "username",
-            "in": "query",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "schema": {
-              "$ref": "#/definitions/User"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "default": {
-            "description": "Unexpected recovery response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          }
-        }
-      },
       "put": {
         "description": "Creates a cookie for user and gets user data",
         "tags": [
@@ -93,41 +58,6 @@ func init() {
             "description": "Put user successful response",
             "schema": {
               "$ref": "#/definitions/User"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "default": {
-            "description": "Post word unexpected error response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Insert user into db",
-        "tags": [
-          "user"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "description": "defining value of users",
-            "name": "username",
-            "in": "query",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post user successful response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
             }
           },
           "500": {
@@ -546,41 +476,6 @@ func init() {
   "basePath": "/api",
   "paths": {
     "/user": {
-      "get": {
-        "description": "Get User from mongodb",
-        "tags": [
-          "user"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "description": "returns a certain user",
-            "name": "username",
-            "in": "query",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "schema": {
-              "$ref": "#/definitions/User"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "default": {
-            "description": "Unexpected recovery response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          }
-        }
-      },
       "put": {
         "description": "Creates a cookie for user and gets user data",
         "tags": [
@@ -600,41 +495,6 @@ func init() {
             "description": "Put user successful response",
             "schema": {
               "$ref": "#/definitions/User"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          },
-          "default": {
-            "description": "Post word unexpected error response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Insert user into db",
-        "tags": [
-          "user"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "description": "defining value of users",
-            "name": "username",
-            "in": "query",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post user successful response",
-            "schema": {
-              "$ref": "#/definitions/ReturnCode"
             }
           },
           "500": {
