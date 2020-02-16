@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/pshebel/xword/util/log"
@@ -34,7 +35,8 @@ func CheckInsert(res sql.Result, numRows int64) (int64, error) {
 	}
 
 	if count != numRows {
-		log.Debug("incorrect number of rows effected: %v", err)
+		err := errors.New("incorrect number of rows effected")
+		log.Debug("incorrect number of rows effected")
 		return 0, err
 	}
 

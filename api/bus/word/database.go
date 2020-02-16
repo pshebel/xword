@@ -10,12 +10,17 @@ import (
 	"github.com/pshebel/xword/util/log"
 )
 
-func GetWords(ctx context.Context) (models.Words, error) {
+func GetWords(ctx context.Context, length *int64) (models.Words, error) {
 	log.Debug("getting all words")
 	var words models.Words
 	conn := db.MysqlConnect()
 	query := `SELECT word, word_len, definition FROM ` + constant.Words
-	rows, err := conn.QueryContext(ctx, query)
+	var args []interface{}
+	if length != nil {
+		query += ` WHERE word_len=?`
+		args = append(args, *length)
+	}
+	rows, err := conn.QueryContext(ctx, query, args...)
 	if err != nil {
 		log.Debug("failed to get users: %v", err)
 		return words, err

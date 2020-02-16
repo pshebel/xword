@@ -12,7 +12,7 @@ import (
 
 func Get(params GetWordsParams) middleware.Responder {
 	ctx := context.Background()
-	w, err := word.GetWords(ctx)
+	w, err := word.GetWords(ctx, params.Length)
 	if err != nil {
 		log.Debug("failed to get words: %v", err)
 		status := models.ReturnCode{Code: int64(GetWordsInternalServerErrorCode), Message: err.Error()}
