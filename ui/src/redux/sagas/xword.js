@@ -1,0 +1,97 @@
+import { put, call, takeLatest, select } from 'redux-saga/effects'
+import * as actionType from '../actions/actionTypes'
+import * as actions from '../actions/xword'
+
+import * as selector from '../selectors/xword';
+import { getUser } from '../selectors/login'
+
+export function* fetchGetXword() {
+  console.log("get xword")
+  var responseBody = {}
+  try {
+    const response = yield call(fetch, 'http://127.0.0.1:7000/api/xword')
+    responseBody = yield response.json()
+    console.log("RESPONSE BODY", responseBody)
+  } catch (e) {
+    yield put(actions.getXwordFailure(e))
+  }
+
+  console.log(responseBody)
+  yield put(actions.getXwordSuccess(responseBody))
+}
+
+
+export function* fetchCheckWord() {
+  // join xword data and input data
+  var xword = yield select(selector.getXword)
+  var input = yield select(selector.getInput)
+  var user = yield select(getUser)
+  var check = {
+    xword_id: xword.id,
+    words: xword.words.map(word => {
+      let w = ""
+      if (word.dir === 0) {
+        w = input.slice(word.idx*xword.size,(word.idx*xword.size+xword.size)).join("")
+      } else {
+        for (let i=0; i < xword.size; i++) {
+          let idx = i*xword.size + word.idx 
+          w += input[idx]
+        }
+      }
+      
+      console.log(w)
+      let solve = Object.assign({}, word)
+      solve.input = w
+      return solve
+    })
+  }
+
+  let body = JSON.stringify(Object.assign({}, check))
+  const response = yield call(fetch, 'http://127.0.0.1:7000/api/xword/solve/puzzle', {
+    method: "PUT",
+    headers: {
+      "user": user,
+      "Content-Type": "application/json",
+    },
+    body,
+  })
+  console.log(response)
+  let responseBody = yield response.json()
+  if (response.ok) {
+    console.log("responseBody", responseBody)
+    if (responseBody.message === "correct") {
+      yield put(actions.getCheckXwordSuccess())
+    } else {
+      yield put(actions.getCheckXwordFailure(responseBody.message))
+    }
+  } else {
+    yield put(actions.getCheckXwordFailure(responseBody.message))
+  }
+  
+  console.log(responseBody)
+}
+// export function* fetchCheckLogin() {
+//   console.log("fetchCheckLogin")
+//   var user = localStorage.getItem("USER")
+//   console.log(user)
+//   // localStoarge.getItem returns undefined as 
+//   // a string if not found, absolutely insane
+//   if (user !== "" && user !== "undefined" && user !== undefined && user !== null) {
+//     yield put(actions.checkLoginSuccess(user))
+//   } else {
+//     yield put(actions.checkLoginFailure())
+//   }
+// }
+
+export function* getXword() {
+  yield takeLatest(actionType.GET_XWORD, fetchGetXword);
+}
+
+export function* getCheckXword() {
+  yield takeLatest(actionType.GET_CHECK_XWORD, fetchCheckWord);
+}
+
+export default {
+  getXword,
+  getCheckXword,
+};

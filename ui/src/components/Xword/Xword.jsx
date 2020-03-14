@@ -49,7 +49,7 @@ class Board extends React.Component {
   }
 }
 
-class Xword extends React.Component {
+class Game extends React.Component {
   constructor(props) {
     super(props);
     // for orientation
@@ -191,4 +191,4 @@ class Xword extends React.Component {
   }
 }
 
-export default Xword;
+export default Game;

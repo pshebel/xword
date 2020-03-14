@@ -17,5 +17,10 @@ module.exports = merge(common, {
       },
     ],
   },
+  devServer: {
+    contentBase: paths.src + '/build',
+    compress: true,
+    port: 9000
+  },
   plugins: [new webpack.HotModuleReplacementPlugin()],
 });

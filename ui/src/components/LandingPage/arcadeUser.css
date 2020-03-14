@@ -1,23 +1,32 @@
-input {
+input.user {
   width: 10vw;
   height: 5vh;
   max-width: 200px;
   max-height: 50px;
   text-align: center; 
-  font-size: 2vh;
+  font-size: 20px;
   font-family: Avenir;
   border: none;
+  /* border-width: 1px; */
 
   margin-bottom: 3vh;
 }
 
+/* hide highlight on input focus */
+/* input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+} */
 
-input.first {
+
+input.user.first {
   border-radius: 15px 0px 0px 15px;
   border-right: 1px solid;
 }
 
-input.last {
+input.user.last {
   border-radius: 0px 15px 15px 0px;
   border-left: 1px solid;
 }

@@ -6,7 +6,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import store from './redux/store/configureStore';
 import { Route, Switch } from 'react-router'
 import LangingPageContainer from './components/LandingPage/container'
-import Xword from './components/Xword/component'
+import Main from './components/Main/main'
 
 class App extends Component {
   render() {
@@ -14,8 +14,8 @@ class App extends Component {
       <Provider store={store}>
         <Router>
           <Switch>
-            <Route path="/" component={LangingPageContainer} />
-            <Route path="/xword" component={Xword} />
+            <Route exact={true} path="/" component={LangingPageContainer} />
+            <Route path="/xword*" component={Main} />
           </Switch>
         </Router>
       </Provider>

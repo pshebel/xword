@@ -1,10 +1,9 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import createSagaMiddleware, { END } from 'redux-saga'
 import rootReducer from '../reducers/root'
+import rootSaga from '../sagas/root'
 
-const store = createStore(
-  rootReducer,
-)
+
 
 if (module.hot) {
   // Enable Webpack hot module replacement for reducers
@@ -17,8 +16,13 @@ if (module.hot) {
 const sagaMiddleware = createSagaMiddleware()
 // const store = createStore(rootReducer, applyMiddleware(sagaMiddleware))
 // sagaMiddleware.run(rootSaga)
+const store = createStore(
+  rootReducer,
+  applyMiddleware(sagaMiddleware)
+)
 
 store.runSaga = sagaMiddleware.run
 store.close = () => store.dispatch(END)
+store.runSaga(rootSaga)
 
 export default store;

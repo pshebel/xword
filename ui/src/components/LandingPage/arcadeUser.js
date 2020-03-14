@@ -3,57 +3,33 @@ import './arcadeUser.css';
 
 const UserLength = 3;
 
-// function CreateUser(onChange, index) {
-//   var className = "middle"
-//   if (index = 0) {
-//     className = "first"
-//   } else if (index == UserLength - 1) {
-//     className = "last"
-//   }
-//   return (
-//     <input name={index} className={className} onChange={onChange} maxLength="1" />
-//   );
-// }
-
-// class arcadeUser extends React.Component {
-//   constructor(props) {
-//     super(props)
-//     this.state = {
-//       focus: 0,
-//     }
-//   }
-
-//   onChange(e) {
-//     this.props.loginFormChange(e.target.name, e.target.value)
-//     let ele = e.currentTarget.nextElementSibling
-//     if (e.target.name != "last") {
-//       ele.focus()
-//     } else {
-//       this.props.login()
-//     }
-//   }
-
-//   render() {
-//     // let userInput = [];
-//     // for (let i = 0; i < UserLength; i++){
-//     //   userInput.push(CreateUser(onChange, i));
-//     // }
-//     return (
-//       <div>
-//         <input autoFocus name={1} className="first" onChange={this.onChange} maxLength="1" />
-//         <input name={2} className="middle" onChange={this.onChange} maxLength="1" />
-//         <input name={3} className="last" onChange={this.onChange} maxLength="1" />
-//       </div>
-//     )
-//   }
-// }
-
-const onChange = (e, props) => {
-  props.loginFormChange(e.target.name, e.target.value)
-  let ele = e.currentTarget.nextElementSibling
-  if (e.target.name != "last") {
-    ele.focus()
+const onKeyDown = (e, props) => {
+  console.log(e.target.name, e.key)
+  if(e.key === "Backspace") {
+    if (e.target.value === "") {
+      // if the element is empty and the user hits backspace again
+      // go to the previous element
+      let ele = e.currentTarget.previousElementSibling
+      ele.focus()
+    } else {
+      // since we aren't doing onChange, manually set empty string
+      // on backspace
+      props.loginFormChange(e.target.name, "")
+    }
   } else {
+    props.loginFormChange(e.target.name, e.key)
+    if (e.target.name != "last") {
+      let ele = e.currentTarget.nextElementSibling
+      ele.focus()
+    } 
+    // else if (props.user === "") {
+    //   props.login()
+    // }
+  }
+}
+
+const check = (props) => {
+  if (props.user !== "") {
     props.login()
   }
 }
@@ -61,9 +37,29 @@ const onChange = (e, props) => {
 const ArcadeUser = props => {
   return (
     <div>
-      <input autoFocus name="first" className="first" onChange={e => onChange(e, props)} maxLength="1" />
-      <input name="middle" className="middle" onChange={e => onChange(e, props)} maxLength="1" />
-      <input name="last" className="last" onChange={e => onChange(e, props)} maxLength="1" />
+      {check(props)}
+      <input
+        autoFocus
+        name="first"
+        className="user first"
+        onKeyDown={e => onKeyDown(e, props)}
+        value={props.input.first}
+        maxLength="1"
+      />
+      <input
+        name="middle"
+        className="user middle"
+        onKeyDown={e => onKeyDown(e, props)}
+        value={props.input.middle}
+        maxLength="1"
+      />
+      <input
+        name="last"
+        className="user last"
+        onKeyDown={e => onKeyDown(e, props)}
+        value={props.input.last}
+        maxLength="1"
+      />
     </div>
   )
 }

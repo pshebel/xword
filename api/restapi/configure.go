@@ -47,6 +47,7 @@ func configureAPI(api *operations.API) http.Handler {
 	db.InitDBPool()
 
 	api.UserAuth = func(header string) (interface{}, error) {
+		log.Debug("UserAuth", header)
 		return &constant.Username{Value: header}, nil
 	}
 

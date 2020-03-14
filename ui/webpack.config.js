@@ -11,6 +11,7 @@ module.exports = {
   entry:  path.resolve(__dirname, './src/index.js'),
   output: {
     path: path.resolve(__dirname, './dist'),
+    publicPath: '/',
     filename: 'bundle.js'
   },
   module: {
@@ -27,8 +28,12 @@ module.exports = {
         }
       },
       {
-          test: /\.css$/,
-          use: ["style-loader", "css-loader"]
+        test: /\.(css|scss)$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'sass-loader',
+        ],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -40,6 +45,13 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx'],
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname, '..', 'dist'),
+    compress: true,
+    historyApiFallback: true,
+    hot: true,
+    port: 9000
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),

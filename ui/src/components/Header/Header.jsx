@@ -1,18 +1,38 @@
 import React from 'react';
-import '../../index.css';
+import Section from './section';
+import './header.css';
 
-class Header extends React.Component {
-
-  render() {
-    return (
-      <div>
-        <button onClick={(e) => this.props.handleOnClick(e.target.value)} value="xword">xword</button>
-        <button onClick={(e) => this.props.handleOnClick(e.target.value)} value="words">+word</button>
-        <button onClick={(e) => this.props.handleOnClick(e.target.value)} value="user">user</button>
-        <button onClick={(e) => this.props.handleOnClick(e.target.value)} value="boards">leaderboards</button>
-      </div>
-    )
+const links = [
+  {
+    link: "/xword/play",
+    name: "play"
+  },
+  {
+    link: "/xword/leaderboard",
+    name: "leaderboard"
+  },
+  {
+    link: "/xword/word",
+    name: "word"
   }
+]
+
+const Header = () => {
+  return (
+    <div className="header">
+      {links.map((ele, i) => {
+        if (i === links.length-1) {
+          return (
+            <Section key={ele.name} name={ele.name} link={ele.link} className={"section last"}/>
+          )
+        } else {
+          return (
+            <Section key={ele.name} name={ele.name} link={ele.link} className={"section"}/>
+          )
+        }
+      })}
+    </div>
+  )
 }
 
 export default Header;

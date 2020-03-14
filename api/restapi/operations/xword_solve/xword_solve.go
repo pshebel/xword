@@ -12,6 +12,7 @@ import (
 )
 
 func Put(params PutXwordSolvePuzzleParams, principle interface{}) middleware.Responder {
+	log.Debug("PutXwordSolvePuzzle")
 	ctx := context.Background()
 	username := principle.(*constant.Username)
 	res, err := xword.CheckXword(ctx, *params.Xword, username.Value)

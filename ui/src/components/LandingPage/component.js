@@ -5,14 +5,17 @@ import {Redirect} from 'react-router-dom';
 
 class LandingPage extends Component {
   render() {
+    console.log("LANDING PAGE", this.props)
     return (
       <div className="container">
-        {false && <Redirect to="/xword"/>}
         <div className="landing">
           <h1>XWORD</h1>
-          <ArcadeUser 
-             login={this.props.login}
-             loginFormChange={this.props.loginFormChange}
+          <p>{this.props.login.error}</p>
+          <ArcadeUser
+            user={this.props.user}
+            input={this.props.input}
+            login={this.props.login}
+            loginFormChange={this.props.loginFormChange}
           />
         </div>
       </div>
