@@ -21,7 +21,6 @@ const joinInput = (input) => {
 }
 
 export default function(state = initialState, action) {
-  console.log(action)
   switch (action.type) {
     case types.LOGIN_SUCCESS:
       return {

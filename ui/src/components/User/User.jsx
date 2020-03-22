@@ -112,7 +112,6 @@ class User extends React.Component {
   }
 
   render() {
-    console.log(this.state)
     return (
       <div>
         <h1>User Profile</h1>

@@ -5,7 +5,6 @@ import {Redirect} from 'react-router-dom';
 
 class LandingPage extends Component {
   render() {
-    console.log("LANDING PAGE", this.props)
     return (
       <div className="container">
         <div className="landing">

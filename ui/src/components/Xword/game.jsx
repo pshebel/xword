@@ -132,7 +132,6 @@ class Game extends Component {
   // this is to account for replacing a current value
   // if we set max length to 1 it will not trigger onChange
   onChange(value) {
-    console.log("onChange", value, value.slice(-1))
     if (value.length > 1) {
       this.props.xwordElementChange(value.slice(-1))
     } else {

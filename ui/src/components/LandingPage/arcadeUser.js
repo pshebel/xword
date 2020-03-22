@@ -4,7 +4,6 @@ import './arcadeUser.css';
 const UserLength = 3;
 
 const onKeyDown = (e, props) => {
-  console.log(e.target.name, e.key)
   if(e.key === "Backspace") {
     if (e.target.value === "") {
       // if the element is empty and the user hits backspace again

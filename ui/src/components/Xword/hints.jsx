@@ -5,7 +5,6 @@ class Hints extends Component {
   renderHelper() {
     const across = []
     const down = []
-    console.log("hints", this.props)
     this.props.words.sort((a,b) => a.idx - b.idx).map(word => {
       if (word.dir === 0) {
         across.push(<li>{word.idx+1}: {word.definition}</li>)

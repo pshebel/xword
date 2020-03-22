@@ -3,8 +3,10 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/pshebel/xword/api/env"
 	"github.com/pshebel/xword/util/log"
 )
 
@@ -13,7 +15,9 @@ var (
 )
 
 func InitDBPool() error {
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/xword")
+	url := env.MariaUser + ":" + env.MariaPW + "@tcp(" + env.MariaHost + ")/" + env.MariaDB
+	fmt.Println("url", url)
+	db, err := sql.Open("mysql", url)
 	if err != nil {
 		log.Debug("failed to connect to db %v", err)
 		return err

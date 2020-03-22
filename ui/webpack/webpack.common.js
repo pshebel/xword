@@ -36,5 +36,8 @@ module.exports = {
     new ScriptExtHtmlWebpackPlugin({
       defaultAttribute: 'async',
     }),
+    new webpack.EnvironmentPlugin({
+      API_HOST: 'API_HOST',
+    })
   ],
 };

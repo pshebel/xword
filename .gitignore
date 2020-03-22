@@ -5,6 +5,7 @@
 /ui/vendor
 /ui/build
 /ui/data
+/ui/.env
 
 # testing
 /ui/coverage

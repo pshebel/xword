@@ -88,16 +88,12 @@ class Game extends React.Component {
   }
 
   handleChange(e, square) {
-    console.log(Object.values(e), Object.keys(e))
     if (e.target.value !== "") {
       let ele = e.currentTarget.nextElementSibling
-      console.log(ele)
       if (ele !== null) {
         ele.focus()
       } else {
         ele = e.currentTarget.parentElement.nextElementSibling
-
-        console.log(ele)
         if (ele !== null) {
           ele.firstElementChild.focus()
         } else {
@@ -141,7 +137,6 @@ class Game extends React.Component {
   handleSubmit = () => {
     let solved = true
     let squares = this.state.squares
-    console.log(squares)
     for (let i = 0; i < squares.length; i++) {
       if (squares[i][2] !== squares[i][3]) {
         solved = false

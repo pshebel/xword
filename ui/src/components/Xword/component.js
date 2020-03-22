@@ -5,7 +5,6 @@ import './component.css'
 
 class Xword extends Component {
   render() {
-    console.log("xword component", this.props)
     return (
       <div >
           <div className="game-container">

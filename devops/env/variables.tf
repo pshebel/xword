@@ -1,12 +1,12 @@
-variable "ecs-cluster-name" {
-  description = "The name for the cluster."
-  default     = "xword-ecs-cluster"
-}
+# variable "ecs-cluster-name" {
+#   description = "The name for the cluster."
+#   default     = "xword-ecs-cluster"
+# }
 
-variable "ecs-key-pair-name" {
-  description = "The name for the cluster."
-  default     = "xword"
-}
+# variable "ecs-key-pair-name" {
+#   description = "The name for the cluster."
+#   default     = "xword"
+# }
 
 /*====
 environment specific variables
@@ -24,5 +24,5 @@ variable "production_database_username" {
 
 variable "production_database_password" {
   description = "The user password for the Production database"
-  default     = "Caps8All"
+  default     = "dummy_password"
 }

@@ -10,13 +10,12 @@ module "vpc" {
   source = "./vpc"
 }
 
-module "ecr" {
-  source = "./ecr"
-}
+# module "ecr" {
+#   source = "./ecr"
+# }
 
 # module "ec2" {
 #     source = "./ec2"
-
 #     vpc-id                      = "${module.vpc.id}"
 #     security-group-id           = "${module.vpc.security-group-id}"
 #     rds-security-group          = "${module.rds.db_access_sg_id}"

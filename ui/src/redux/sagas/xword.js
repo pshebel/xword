@@ -9,14 +9,11 @@ export function* fetchGetXword() {
   console.log("get xword")
   var responseBody = {}
   try {
-    const response = yield call(fetch, 'http://127.0.0.1:7000/api/xword')
+    const response = yield call(fetch, `${process.env.API_HOST}/api/xword`)
     responseBody = yield response.json()
-    console.log("RESPONSE BODY", responseBody)
   } catch (e) {
     yield put(actions.getXwordFailure(e))
   }
-
-  console.log(responseBody)
   yield put(actions.getXwordSuccess(responseBody))
 }
 
@@ -38,8 +35,6 @@ export function* fetchCheckWord() {
           w += input[idx]
         }
       }
-      
-      console.log(w)
       let solve = Object.assign({}, word)
       solve.input = w
       return solve
@@ -47,7 +42,7 @@ export function* fetchCheckWord() {
   }
 
   let body = JSON.stringify(Object.assign({}, check))
-  const response = yield call(fetch, 'http://127.0.0.1:7000/api/xword/solve/puzzle', {
+  const response = yield call(fetch, `${process.env.API_HOST}/api/xword/solve/puzzle`, {
     method: "PUT",
     headers: {
       "user": user,
@@ -55,10 +50,8 @@ export function* fetchCheckWord() {
     },
     body,
   })
-  console.log(response)
   let responseBody = yield response.json()
   if (response.ok) {
-    console.log("responseBody", responseBody)
     if (responseBody.message === "correct") {
       yield put(actions.getCheckXwordSuccess())
     } else {
@@ -68,7 +61,6 @@ export function* fetchCheckWord() {
     yield put(actions.getCheckXwordFailure(responseBody.message))
   }
   
-  console.log(responseBody)
 }
 // export function* fetchCheckLogin() {
 //   console.log("fetchCheckLogin")

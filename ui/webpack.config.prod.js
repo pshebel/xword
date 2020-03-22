@@ -1,16 +1,17 @@
 const path = require('path');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const htmlWebpackPlugin = new HtmlWebpackPlugin({
-    template: path.resolve(__dirname, './src/index.html'),
-    filename: "index.html"
-});
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 
 module.exports = {
-  mode: 'development',
-  entry:  path.resolve(__dirname, './src/index.js'),
+  mode: 'production',
+  entry: path.resolve(__dirname, './src/index.js'),
   output: {
     path: path.resolve(__dirname, './dist'),
+    chunkFilename: "[name].chunk.bundle.js",
     publicPath: '/',
     filename: 'bundle.js'
   },
@@ -46,19 +47,18 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
   },
-  devServer: {
-    contentBase: path.resolve(__dirname, '..', 'dist'),
-    compress: true,
-    historyApiFallback: true,
-    hot: true,
-    port: 9000
-  },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    htmlWebpackPlugin,
+    new HtmlWebpackPlugin({
+      template: "./dist/index.html",
+      filename: "index.html"
+    }),
+    new MiniCssExtractPlugin(),
+    new OptimizeCssAssetsPlugin(),
     new webpack.EnvironmentPlugin({
-      'process.env.API_HOST': JSON.stringify(env.API_HOST)
-    })
+      // 'process.env.API_HOST': JSON.stringify(env.API_HOST)
+      API_HOST: 'API_HOST',
+    }),
+    new CopyWebpackPlugin([{ from: 'src/static', to: 'src/static' }])
   ],
 
   // plugins: [

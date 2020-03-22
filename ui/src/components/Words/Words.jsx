@@ -11,9 +11,7 @@ class Words extends React.Component {
 
   handleSubmit = () => {
     this.props.postWord(this.state, ((res) => {
-      console.log("made it to cb", res)
       if (res === 200) {
-        console.log("success put word")
         this.setState({ word: '', definition: ''})
         this.props.putUser("words", ((res) => {
           if (res === 200) {
