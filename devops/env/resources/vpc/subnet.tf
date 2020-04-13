@@ -18,7 +18,6 @@ resource "aws_subnet" "xword-data-subnet2" {
     }
 }
 
-# for now, bastion subnet too
 resource "aws_subnet" "xword-web-subnet" {
     vpc_id     = aws_vpc.xword-vpc.id
     cidr_block = "10.0.2.0/24"

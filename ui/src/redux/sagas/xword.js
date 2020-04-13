@@ -8,9 +8,9 @@ import { getUser } from '../selectors/login'
 export function* fetchGetXword() {
   console.log("get xword")
   var responseBody = {}
-  console.log("TEST ENV (10.0.3.216:8000)", process.env.API_HOST)
+  console.log("TEST ENV (3.87.2.137:8000)", process.env.API_HOST)
   try {
-    const response = yield call(fetch, `10.0.3.216:8000/api/xword`)
+    const response = yield call(fetch, `http://3.87.2.137:8000/api/xword`)
     responseBody = yield response.json()
   } catch (e) {
     yield put(actions.getXwordFailure(e))
@@ -43,7 +43,7 @@ export function* fetchCheckWord() {
   }
 
   let body = JSON.stringify(Object.assign({}, check))
-  const response = yield call(fetch, `10.0.3.216:8000/api/xword/solve/puzzle`, {
+  const response = yield call(fetch, `http://3.87.2.137:8000/api/xword/solve/puzzle`, {
     method: "PUT",
     headers: {
       "user": user,

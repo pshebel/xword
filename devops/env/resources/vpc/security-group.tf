@@ -1,7 +1,10 @@
 resource "aws_security_group" "xword-vpc-security-group" {
     name        = "xword-vpc-security-group"
     description = "Allow HTTP, HTTPS, and SSH"
-    vpc_id = aws_vpc.xword-vpc.id
+    vpc_id = "${aws_vpc.xword-vpc.id}"
+    tags = {
+        Name = "${var.environment}-vpc-sg"
+    }
 
     // HTTP
     ingress {
@@ -27,6 +30,14 @@ resource "aws_security_group" "xword-vpc-security-group" {
         cidr_blocks = ["0.0.0.0/0"]
     }
 
+    // API 
+    ingress {
+        from_port = 0
+        to_port = 8000
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
     egress {
         from_port = 0
         to_port = 0
@@ -36,5 +47,5 @@ resource "aws_security_group" "xword-vpc-security-group" {
 }
 
 output "security-group-id" {
-  value = aws_security_group.xword-vpc-security-group.id
+  value = "${aws_security_group.xword-vpc-security-group.id}"
 }

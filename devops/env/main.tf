@@ -60,8 +60,9 @@ module "web" {
   associate_public_ip_address = true
   environment                 = "production"
   vpc_id                      = "${module.vpc.id}"
-  app_access_sg_id            = "${module.app.app_access_sg_id}"
-  xword_vpc_security_group_id    = "${module.vpc.security-group-id}"
+  db_access_sg_id             = "${module.rds.db_access_sg_id}"
+  xword_vpc_security_group_id = "${module.vpc.security-group-id}"
+  # cidr_blocks                 = ["73.39.106.76/32"]
 }
 
 module "app" {

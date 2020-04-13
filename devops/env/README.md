@@ -62,3 +62,5 @@ sudo yum install docker
 sudo groupadd docker
 sudo usermod -aG docker ec2-user
 // logout and back in
+service docker start
+docker network create xword
