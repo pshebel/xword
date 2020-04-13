@@ -1,6 +1,6 @@
 resource "aws_network_acl" "xword-vpc-network-acl" {
     vpc_id = aws_vpc.xword-vpc.id
-    subnet_ids = ["${aws_subnet.xword-data-subnet1.id}", "${aws_subnet.xword-data-subnet2.id}", "${aws_subnet.xword-app-subnet.id}"]
+    subnet_ids = ["${aws_subnet.xword-data-subnet1.id}", "${aws_subnet.xword-data-subnet2.id}", "${aws_subnet.xword-app-subnet.id}", "${aws_subnet.xword-web-subnet.id}"]
 
     egress {
         protocol   = "-1"

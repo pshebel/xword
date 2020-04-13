@@ -49,16 +49,15 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./dist/index.html",
+      template: path.resolve(__dirname, './src/index.html'),
       filename: "index.html"
     }),
     new MiniCssExtractPlugin(),
     new OptimizeCssAssetsPlugin(),
-    new webpack.EnvironmentPlugin({
-      // 'process.env.API_HOST': JSON.stringify(env.API_HOST)
-      API_HOST: 'API_HOST',
+    new CopyWebpackPlugin([{ from: 'src/static', to: 'src/static' }]),
+    new webpack.DefinePlugin({
+      'process.env.API_HOST': JSON.stringify(process.env.API_HOST)
     }),
-    new CopyWebpackPlugin([{ from: 'src/static', to: 'src/static' }])
   ],
 
   // plugins: [

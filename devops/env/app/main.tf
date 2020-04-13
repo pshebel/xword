@@ -2,20 +2,14 @@ provider "aws" {
   region = "us-east-1"
 }
 
-data "aws_ami" "ubuntu" {
-  most_recent = true
+data "aws_ami" "amazon-linux-2" {
+ most_recent = true
 
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
+ filter {
+   name   = "name"
+   values = ["amzn2-ami-hvm*"]
+ }
+  owners = ["amazon"]
 }
 
 /* Security Group for resources that want to access the App */
@@ -48,6 +42,13 @@ resource "aws_security_group" "app_sg" {
       self = true
   }
 
+  ingress {
+    to_port = 22
+    from_port = 22
+    protocol  = "tcp"
+    cidr_blocks = var.cidr_blocks
+  }
+  
   //allow traffic for TCP 5432
   ingress {
       from_port = 8000
@@ -66,12 +67,12 @@ resource "aws_security_group" "app_sg" {
 }
 
 resource "aws_instance" "app" {
-  ami                           = "${data.aws_ami.ubuntu.id}"
+  ami                           = "${data.aws_ami.amazon-linux-2.id}"
   instance_type                 = "${var.instance_type}"
   subnet_id                     = "${var.subnet_id}"
   key_name                      = "${var.key_name}"
   associate_public_ip_address   = "${var.associate_public_ip_address}"
-  vpc_security_group_ids        = ["${aws_security_group.app_sg.id}"]
+  vpc_security_group_ids        = ["${aws_security_group.app_sg.id}", "${var.db_access_sg_id}"]
   tags = {
     Name = "xword-app"
   }

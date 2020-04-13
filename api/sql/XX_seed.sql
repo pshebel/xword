@@ -8,13 +8,13 @@ INSERT INTO xword.words (id, word, word_len, definition, submitter) VALUES
 (3, "got", 3, "Sean Bean dies", "phs"),
 (4, "uno", 3, "shitty card game", "phs"),
 (5, "bub", 3, "rude greating", "phs"),
-(6, "uno", 3, "lowest tier pizza place", "phs"),
-(7, "rat", 3, "Baltimore mascot"),
-(8, "ops", 3, "dev, black, etc."),
-(9, "cry", 3, "Wanna _____"),
-(10, "orc", 3, "Melkors feeble attempt at creating elves resulted in this"),
-(11, "par", 3, "the average"),
-(12, "sty", 3, "Where pigs live, also your bedroom");
+(6, "uno", 3, "lowest tier pizza place", "phs");
+-- (7, "rat", 3, "Baltimore mascot"),
+-- (8, "ops", 3, "dev, black, etc."),
+-- (9, "cry", 3, "Wanna _____"),
+-- (10, "orc", 3, "Melkors feeble attempt at creating elves resulted in this"),
+-- (11, "par", 3, "the average"),
+-- (12, "sty", 3, "Where pigs live, also your bedroom");
 
 INSERT INTO xword.xwords (id, size) VALUES 
 (100, 3);

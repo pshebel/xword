@@ -12,4 +12,4 @@ RUN GOOS=linux GOARCH=386 go build ./api/cmd-server/main.go
 
 FROM busybox
 COPY --from=builder ./build /home
-CMD /home/main --port 7000 --host=0.0.0.0
+CMD /home/main --port 8000 --host=0.0.0.0

@@ -56,9 +56,7 @@ module.exports = {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     htmlWebpackPlugin,
-    new webpack.EnvironmentPlugin({
-      'process.env.API_HOST': JSON.stringify(env.API_HOST)
-    })
+    new webpack.EnvironmentPlugin(['API_HOST'])
   ],
 
   // plugins: [

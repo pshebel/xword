@@ -7,8 +7,8 @@ export function* fetchLogin() {
   console.log("fetchLogin")
   const user = yield select(getUser)
   localStorage.setItem("USER", user)
-  console.log("TEST ENV", process.env.API_HOST)
-  const response = yield call(fetch, `${process.env.API_HOST}/api/user?username=${user}`, {
+  console.log("TEST ENV (10.0.3.216:8000)", process.env.API_HOST)
+  const response = yield call(fetch, `10.0.3.216:8000/api/user?username=${user}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -26,11 +26,15 @@ export function* fetchCheckLogin() {
   console.log("fetchCheckLogin")
   var user = localStorage.getItem("USER")
   localStorage.setItem("USER", user)
-  console.log("TEST ENV", process.env.API_HOST)
+  console.log("USER: ", user)
 
   // localStoarge.getItem returns undefined as 
   // a string if not found, absolutely insane
-  if (user !== "" && user !== "undefined" && user !== undefined && user !== null) {
+  if (user !== "" 
+      && user !== "undefined" 
+      && user !== undefined 
+      && user !== null
+      && user !== "null") {
     yield put(actions.checkLoginSuccess(user))
   } else {
     yield put(actions.checkLoginFailure())

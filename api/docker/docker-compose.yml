@@ -13,4 +13,4 @@ services:
       - MARIA_PW
       - MARIA_DB
     ports:
-      - '7000:7000'
+      - '8000:8000'

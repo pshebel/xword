@@ -22,3 +22,8 @@ variable "vpc_id" {
 variable "environment" {
   description = "The environment"
 }
+
+
+variable "cidr_blocks" {
+  description = "authorized ip ranges"
+}

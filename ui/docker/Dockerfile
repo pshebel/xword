@@ -1,12 +1,13 @@
 ### STAGE 1: Build ###
 FROM node:12.13.0 as build
 
-RUN mkdir /usr/src/app
+ARG API_HOST
+ENV API_HOST $API_HOST
+
+WORKDIR /usr/src/app
 COPY package.json /usr/src/app/package.json
 RUN npm install --silent
 COPY . /usr/src/app
-WORKDIR /usr/src/app
-RUN npm i -g webpack
 RUN npm run build
 
 ### STAGE 2: Production Environment ###

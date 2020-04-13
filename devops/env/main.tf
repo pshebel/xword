@@ -39,18 +39,18 @@ module "rds" {
   instance_class    = "db.t2.micro"
 }
 
-module "bastion" {
-  source                      = "./bastion"
-  instance_type               = "t2.micro"
-  subnet_id                   = "${module.vpc.xword-web-subnet-id}"
-  key_name                    = "xword"
-  associate_public_ip_address = true
-  environment                 = "production"
-  vpc_id                      = "${module.vpc.id}"
-  db_access_sg_id             = "${module.rds.db_access_sg_id}"
-  app_access_sg_id            = "${module.app.app_access_sg_id}"
-  cidr_blocks                 = ["73.39.106.77/32"]
-}
+# module "bastion" {
+#   source                      = "./bastion"
+#   instance_type               = "t2.micro"
+#   subnet_id                   = "${module.vpc.xword-web-subnet-id}"
+#   key_name                    = "xword"
+#   associate_public_ip_address = true
+#   environment                 = "production"
+#   vpc_id                      = "${module.vpc.id}"
+#   db_access_sg_id             = "${module.rds.db_access_sg_id}"
+#   app_access_sg_id            = "${module.app.app_access_sg_id}"
+#   cidr_blocks                 = ["73.39.106.77/32"]
+# }
 
 module "web" {
   source                      = "./web"
@@ -73,6 +73,7 @@ module "app" {
   environment                 = "production"
   vpc_id                      = "${module.vpc.id}"
   db_access_sg_id             = "${module.rds.db_access_sg_id}"
+  cidr_blocks                 = ["73.39.106.77/32"]
 }
 
 
