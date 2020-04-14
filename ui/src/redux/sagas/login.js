@@ -7,8 +7,8 @@ export function* fetchLogin() {
   console.log("fetchLogin")
   const user = yield select(getUser)
   localStorage.setItem("USER", user)
-  console.log("TEST ENV (3.87.2.137:8000)", process.env.API_HOST)
-  const response = yield call(fetch, `http://3.87.2.137:8000/api/user?username=${user}`, {
+  console.log("TEST ENV (0.0.0.0:8000)", process.env.API_HOST)
+  const response = yield call(fetch, `http://0.0.0.0:8000/api/user?username=${user}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
