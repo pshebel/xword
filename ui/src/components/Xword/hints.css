@@ -1,6 +1,8 @@
 div.hints {
-  width: 20vw;
+  /* width: 40vw; */
+  display: inline-block;
   min-width: 250px;
+  max-width: 40vw;
   background-color: white;
   border-radius: 15px;
   margin-left: 10vw;

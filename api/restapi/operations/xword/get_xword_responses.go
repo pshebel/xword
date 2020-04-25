@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	models "github.com/pshebel/xword/api/models"
+	"github.com/pshebel/xword/api/models"
 )
 
 // GetXwordOKCode is the HTTP code returned for type GetXwordOK

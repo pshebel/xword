@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	loads "github.com/go-openapi/loads"
+	"github.com/go-openapi/loads"
 	flags "github.com/jessevdk/go-flags"
 	"github.com/pshebel/xword/api/restapi"
 	"github.com/pshebel/xword/api/restapi/operations"
@@ -22,14 +22,13 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	api := operations.NewAPI(swaggerSpec)
+	api := operations.NewXwordAPI(swaggerSpec)
 	server := restapi.NewServer(api)
 	defer server.Shutdown()
 
 	parser := flags.NewParser(server, flags.Default)
-	parser.ShortDescription = "api"
+	parser.ShortDescription = "xword"
 	parser.LongDescription = "XWORD"
-
 	server.ConfigureFlags()
 	for _, optsGroup := range api.CommandLineOptionsGroups {
 		_, err := parser.AddGroup(optsGroup.ShortDescription, optsGroup.LongDescription, optsGroup.Options)

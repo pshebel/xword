@@ -7,11 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	errors "github.com/go-openapi/errors"
-	runtime "github.com/go-openapi/runtime"
-	middleware "github.com/go-openapi/runtime/middleware"
-	"github.com/pshebel/xword/util/db"
-	"github.com/pshebel/xword/util/log"
+	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/rs/cors"
 
 	"github.com/pshebel/xword/api/constant"
@@ -22,15 +20,17 @@ import (
 	"github.com/pshebel/xword/api/restapi/operations/words"
 	"github.com/pshebel/xword/api/restapi/operations/xword"
 	"github.com/pshebel/xword/api/restapi/operations/xword_solve"
+	"github.com/pshebel/xword/util/db"
+	"github.com/pshebel/xword/util/log"
 )
 
-//go:generate swagger generate server --target .. --name API --spec ../swagger.yml
+//go:generate swagger generate server --target ../../api --name Xword --spec ../swagger.yml
 
-func configureFlags(api *operations.API) {
+func configureFlags(api *operations.XwordAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
-func configureAPI(api *operations.API) http.Handler {
+func configureAPI(api *operations.XwordAPI) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 

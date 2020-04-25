@@ -3,6 +3,7 @@ package xword
 import (
 	"context"
 	"database/sql"
+	"strconv"
 	"strings"
 
 	"github.com/pshebel/xword/api/constant"
@@ -16,7 +17,7 @@ func GetXword(ctx context.Context) (models.Xword, error) {
 	var xword models.Xword
 	conn := db.MysqlConnect()
 	query := `SELECT x.id, x.size, w.id, xw.idx, xw.dir, w.word_len, w.definition FROM ` +
-		`(SELECT * FROM ` + constant.Xwords + ` LIMIT 1) AS x ` +
+		`(SELECT * FROM ` + constant.Xwords + ` ORDER BY RAND() LIMIT 1) AS x ` +
 		`LEFT JOIN ` + constant.XwordWords + ` AS xw ON x.id = xw.xword_id ` +
 		`LEFT JOIN ` + constant.Words + ` AS w ON w.id = xw.word_id `
 
@@ -49,9 +50,16 @@ func PostXword(ctx context.Context, xword models.Xword) error {
 		return err
 	}
 
+	var ids []string
+	for _, word := range xword.Words {
+		ids = append(ids, strconv.Itoa(int(*word.WordID)))
+	}
+
+	hash := strings.Join(ids, ":")
+
 	// insert initial db
-	query := `INSERT INTO ` + constant.Xwords + ` (size) VALUES (?)`
-	res, err := tx.ExecContext(ctx, query, xword.Size)
+	query := `INSERT INTO ` + constant.Xwords + ` (size, hash) VALUES (?, ?)`
+	res, err := tx.ExecContext(ctx, query, xword.Size, hash)
 	if err != nil {
 		log.Debug("failed to insert xword: %v", err)
 		tx.Rollback()

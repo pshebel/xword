@@ -8,7 +8,7 @@ package xword_solve
 import (
 	"net/http"
 
-	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/runtime/middleware"
 )
 
 // PutXwordSolvePuzzleHandlerFunc turns a function with the right signature into a put xword solve puzzle handler

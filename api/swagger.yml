@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  title: api
+  title: xword
   version: 0.0.1
   description: XWORD
   contact:
@@ -194,6 +194,8 @@ definitions:
       - word
       - definition
     properties:
+      id:
+        type: integer
       word:
         type: string
       wordLength:

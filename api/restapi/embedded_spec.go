@@ -30,7 +30,7 @@ func init() {
   "swagger": "2.0",
   "info": {
     "description": "XWORD",
-    "title": "api",
+    "title": "xword",
     "contact": {
       "email": "phil.shebel@gmail.com"
     },
@@ -384,6 +384,9 @@ func init() {
       "properties": {
         "definition": {
           "type": "string"
+        },
+        "id": {
+          "type": "integer"
         },
         "word": {
           "type": "string"
@@ -467,7 +470,7 @@ func init() {
   "swagger": "2.0",
   "info": {
     "description": "XWORD",
-    "title": "api",
+    "title": "xword",
     "contact": {
       "email": "phil.shebel@gmail.com"
     },
@@ -821,6 +824,9 @@ func init() {
       "properties": {
         "definition": {
           "type": "string"
+        },
+        "id": {
+          "type": "integer"
         },
         "word": {
           "type": "string"

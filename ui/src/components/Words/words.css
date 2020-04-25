@@ -1,9 +1,9 @@
 div.words {
-  width: 80vw;
+  width: 40vw;
   min-width: 250px;
   background-color: white;
   border-radius: 15px;
-  margin-left: 10vw;
+  margin-left: 30vw;
 }
 
 div.forms{
@@ -14,12 +14,14 @@ div.forms{
 }
 
 div.forms input {
+  padding: 5px;
   width: 20vw;
   border-radius: 5px;
   height: 3vh;
 }
 
 div.forms textarea {
+  padding: 5px;
   width: 20vw;
   border-radius: 5px; 
   height: 3vh;

@@ -17,9 +17,9 @@ class LangingPageContainer extends Component {
         {this.props.loggedIn && <Redirect to="/xword/play"/>
         || (
           <LandingPage
-            user={this.props.user}
-            input={this.props.input}
+            username={this.props.username}
             loggedIn={this.props.loggedIn}
+            error={this.props.error}
             login={this.props.login}
             loginFormChange={this.props.loginFormChange}
             checkLogin={this.props.checkLogin}
@@ -32,16 +32,16 @@ class LangingPageContainer extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.login.user,
-    input: state.login.input,
+    username: state.login.username,
     loggedIn: state.login.loggedIn,
+    error: state.login.error,
   };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     login: () => dispatch(login()),
-    loginFormChange: (name, value) => dispatch(loginFormChange(name, value)),
+    loginFormChange: (username) => dispatch(loginFormChange(username)),
     checkLogin: () => dispatch(checkLogin())
   };
 }

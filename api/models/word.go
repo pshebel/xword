@@ -6,20 +6,23 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // Word word
+//
 // swagger:model Word
 type Word struct {
 
 	// definition
 	// Required: true
 	Definition *string `json:"definition"`
+
+	// id
+	ID int64 `json:"id,omitempty"`
 
 	// word
 	// Required: true

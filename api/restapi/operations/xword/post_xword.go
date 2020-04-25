@@ -8,7 +8,7 @@ package xword
 import (
 	"net/http"
 
-	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/runtime/middleware"
 )
 
 // PostXwordHandlerFunc turns a function with the right signature into a post xword handler

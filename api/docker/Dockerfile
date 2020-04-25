@@ -7,7 +7,7 @@ COPY util/ /build/util
 WORKDIR /build
 RUN go mod download
 RUN ls
-RUN GOOS=linux GOARCH=386 go build ./api/cmd-server/main.go
+RUN GOOS=linux GOARCH=386 go build ./api/cmd/xword-server/main.go
 
 
 FROM busybox

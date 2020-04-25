@@ -7,14 +7,13 @@ export function* fetchPostWord(action, args) {
   console.log("fetchPostWord", action, args)
   const user = yield select(getUser)
 
-  console.log("TEST ENV (0.0.0.0:8000)", process.env.API_HOST)
   const body = {
     word: args.word,
     definition: args.definition,
     wordLength: args.wordLen,
   }
   const strBody = JSON.stringify(body)
-  const response = yield call(fetch, `http://0.0.0.0:8000/api/word`, {
+  const response = yield call(fetch, `http://3.87.2.137:8000/api/word`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

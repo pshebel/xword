@@ -11,7 +11,7 @@ class Main extends Component {
   render() {
     return (
       <div className="main-container">
-        {this.props.user === "" && <Redirect to="/"/>}
+        {this.props.username === "" && <Redirect to="/"/>}
         <Header/>
         <div>
           <Route path="/xword/play" component={XwordContainer}/>
@@ -25,7 +25,7 @@ class Main extends Component {
   
 const mapStateToProps = (state) => {
   return {
-    user: state.login.user,
+    username: state.login.username,
   };
 }
 // const mapDispatchToProps = (dispatch) => {

@@ -16,14 +16,14 @@ export function checkLogin() {
   return {type: types.CHECK_LOGIN};
 }
 
-export function checkLoginSuccess(user) {
-  return {type: types.CHECK_LOGIN_SUCCESS, user};
+export function checkLoginSuccess(username) {
+  return {type: types.CHECK_LOGIN_SUCCESS, username};
 }
 
 export function checkLoginFailure() {
   return {type: types.CHECK_LOGIN_FAILURE}
 }
 
-export function loginFormChange(index, value) {
-  return {type: types.LOGIN_FORM_CHANGE, index, value}
+export function loginFormChange(username) {
+  return {type: types.LOGIN_FORM_CHANGE, username}
 }

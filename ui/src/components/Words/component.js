@@ -9,9 +9,9 @@ class Words extends React.Component {
         <div className="forms">
           <div className="col">
             <h4>Word</h4>
-            <input type="text" name="word" value={this.props.words.word} onChange={(e) => this.props.changeWord(e.target.name, e.target.value)}/>
-            <h4>Definition</h4>
-            <textarea name="definition" value={this.props.words.definition} onChange={(e) => this.props.changeWord(e.target.name, e.target.value)}/>
+            <input autocomplete="off" type="text" name="word" value={this.props.words.word} onChange={(e) => this.props.changeWord(e.target.name, e.target.value)}/>
+            <h4>Hint</h4>
+            <textarea autocomplete="off" name="definition" value={this.props.words.definition} onChange={(e) => this.props.changeWord(e.target.name, e.target.value)}/>
           </div>
           <p>
             {this.props.words.success && <div>Successfully added word</div>}

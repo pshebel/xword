@@ -8,7 +8,7 @@ package xword
 import (
 	"net/http"
 
-	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/runtime/middleware"
 )
 
 // GetXwordHandlerFunc turns a function with the right signature into a get xword handler

@@ -9,13 +9,23 @@ class LandingPage extends Component {
       <div className="container">
         <div className="landing">
           <h1>XWORD</h1>
-          <p>{this.props.login.error}</p>
-          <ArcadeUser
-            user={this.props.user}
-            input={this.props.input}
-            login={this.props.login}
-            loginFormChange={this.props.loginFormChange}
-          />
+          <div className="forms">
+            <div className="col">
+              <h4>Username</h4>
+              <input autocomplete="off" type="text" name="word" value={this.props.username} onChange={(e) => this.props.loginFormChange(e.target.value)}/>
+            </div>
+            <p>
+              {this.props.error && 
+                <div>Error: {this.props.error}</div>
+              }
+            </p>
+            <button 
+              disabled={this.props.username.length < 4 || this.props.username.length > 12}
+              onClick={this.props.login} 
+            >
+              Play
+            </button>
+          </div>
         </div>
       </div>
     )

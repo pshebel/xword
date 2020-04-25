@@ -3,6 +3,7 @@ package word
 import (
 	"context"
 	"database/sql"
+	"strings"
 
 	"github.com/pshebel/xword/api/constant"
 	"github.com/pshebel/xword/api/models"
@@ -14,7 +15,7 @@ func GetWords(ctx context.Context, length *int64) (models.Words, error) {
 	log.Debug("getting all words")
 	var words models.Words
 	conn := db.MysqlConnect()
-	query := `SELECT word, word_len, definition FROM ` + constant.Words
+	query := `SELECT id, word, word_len, definition FROM ` + constant.Words
 	var args []interface{}
 	if length != nil {
 		query += ` WHERE word_len=?`
@@ -27,7 +28,7 @@ func GetWords(ctx context.Context, length *int64) (models.Words, error) {
 	}
 	for rows.Next() {
 		var word models.Word
-		err := rows.Scan(&word.Word, &word.WordLength, &word.Definition)
+		err := rows.Scan(&word.ID, &word.Word, &word.WordLength, &word.Definition)
 		if err != nil {
 			log.Debug("failed to scan user: %v", err)
 			return nil, err
@@ -50,7 +51,8 @@ func PostWord(ctx context.Context, word models.Word, username string) error {
 	query := `INSERT INTO ` + constant.Words +
 		`(word, word_len, definition, submitter) VALUES (?, ?, ?, ?)`
 
-	res, err := tx.ExecContext(ctx, query, *word.Word, len(*word.Word), *word.Definition, username)
+	w := strings.ToLower(*word.Word)
+	res, err := tx.ExecContext(ctx, query, w, len(*word.Word), *word.Definition, username)
 	if err != nil {
 		log.Debug("failed to insert word: %v", err)
 		tx.Rollback()

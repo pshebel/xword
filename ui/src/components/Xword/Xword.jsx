@@ -147,7 +147,6 @@ class Game extends React.Component {
     if (solved) {
       console.log("success!")
       this.props.putUser("puzzles", ((res) => {
-        console.log("made it to cb", res)
         if (res === 200) {
           console.log("successfully update user")
         } else {

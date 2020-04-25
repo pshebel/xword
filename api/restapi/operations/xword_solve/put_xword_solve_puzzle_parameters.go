@@ -13,7 +13,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
-	models "github.com/pshebel/xword/api/models"
+	"github.com/pshebel/xword/api/models"
 )
 
 // NewPutXwordSolvePuzzleParams creates a new PutXwordSolvePuzzleParams object
