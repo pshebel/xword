@@ -1,0 +1,90 @@
+div.container {
+  margin: 0;
+}
+
+div.leaderboard {
+  margin-top: 5vh;
+  margin-left: 25vw;
+  width: 50vw;
+  text-align: center;
+  border-radius: 15px;
+  background-color: white;
+  font-size: 20px;
+  font-family: Avenir;
+  /* background-color:rgba(255, 255, 255, .5); */
+}
+
+div.leader {
+  width: 15vw;
+  border-radius: 15px;
+  background-color: blanchedalmond;
+  padding: 3px;
+}
+
+div.col-row {
+  display: flex;
+  flex-direction: row;
+  margin-left: 1vw;
+  margin-top: 2vh;
+}
+div.user-col {
+  margin-left: 2vw;
+  margin-top: 2vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  text-align: left;
+}
+
+div.user-col  div{
+  padding: 2px;
+}
+
+div.row {
+  display: flex;
+  flex-direction: row;
+  /* align-items: left; */
+  justify-content: center;
+}
+
+div.col {
+  display: flex;
+  flex-direction: column;
+  padding: 2vh;
+  justify-content: left;
+}
+
+div.users {
+  margin-left: 2vw;
+  margin-top: 2vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  text-align: left;
+}
+
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+li{
+  list-style-type: none;
+  list-style-position: none;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-family: Avenir;
+  font-size: 60px;
+}
+
+
+div.forms input {
+  padding: 5px;
+  width: 20vw;
+  border-radius: 5px;
+  height: 3vh;
+}

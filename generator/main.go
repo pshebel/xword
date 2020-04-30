@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
@@ -77,9 +76,9 @@ func main() {
 	// wordLen := 3
 	// // words := word.Build(m, allWords)
 	for {
-		rand.Seed(time.Now().UTC().UnixNano())
-		wordLen := int64(rand.Intn(5-3) + 3)
-
+		// rand.Seed(time.Now().UTC().UnixNano())
+		// wordLen := int64(rand.Intn(5-3) + 3)
+		wordLen := int64(3),
 		words, err := read(wordLen)
 		if err != nil {
 			fmt.Println(err)

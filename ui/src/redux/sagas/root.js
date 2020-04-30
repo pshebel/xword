@@ -2,6 +2,7 @@ import { take, put, call, fork, select, takeEvery, all } from 'redux-saga/effect
 import * as login from './login'
 import * as xword from './xword'
 import * as words from './words'
+import * as users from './users'
 
 
 export default function* root() {
@@ -12,6 +13,7 @@ export default function* root() {
     xword.getCheckXword(),
     words.postWord(),
     words.resetWord(),
+    users.getUsers(),
   ])
   // code after all-effect
 }

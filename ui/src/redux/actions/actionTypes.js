@@ -22,6 +22,11 @@ export const POST_WORD_SUCCESS = 'POST_WORD_SUCCESS';
 export const POST_WORD_FAILURE = 'POST_WORD_FAILURE';
 export const CHANGE_WORD = 'CHANGE_WORD';
 export const RESET_WORD = 'RESET_WORD';
+// USERS
+export const GET_USERS = 'GET_USER';
+export const GET_USERS_SUCCESS = 'GET_USER_SUCCESS';
+export const GET_USERS_FAILURE = 'GET_USER_FAILURE';
+
 
 export default {
   LOGIN,
@@ -44,4 +49,7 @@ export default {
   POST_WORD_FAILURE,
   CHANGE_WORD,
   RESET_WORD,
+  GET_USERS,
+  GET_USERS_SUCCESS,
+  GET_USERS_FAILURE,
 };

@@ -5,6 +5,7 @@ import Header from '../Header/header';
 import {Redirect} from 'react-router-dom';
 import XwordContainer from '../Xword/container';
 import WordContainer from '../Words/container';
+import LeaderboardContainer from '../Leaderboards/container';
 
 
 class Main extends Component {
@@ -15,7 +16,7 @@ class Main extends Component {
         <Header/>
         <div>
           <Route path="/xword/play" component={XwordContainer}/>
-          <Route path="/xword/leaderboard">leaderboard</Route>
+          <Route path="/xword/leaderboard" component={LeaderboardContainer}/>
           <Route path="/xword/word" component={WordContainer}/>
         </div>
       </div>

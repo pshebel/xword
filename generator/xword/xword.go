@@ -39,6 +39,7 @@ func Build(wordLen int, words []string) ([]string, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		next := n[rand.Intn(len(n))]
 		for i, l := range strings.Split(next, "") {
 			v[i] = append(v[i], l)
