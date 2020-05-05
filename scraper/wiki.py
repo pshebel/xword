@@ -27,12 +27,12 @@ blacklist = [
 url = "https://en.wikipedia.org"
 wordDef = {}
 linkWord = {}
-linkWord["/wiki/War"] = "war"
-words = ["war"]
-links = ["/wiki/War"]
+linkWord["/wiki/Taco"] = "taco"
+words = ["taco"]
+links = ["/wiki/Taco"]
 seen = []
 
-while links and len(seen) < 50:
+while links and len(seen) < 300:
   newLink = links.pop(0)
   newWord = linkWord[newLink]
   page = requests.get(url+newLink)
@@ -51,7 +51,7 @@ while links and len(seen) < 50:
         continue
       word = word.strip()
       link = link.strip()
-      matchWord = re.match("^[a-zA-Z]{3}$", word)
+      matchWord = re.match("^[a-zA-Z]{4}$", word)
       matchLink = re.match("^\/wiki\/[a-zA-Z\d\-\_]*$", link)
       if matchWord == None or matchLink == None:
         continue

@@ -6,7 +6,6 @@ import (
 )
 
 func TestFilter(t *testing.T) {
-
 	var test = []struct {
 		name    string
 		prefix  string
@@ -14,7 +13,7 @@ func TestFilter(t *testing.T) {
 		words   []string
 		filter  string
 	}{
-		{"test filter ", "t", 4, []string{"test", "abcd", "t", "te", "tart"}, "test, tart"},
+		{"test filter", "t", 4, []string{"test", "abcd", "t", "te", "tart"}, "test, tart"},
 	}
 
 	for _, tc := range test {

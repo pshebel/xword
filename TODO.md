@@ -1,5 +1,0 @@
-- only works for perfect squares. find ways to pad
-- archive xwords after get (make get xword a put or create trigger on SELECT)
-- handle minimum screen size
-- handle index, focus, and direction for xword
-  - focus transition : add margin to selected row or column

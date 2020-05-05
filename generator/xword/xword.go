@@ -1,55 +1,71 @@
 package xword
 
 import (
+	"context"
+	"errors"
 	"fmt"
-	"math/rand"
 	"strings"
-	"time"
-
-	w "github.com/pshebel/xword/generator/word"
 )
 
-func Build(wordLen int, words []string) ([]string, error) {
-	// initialize xword
-	rand.Seed(time.Now().UTC().UnixNano())
-	n := len(words)
-	fmt.Println(n)
-	sidx := rand.Intn(n)
-	seed := words[sidx]
-	words = remove(words, sidx)
+func Build(ctx context.Context, wordLen int, h, v, words []string) ([]string, error) {
+	// fmt.Println("Building", h, v)
 
-	xword := []string{seed}
-	h := seed
-	// keeps track of the down words
-	v := make([][]string, wordLen)
-	for i, l := range strings.Split(h, "") {
-		v[i] = append(v[i], l)
-	}
-	// build xword
-	for x := 0; x < wordLen-1; x++ {
-		// filters list of words based on the possible
-		// down words
-		m := make([][]string, wordLen)
-		for i := 0; i < wordLen; i++ {
-			prefix := strings.Join(v[i], "")
-			m[i] = Filter(prefix, wordLen, words)
-		}
-		// builds a word given a list of letters at each index of the across
-		n, err := w.Build(m, words)
-		if err != nil {
-			return nil, err
-		}
-
-		next := n[rand.Intn(len(n))]
-		for i, l := range strings.Split(next, "") {
-			v[i] = append(v[i], l)
-		}
-		words = searchRemove(words, next)
-		fmt.Println(m)
-		xword = append(xword, next)
+	m := make([][]string, wordLen)
+	for i := 0; i < wordLen; i++ {
+		// filter words for only those that could exist
+		// on a down given the previous rows that have been completed
+		w := FilterWords(v[i], words)
+		// get letters at the next index of possible words
+		m[i] = GetLetters(len(v[i]), w)
 	}
 
-	return xword, nil
+	// builds a word given a list of letters at each index of the across
+	n, err := BuildWords(m, words)
+	if err != nil {
+		return nil, err
+	}
+
+	// check to see if we are done
+	if len(h) == (wordLen - 1) {
+		return append(h, n[0]), nil
+	}
+
+	emps := len(n)
+	ch := make(chan []string, emps)
+
+	for _, next := range n {
+		go func(next string) {
+			vl := make([]string, wordLen)
+			// we have a potential next row. add the letters to
+			// the down lists so we can keep track of the prefix
+			for i, l := range strings.Split(next, "") {
+				vl[i] = v[i] + l
+			}
+			hl := append(h, next)
+			xword, err := Build(wordLen, hl, vl, searchRemove(words, next))
+			if err != nil {
+				// fmt.Println("failed to build xword")
+			}
+			select {
+			case ch <- xword:
+				fmt.Println("manager : sent signal", xword)
+			default:
+				fmt.Println("manager : dropped data")
+			}
+		}(next)
+	}
+
+	for emps > 0 {
+		p := <-ch
+		emps--
+		if len(p) == wordLen {
+			fmt.Println(p)
+			close(ch)
+			return p, nil
+		}
+	}
+
+	return nil, errors.New("No possible crosswords")
 }
 
 func remove(list []string, index int) []string {
