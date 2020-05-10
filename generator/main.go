@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -9,42 +10,60 @@ import (
 )
 
 var (
-// url = os.Getenv("XWORD_API")
+	url = os.Getenv("XWORD_API")
+
 // emps = 10000
 )
 
 func main() {
-	seed := os.Args[1]
 	words := read()
-	h := []string{seed}
-	v := strings.Split(seed, "")
-	xword, err := xword.Build(4, h, v, words)
-	if err != nil {
-		fmt.Println("err", err)
-		return
+	for i := range words {
+		seed := words[i]
+		// fmt.Println(seed)
+		h := []string{seed}
+		v := strings.Split(seed, "")
+		ctx := context.TODO()
+		xword := xword.Build(ctx, 4, h, v, words)
+		if xword != nil {
+			fmt.Println("xword", xword)
+		}
 	}
-
-	fmt.Println("xword", xword)
 	return
 }
 
 // func main() {
+// 	seed := os.Args[1]
 // 	words := read()
-// 	for i := range words {
-// 		seed := words[i]
-// 		// fmt.Println(seed)
-// 		h := []string{seed}
-// 		v := strings.Split(seed, "")
-// 		xword, err := xword.Build(4, h, v, words)
-// 		if err != nil {
-// 			// fmt.Println("err", err)
-// 			// return
-// 			continue
-// 		}
-
-// 		fmt.Println("xword", xword)
+// 	h := []string{seed}
+// 	v := strings.Split(seed, "")
+// 	ctx := context.TODO()
+// 	xword := xword.Build(ctx, 4, h, v, words)
+// 	if xword == nil {
+// 		fmt.Println("err, no xword found")
+// 		return
 // 	}
+
+// 	fmt.Println("xword", xword)
 // 	return
+// }
+
+// func read(wordLen int64) (models.Words, error) {
+// 	resp, err := http.Get(url + "/api/words?length=" + strconv.Itoa(int(wordLen)))
+// 	if err != nil {
+// 		return models.Words{}, err
+// 	}
+// 	defer resp.Body.Close()
+// 	body, err := ioutil.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return models.Words{}, err
+// 	}
+
+// 	var words models.Words
+// 	err = json.Unmarshal(body, &words)
+// 	if err != nil {
+// 		return words, err
+// 	}
+// 	return words, nil
 // }
 
 func read() []string {

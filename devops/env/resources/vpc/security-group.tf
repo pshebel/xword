@@ -32,8 +32,16 @@ resource "aws_security_group" "xword-vpc-security-group" {
 
     // API 
     ingress {
-        from_port = 0
+        from_port = 8000
         to_port = 8000
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    // Jenkins
+    ingress {
+        from_port = 8081
+        to_port = 8081
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }

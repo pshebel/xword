@@ -1,0 +1,27 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Log') {
+        steps {
+            sh 'ls -a'
+            sh 'printenv'
+        }
+    }
+    
+    stage('Build') {
+        steps {
+            sh 'docker system prune -f'
+            sh 'docker-compose -f docker-compose.production.yml build'
+        }
+    }
+
+    stage('Push') {
+        steps {
+            sh 'docker tag foretrace-backend:latest 551233908713.dkr.ecr.us-east-1.amazonaws.com/foretrace-backend:latest'
+            sh '$(aws ecr get-login --no-include-email --region us-east-1)'
+            sh 'docker push 551233908713.dkr.ecr.us-east-1.amazonaws.com/foretrace-backend:latest'
+        }
+    }
+  }
+}
