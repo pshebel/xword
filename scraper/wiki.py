@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests;
 import re
+import sys
 
 def GetDefinition(page, word):
   # print(content.get_text())
@@ -24,12 +25,14 @@ blacklist = [
   "",
 ]
 
+seed = sys.argv[1]
+wordLen = len(seed)
 url = "https://en.wikipedia.org"
 wordDef = {}
 linkWord = {}
-linkWord["/wiki/Taco"] = "taco"
-words = ["taco"]
-links = ["/wiki/Taco"]
+linkWord["/wiki/"+seed] = seed
+words = [seed]
+links = ["/wiki/"+seed]
 seen = []
 
 while links and len(seen) < 300:
@@ -51,7 +54,7 @@ while links and len(seen) < 300:
         continue
       word = word.strip()
       link = link.strip()
-      matchWord = re.match("^[a-zA-Z]{4}$", word)
+      matchWord = re.match("^[a-zA-Z]{"+str(wordLen)+"}$", word)
       matchLink = re.match("^\/wiki\/[a-zA-Z\d\-\_]*$", link)
       if matchWord == None or matchLink == None:
         continue
@@ -62,7 +65,7 @@ while links and len(seen) < 300:
         links.append(link)
         linkWord[link] = l
 
-f = open("test.txt", "a")
+f = open(seed+".sql", "a")
 f.write("INSERT INTO xword.words (word, word_len, definition, submitter) VALUES ")
 values = []
 for key in wordDef:

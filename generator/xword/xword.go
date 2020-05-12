@@ -2,14 +2,12 @@ package xword
 
 import (
 	"context"
-	"strings"
 
 	"github.com/pshebel/xword/sgroup"
 )
 
 func Build(ctx context.Context, wordLen int, h, v, words []string) interface{} {
 	// fmt.Println("Building", h, v)
-
 	if len(words) == 0 {
 		return nil
 	}
@@ -24,14 +22,17 @@ func Build(ctx context.Context, wordLen int, h, v, words []string) interface{} {
 	}
 
 	// builds a word given a list of letters at each index of the across
-	n, err := BuildWords(m, words)
-	if err != nil {
+	n := BuildWords(m, words)
+	if len(n) == 0 {
 		return nil
 	}
 
 	// check to see if we are done
 	if len(h) == (wordLen - 1) {
-		return append(h, n[0])
+		for i := 0; i < wordLen; i++ {
+			v[i] = v[i] + string(n[0][i])
+		}
+		return [][]string{append(h, n[0]), v}
 	}
 
 	sg, sgCtx := sgroup.WithContext(ctx)
@@ -40,12 +41,13 @@ func Build(ctx context.Context, wordLen int, h, v, words []string) interface{} {
 		vl := make([]string, wordLen)
 		// we have a potential next row. add the letters to
 		// the down lists so we can keep track of the prefix
-		for i, l := range strings.Split(next, "") {
-			vl[i] = v[i] + l
+		for i := 0; i < wordLen; i++ {
+			vl[i] = v[i] + string(next[i])
 		}
 		hl := append(h, next)
 		sg.Go(func() interface{} { return Build(sgCtx, wordLen, hl, vl, words) })
-		// nl := searchRemove(words, next))
+		// nl := SearchRemove(words, next)
+		// // fmt.Println(len(nl))
 		// if len(nl) > 0 {
 		// 	sg.Go(func() interface{} { return Build(sgCtx, wordLen, hl, vl, nl) })
 		// }
@@ -58,22 +60,24 @@ func Build(ctx context.Context, wordLen int, h, v, words []string) interface{} {
 // 	return append(list[:index], list[index+1:]...)
 // }
 
-func searchRemove(list []string, target string) []string {
-	n := make([]string, len(list))
-	for i, l := range list {
-		if l == target {
-			if i == len(list) {
-				list = list[:i-1]
-			} else {
-				list = append(list[:i], list[i+1:]...)
-			}
-			copy(n, list)
-			return n
-		}
-	}
-	copy(n, list)
-	return n
-}
+// func SearchRemove(list []string, target string) []string {
+// 	n := make([]string, len(list))
+// 	copy(n, list)
+
+// 	for i, l := range list {
+// 		if l == target {
+// 			if i == len(list)-1 {
+// 				n = n[:i]
+// 			} else if i == 0 {
+// 				n = n[1:]
+// 			} else {
+// 				n = append(n[:i], n[i+1:]...)
+// 			}
+// 			return n
+// 		}
+// 	}
+// 	return list
+// }
 
 // go func(next string) {
 // 	vl := make([]string, wordLen)

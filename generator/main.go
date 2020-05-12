@@ -1,31 +1,51 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
+	"github.com/pshebel/xword/api/models"
 	"github.com/pshebel/xword/generator/xword"
 )
 
 var (
 	url = os.Getenv("XWORD_API")
-
-// emps = 10000
 )
 
 func main() {
-	words := read()
-	for i := range words {
-		seed := words[i]
-		// fmt.Println(seed)
+	wordLen := 5
+	wordMap, wordList, err := read(int64(wordLen))
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	for i := range wordList {
+		seed := wordList[i]
 		h := []string{seed}
 		v := strings.Split(seed, "")
 		ctx := context.TODO()
-		xword := xword.Build(ctx, 4, h, v, words)
-		if xword != nil {
-			fmt.Println("xword", xword)
+		words := xword.Build(ctx, wordLen, h, v, wordList)
+		if words != nil {
+			xword := format(int64(wordLen), words.([][]string), wordList, wordMap)
+			if xword == nil {
+				//
+				continue
+			}
+			err := write(*xword)
+			if err != nil {
+				// fmt.Println(err)
+				// return
+			} else {
+				fmt.Println(words)
+			}
 		}
 	}
 	return
@@ -33,768 +53,167 @@ func main() {
 
 // func main() {
 // 	seed := os.Args[1]
-// 	words := read()
+// 	wordLen := 4
+// 	_, wordList, err := read(int64(wordLen))
+// 	if err != nil {
+// 		fmt.Println(err.Error())
+// 		return
+// 	}
 // 	h := []string{seed}
 // 	v := strings.Split(seed, "")
+// 	wordList = xword.SearchRemove(wordList, seed)
 // 	ctx := context.TODO()
-// 	xword := xword.Build(ctx, 4, h, v, words)
+// 	xword := xword.Build(ctx, 4, h, v, wordList)
 // 	if xword == nil {
 // 		fmt.Println("err, no xword found")
 // 		return
 // 	}
-
+// 	// if words != nil {
+// 	// 	xword := format(int64(wordLen), words.([][]string), wordList, wordMap)
+// 	// 	err := write(xword)
+// 	// 	if err != nil {
+// 	// 		fmt.Println(err)
+// 	// 		return
+// 	// 	}
+// 	// }
 // 	fmt.Println("xword", xword)
 // 	return
 // }
 
-// func read(wordLen int64) (models.Words, error) {
-// 	resp, err := http.Get(url + "/api/words?length=" + strconv.Itoa(int(wordLen)))
-// 	if err != nil {
-// 		return models.Words{}, err
-// 	}
-// 	defer resp.Body.Close()
-// 	body, err := ioutil.ReadAll(resp.Body)
-// 	if err != nil {
-// 		return models.Words{}, err
-// 	}
-
-// 	var words models.Words
-// 	err = json.Unmarshal(body, &words)
-// 	if err != nil {
-// 		return words, err
-// 	}
-// 	return words, nil
-// }
-
-func read() []string {
-	return []string{
-		"coop",
-		"worm",
-		"math",
-		"opus",
-		"paws",
-		"mull",
-		"dune",
-		"roux",
-		"jump",
-		"sink",
-		"dice",
-		"salt",
-		"slit",
-		"from",
-		"like",
-		"acre",
-		"what",
-		"flaw",
-		"rich",
-		"okra",
-		"meet",
-		"test",
-		"jape",
-		"pawn",
-		"vine",
-		"moon",
-		"fish",
-		"dune",
-		"lear",
-		"ping",
-		"flip",
-		"soup",
-		"juul",
-		"path",
-		"bill",
-		"beer",
-		"hops",
-		"numb",
-		"mono",
-		"bone",
-		"code",
-		"cats",
-		"city",
-		"cent",
-		"eggs",
-		"even",
-		"eyes",
-		"film",
-		"tuna",
-		"firm",
-		"gods",
-		"game",
-		"wink",
-		"golf",
-		"gold",
-		"oven",
-		"open",
-		"ouch",
-		"arch",
-		"leaf",
-		"stem",
-		"bulb",
-		"flux",
-		"peas",
-		"food",
-		"buds",
-		"rosa",
-		"taro",
-		"waxy",
-		"rhus",
-		"acer",
-		"cork",
-		"wood",
-		"root",
-		"seed",
-		"self",
-		"corm",
-		"twig",
-		"lily",
-		"flax",
-		"pith",
-		"tree",
-		"pine",
-		"toys",
-		"tool",
-		"reed",
-		"hemp",
-		"jute",
-		"watt",
-		"beef",
-		"pork",
-		"eggs",
-		"tofu",
-		"iron",
-		"soup",
-		"salt",
-		"zinc",
-		"soil",
-		"noun",
-		"fats",
-		"rice",
-		"herb",
-		"corn",
-		"meat",
-		"milk",
-		"bees",
-		"fork",
-		"buns",
-		"fish",
-		"tuna",
-		"bred",
-		"diet",
-		"mice",
-		"java",
-		"oils",
-		"sour",
-		"ions",
-		"thai",
-		"meal",
-		"list",
-		"meze",
-		"soul",
-		"plum",
-		"clam",
-		"crab",
-		"veal",
-		"goat",
-		"lamb",
-		"hams",
-		"bean",
-		"wave",
-		"wind",
-		"land",
-		"sand",
-		"peak",
-		"life",
-		"rain",
-		"axil",
-		"asia",
-		"deer",
-		"type",
-		"isis",
-		"flag",
-		"flea",
-		"wasp",
-		"tick",
-		"frog",
-		"toad",
-		"bear",
-		"lion",
-		"seal",
-		"crop",
-		"beer",
-		"wine",
-		"maga",
-		"luau",
-		"pies",
-		"stew",
-		"lard",
-		"fufu",
-		"yuca",
-		"eddo",
-		"cuba",
-		"holy",
-		"dill",
-		"mint",
-		"sage",
-		"star",
-		"blue",
-		"soft",
-		"rimu",
-		"hard",
-		"pear",
-		"teak",
-		"adze",
-		"rasp",
-		"vise",
-		"saws",
-		"butt",
-		"ogee",
-		"fuel",
-		"oaks",
-		"skis",
-		"burl",
-		"lath",
-		"sill",
-		"stud",
-		"nano",
-		"dyes",
-		"beet",
-		"sown",
-		"husk",
-		"cone",
-		"ovum",
-		"date",
-		"aril",
-		"dock",
-		"ants",
-		"snow",
-		"isni",
-		"cats",
-		"agar",
-		"rose",
-		"feed",
-		"lace",
-		"rope",
-		"yarn",
-		"coir",
-		"hair",
-		"silk",
-		"wool",
-		"neem",
-		"sago",
-		"sola",
-		"kiln",
-		"aves",
-		"firs",
-		"moth",
-		"clay",
-		"hoop",
-		"doll",
-		"bone",
-		"cars",
-		"maze",
-		"tops",
-		"rule",
-		"maul",
-		"apes",
-		"axes",
-		"froe",
-		"goad",
-		"fire",
-		"kiva",
-		"cave",
-		"well",
-		"arts",
-		"glue",
-		"cist",
-		"oboe",
-		"shop",
-		"kief",
-		"audi",
-		"ford",
-		"bast",
-		"arum",
-		"mill",
-		"volt",
-		"hour",
-		"zebu",
-		"oxen",
-		"oven",
-		"alps",
-		"lent",
-		"vice",
-		"cuts",
-		"rump",
-		"tail",
-		"aged",
-		"duck",
-		"wolf",
-		"carp",
-		"pike",
-		"swai",
-		"chop",
-		"fuet",
-		"loin",
-		"oman",
-		"mali",
-		"pigs",
-		"ribs",
-		"wild",
-		"gull",
-		"yolk",
-		"lime",
-		"hunt",
-		"kana",
-		"taho",
-		"sake",
-		"udon",
-		"yang",
-		"miso",
-		"phas",
-		"heme",
-		"bran",
-		"base",
-		"kale",
-		"rock",
-		"lava",
-		"wind",
-		"jade",
-		"ovoo",
-		"iron",
-		"coal",
-		"salt",
-		"rain",
-		"tuff",
-		"gale",
-		"pass",
-		"alps",
-		"kite",
-		"mars",
-		"time",
-		"snow",
-		"life",
-		"gold",
-		"mana",
-		"adze",
-		"onyx",
-		"opal",
-		"ruby",
-		"hair",
-		"neon",
-		"zinc",
-		"lead",
-		"rust",
-		"moon",
-		"dppe",
-		"aryl",
-		"slag",
-		"road",
-		"heme",
-		"fish",
-		"tofu",
-		"coma",
-		"peat",
-		"fuel",
-		"urea",
-		"egat",
-		"char",
-		"wave",
-		"rice",
-		"pork",
-		"ions",
-		"kiln",
-		"koku",
-		"holy",
-		"dill",
-		"hemp",
-		"mint",
-		"sage",
-		"star",
-		"blue",
-		"isni",
-		"hail",
-		"soil",
-		"asia",
-		"land",
-		"sand",
-		"peak",
-		"food",
-		"wood",
-		"vent",
-		"tufa",
-		"moai",
-		"rome",
-		"muds",
-		"clay",
-		"acid",
-		"mull",
-		"maar",
-		"fire",
-		"lows",
-		"west",
-		"ibex",
-		"nile",
-		"lyon",
-		"lent",
-		"flag",
-		"east",
-		"goad",
-		"agni",
-		"iast",
-		"rama",
-		"kali",
-		"yoga",
-		"idam",
-		"kama",
-		"wing",
-		"silk",
-		"bali",
-		"foil",
-		"sols",
-		"mass",
-		"core",
-		"cave",
-		"ares",
-		"axes",
-		"cone",
-		"wise",
-		"isro",
-		"rosa",
-		"past",
-		"hour",
-		"date",
-		"nist",
-		"week",
-		"year",
-		"eras",
-		"yuga",
-		"idea",
-		"mind",
-		"soul",
-		"rime",
-		"fall",
-		"lake",
-		"firn",
-		"fast",
-		"lynx",
-		"sled",
-		"seti",
-		"died",
-		"grow",
-		"taxa",
-		"cats",
-		"dogs",
-		"cell",
-		"tree",
-		"moss",
-		"arts",
-		"dust",
-		"ores",
-		"lode",
-		"zipa",
-		"raft",
-		"magi",
-		"hajj",
-		"amun",
-		"evil",
-		"mary",
-		"mali",
-		"bars",
-		"vark",
-		"guru",
-		"anga",
-		"gods",
-		"tapa",
-		"nath",
-		"chan",
-		"mari",
-		"miao",
-		"monk",
-		"agar",
-		"miso",
-		"beer",
-		"wine",
-		"miko",
-		"atua",
-		"pono",
-		"puuc",
-		"gulf",
-		"itza",
-		"ajaw",
-		"noun",
-		"verb",
-		"taco",
-		"meat",
-		"corn",
-		"masa",
-		"sope",
-		"beer",
-		"dosa",
-		"idli",
-		"naan",
-		"poha",
-		"roti",
-		"food",
-		"fish",
-		"deer",
-		"lamb",
-		"troy",
-		"pork",
-		"hams",
-		"dogs",
-		"cats",
-		"kant",
-		"cows",
-		"pigs",
-		"zinc",
-		"iron",
-		"salt",
-		"tofu",
-		"wood",
-		"pain",
-		"veal",
-		"duck",
-		"frog",
-		"wolf",
-		"carp",
-		"pike",
-		"swai",
-		"tuna",
-		"crab",
-		"aged",
-		"chop",
-		"cake",
-		"arab",
-		"pita",
-		"kaak",
-		"farl",
-		"baby",
-		"blue",
-		"dent",
-		"waxy",
-		"samp",
-		"fufu",
-		"milk",
-		"hops",
-		"rice",
-		"tawa",
-		"ghee",
-		"rava",
-		"upma",
-		"pohe",
-		"kuih",
-		"puto",
-		"tuak",
-		"acar",
-		"kaya",
-		"jeok",
-		"list",
-		"okoy",
-		"taho",
-		"sagu",
-		"basi",
-		"curd",
-		"podi",
-		"ragi",
-		"soup",
-		"soba",
-		"udon",
-		"paan",
-		"barm",
-		"oven",
-		"buns",
-		"tulu",
-		"atta",
-		"fats",
-		"herb",
-		"peas",
-		"bees",
-		"fork",
-		"bred",
-		"diet",
-		"mice",
-		"java",
-		"oils",
-		"sour",
-		"ions",
-		"thai",
-		"meal",
-		"meze",
-		"soul",
-		"plum",
-		"clam",
-		"goat",
-		"bean",
-		"wave",
-		"wind",
-		"land",
-		"sand",
-		"peak",
-		"soil",
-		"life",
-		"rain",
-		"basa",
-		"hake",
-		"scup",
-		"hoki",
-		"cusk",
-		"opah",
-		"fugu",
-		"king",
-		"lent",
-		"ukha",
-		"bait",
-		"hook",
-		"line",
-		"ibex",
-		"alps",
-		"gaur",
-		"rusa",
-		"mark",
-		"axis",
-		"rama",
-		"dama",
-		"oryx",
-		"ovis",
-		"fess",
-		"bear",
-		"boar",
-		"dove",
-		"vair",
-		"flag",
-		"loin",
-		"cuts",
-		"thor",
-		"wars",
-		"wine",
-		"arts",
-		"syca",
-		"lard",
-		"fuet",
-		"oman",
-		"mali",
-		"ribs",
-		"tail",
-		"wild",
-		"sate",
-		"bali",
-		"soju",
-		"odor",
-		"curs",
-		"meow",
-		"purr",
-		"acne",
-		"flea",
-		"tick",
-		"lima",
-		"area",
-		"inti",
-		"puna",
-		"ichu",
-		"moss",
-		"puno",
-		"oral",
-		"lute",
-		"spir",
-		"time",
-		"good",
-		"mind",
-		"duty",
-		"ward",
-		"sage",
-		"film",
-		"chan",
-		"yoga",
-		"hard",
-		"idea",
-		"fact",
-		"more",
-		"rand",
-		"care",
-		"evil",
-		"love",
-		"hell",
-		"gaze",
-		"kama",
-		"bork",
-		"ordo",
-		"zebu",
-		"oxen",
-		"eggs",
-		"vice",
-		"rump",
-		"neon",
-		"gold",
-		"lead",
-		"ores",
-		"slag",
-		"dyes",
+func read(wordLen int64) (map[string][]int64, []string, error) {
+	resp, err := http.Get(url + "/api/words?length=" + strconv.Itoa(int(wordLen)))
+	if err != nil {
+		return nil, nil, err
 	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var w models.Words
+	err = json.Unmarshal(body, &w)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	wordMap := make(map[string][]int64)
+	var words []string
+
+	for _, word := range w {
+		ids := wordMap[*word.Word]
+		if ids != nil {
+			wordMap[*word.Word] = append(ids, word.ID)
+		} else {
+			wordMap[*word.Word] = []int64{word.ID}
+		}
+		words = append(words, *word.Word)
+	}
+
+	return wordMap, words, nil
 }
 
-// func write(words []string) error {
-// 	// writing xword
+func format(wordLen int64, words [][]string, wordList []string, wordMap map[string][]int64) *models.Xword {
+	xword := models.Xword{Size: &wordLen}
+	// so their are no duplicate definitions
+	ids := make([]int64, 2*wordLen)
+	// dir
+	across := int64(0)
+	down := int64(1)
 
-// 	xword := models.Xword{Size: &wordLen}
-// 	// dir
-// 	across := int64(0)
-// 	down := int64(1)
-// 	for i, w := range words {
-// 		// horizontal
-// 		hid := wordID[w]
-// 		idx := int64(i)
-// 		h := models.XwordWord{
-// 			WordID: &hid,
-// 			Idx:    &idx,
-// 			Dir:    &across,
-// 		}
-// 		xword.Words = append(xword.Words, &h)
+	// across
+	h := words[0]
+	for i, word := range h {
+		var wordID int64
+		for _, id := range wordMap[word] {
+			if !in(id, ids) {
+				wordID = id
+				ids = append(ids, id)
+				break
+			}
+		}
+		// not enough ids, meaning their is a duplicate
+		// word
+		if wordID == 0 {
+			return nil
+		}
 
-// 		// vertical
-// 		w = ""
-// 		for _, v := range wordList {
-// 			list := strings.Split(v, "")
-// 			w += list[i]
-// 		}
-// 		vid := wordID[w]
-// 		v := models.XwordWord{
-// 			WordID: &vid,
-// 			Idx:    &idx,
-// 			Dir:    &down,
-// 		}
-// 		xword.Words = append(xword.Words, &v)
-// 		fmt.Println(*h.WordID, *v.WordID)
-// 	}
-// 	err = write(xword)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
+		idx := int64(i)
+		xw := models.XwordWord{
+			WordID: &wordID,
+			Idx:    &idx,
+			Dir:    &across,
+		}
+		xword.Words = append(xword.Words, &xw)
+	}
 
-// 	body, err := json.Marshal(xword)
-// 	if err != nil {
-// 		return err
-// 	}
+	// down
+	v := words[1]
+	for i, word := range v {
+		var wordID int64
+		for _, id := range wordMap[word] {
+			if !in(id, ids) {
+				wordID = id
+				ids = append(ids, id)
+				break
+			}
+		}
 
-// 	req, err := http.NewRequest("POST", url+"/api/xword", bytes.NewBuffer(body))
-// 	if err != nil {
-// 		return err
-// 	}
-// 	req.Header.Set("Content-Type", "application/json")
+		// not enough ids, meaning their is a duplicate
+		// word
+		if wordID == 0 {
+			return nil
+		}
 
-// 	client := &http.Client{}
-// 	resp, err := client.Do(req)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	defer resp.Body.Close()
+		idx := int64(i)
+		xw := models.XwordWord{
+			WordID: &wordID,
+			Idx:    &idx,
+			Dir:    &down,
+		}
+		xword.Words = append(xword.Words, &xw)
+	}
+	// fmt.Println(words, xword)
+	return &xword
+}
 
-// 	if resp.Status != "200" {
-// 		body, _ := ioutil.ReadAll(resp.Body)
-// 		fmt.Println("response Body:", string(body))
-// 		return errors.New(string(body))
-// 	}
+func in(target int64, list []int64) bool {
+	for _, ele := range list {
+		if ele == target {
+			return true
+		}
+	}
+	return false
+}
 
-// 	return nil
-// }
+func write(xword models.Xword) error {
+	// writing xword
+	body, err := json.Marshal(xword)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", url+"/api/xword", bytes.NewBuffer(body))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := ioutil.ReadAll(resp.Body)
+		// fmt.Println("response Body:", string(body))
+		return errors.New(string(body))
+	}
+
+	return nil
+}
 
 // func read(wordLen int64) (models.Words, error) {
 // 	resp, err := http.Get(url + "/api/words?length=" + strconv.Itoa(int(wordLen)))
