@@ -35,11 +35,11 @@ div.forms textarea {
 } */
 
 h3 {
-  font-family: Avenir;
+  font-family: Arial;
 }
 
 h4 {
-  font-family: Avenir;
+  font-family: Arial;
 }
 
 input {
@@ -60,7 +60,7 @@ div.submit{
   align-items: center;
 } */
 div.forms p {
-  font-family: Avenir;
+  font-family: Arial;
 }
 
 div.forms button {

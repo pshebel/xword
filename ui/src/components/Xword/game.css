@@ -9,8 +9,8 @@ div.board-row {
 
 div.board-row input.square {
   border: none;
-  width: 15vw;
-  height: 15vw;
+  width: 7vw;
+  height: 7vw;
   min-height: 50px;
   max-height: 150px;
   min-width: 50px;
@@ -18,7 +18,7 @@ div.board-row input.square {
   /* margin: 2px; */
   text-align: center; 
   font-size: 20px;
-  font-family: Avenir;
+  font-family: Arial;
   /* hide the input cursor */
   /* color: transparent;
   text-shadow: 0 0 0 black; */

@@ -13,13 +13,13 @@ class LeaderboardContainer extends Component {
     console.log("LeaderboardContainer", this.props)
     return (
       <div>
-          <Leaderboard
-            puzzlesLeader={this.props.puzzlesLeader}
-            puzzlesUsers={this.props.puzzlesUsers}
-            wordsLeader={this.props.wordsLeader}
-            wordsUsers={this.props.wordsUsers}
-            error={this.props.error}
-          />  
+        <Leaderboard
+          puzzlesLeader={this.props.puzzlesLeader}
+          puzzlesUsers={this.props.puzzlesUsers}
+          wordsLeader={this.props.wordsLeader}
+          wordsUsers={this.props.wordsUsers}
+          error={this.props.error}
+        />  
       </div>
     )
   }

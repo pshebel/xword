@@ -6,6 +6,7 @@ div.hints {
   background-color: white;
   border-radius: 15px;
   margin-left: 10vw;
+  overflow-y: scroll;
 }
 
 div.sub-hint {
@@ -35,7 +36,7 @@ div.game-handler {
   height: 5vh;
   padding: 2vw;
   font-size: 20px;
-  font-family: Avenir;
+  font-family: Arial;
 
 }
 div.game-handler button {
@@ -44,5 +45,7 @@ div.game-handler button {
   border-radius: 5px;
   width: 20vw;
   height: 5vh;
+  font-size: 20px;
+  font-family: Arial;
 }
 

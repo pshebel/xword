@@ -6,19 +6,20 @@ div.leaderboard {
   margin-top: 5vh;
   margin-left: 25vw;
   width: 50vw;
+  height: 80vh;
   text-align: center;
   border-radius: 15px;
   background-color: white;
   font-size: 20px;
-  font-family: Avenir;
+  font-family: Arial;
   /* background-color:rgba(255, 255, 255, .5); */
 }
 
 div.leader {
-  width: 15vw;
+  /* width: 15vw; */
   border-radius: 15px;
   background-color: blanchedalmond;
-  padding: 3px;
+  /* padding: 3px; */
 }
 
 div.col-row {
@@ -28,7 +29,7 @@ div.col-row {
   margin-top: 2vh;
 }
 div.user-col {
-  margin-left: 2vw;
+  /* margin-left: 2vw; */
   margin-top: 2vh;
   display: flex;
   flex-direction: column;
@@ -36,8 +37,8 @@ div.user-col {
   text-align: left;
 }
 
-div.user-col  div{
-  padding: 2px;
+div.user-col div{
+  padding: 3px;
 }
 
 div.row {
@@ -48,10 +49,12 @@ div.row {
 }
 
 div.col {
+  width: 20vw;
+  margin-left: 2.5vw;
+  margin-right: 2.5vw;
   display: flex;
   flex-direction: column;
-  padding: 2vh;
-  justify-content: left;
+  justify-content: center;
 }
 
 div.users {
@@ -69,7 +72,7 @@ ul {
   padding: 0;
 }
 
-li{
+li {
   list-style-type: none;
   list-style-position: none;
   margin: 0;
@@ -77,7 +80,7 @@ li{
 }
 
 h1 {
-  font-family: Avenir;
+  font-family: Arial;
   font-size: 60px;
 }
 
