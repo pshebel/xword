@@ -1,6 +1,7 @@
 // sgroup is meant to help jobs that want to spawn a lot of workers that are
 // all trying to meet the same success condition. This allows us to stop all
-// work once we find a single success
+// work once we find a single success. This code is a modification of the error
+// group package found here https://godoc.org/golang.org/x/sync/errgroup
 
 // Package sgroup provides synchronization, success propagation, and Context
 // cancelation for groups of goroutines working on subtasks of a common task.

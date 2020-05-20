@@ -9,7 +9,7 @@ export function* fetchGetXword() {
   console.log("get xword")
   var responseBody = {}
   try {
-    const response = yield call(fetch, `http://54.235.226.192:8000/api/xword`)
+    const response = yield call(fetch, `api/xword`)
     responseBody = yield response.json()
   } catch (e) {
     yield put(actions.getXwordFailure(e))
@@ -42,7 +42,7 @@ export function* fetchCheckWord() {
   }
 
   let body = JSON.stringify(Object.assign({}, check))
-  const response = yield call(fetch, `http://54.235.226.192:8000/api/xword/solve/puzzle`, {
+  const response = yield call(fetch, `api/xword/solve/puzzle`, {
     method: "PUT",
     headers: {
       "user": user,

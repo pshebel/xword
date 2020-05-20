@@ -7,7 +7,7 @@ export function* fetchLogin() {
   console.log("fetchLogin")
   const user = yield select(getUser)
   localStorage.setItem("USER", user)
-  const response = yield call(fetch, `http://54.235.226.192:8000/api/user?username=${user}`, {
+  const response = yield call(fetch, `api/user?username=${user}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

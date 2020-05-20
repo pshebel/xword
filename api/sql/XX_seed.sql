@@ -16,8 +16,8 @@ INSERT INTO xword.words (id, word, word_len, definition, submitter) VALUES
 -- (11, "par", 3, "the average"),
 -- (12, "sty", 3, "Where pigs live, also your bedroom");
 
-INSERT INTO xword.xwords (id, size) VALUES 
-(100, 3);
+INSERT INTO xword.xwords (id, hash, size) VALUES 
+(100, "1:4:2:5:6:3", 3);
 
 -- bug
 -- uno

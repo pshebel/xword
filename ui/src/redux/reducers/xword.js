@@ -43,6 +43,12 @@ export default function(state = initialState, action) {
         ...state,
         solved: true,
       }
+    case types.GET_CHECK_XWORD_FAILURE:
+      return {
+        ...state,
+        solved: false,
+        error: action.error,
+      }
     case types.XWORD_ELEMENT_CHANGE:
       // update input array
       const newInput = state.input.slice()

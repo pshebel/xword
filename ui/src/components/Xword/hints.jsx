@@ -23,6 +23,9 @@ class Hints extends Component {
         {this.props.solved && (
           <h1 className="solved">Solved!</h1>
         ) || (this.renderHelper())}
+        <div className="error-handler">
+          {this.props.error}
+        </div>
         <div className="game-handler">
           {this.props.solved && (
             <button onClick={this.props.getXword}>new xword</button>

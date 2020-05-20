@@ -22,6 +22,7 @@ class Xword extends Component {
               solved={this.props.xword.solved}
               getXword={this.props.getXword}
               getCheckXword={this.props.getCheckXword}
+              error={this.props.xword.error}
             />
           </div>
         
