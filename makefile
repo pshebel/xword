@@ -1,12 +1,10 @@
 build:
 	# remove existing docker images
 	@ if [ $(docker images | grep xword-ui) ]; then \
-		@echo removing xword ui
 		docker rmi 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-ui; \
 	fi
 
 	@ if [ $(docker images | grep xword-api) ]; then \
-		@echo removing xword api
 		docker rmi 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-api; \
 	fi
 
