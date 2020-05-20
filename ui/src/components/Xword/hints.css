@@ -37,8 +37,8 @@ div.game-handler {
   padding: 2vw;
   font-size: 20px;
   font-family: Arial;
-
 }
+
 div.game-handler button {
   background-color: white;
   border: 1px solid;
@@ -47,5 +47,13 @@ div.game-handler button {
   height: 5vh;
   font-size: 20px;
   font-family: Arial;
+}
+
+div.error-handler {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 2vh;
 }
 
