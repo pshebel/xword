@@ -6,7 +6,7 @@ export function* fetchGetUsers() {
   console.log("get users")
   var responseBody = {}
   try {
-    const response = yield call(fetch, `http://3.87.2.137:8000/api/users`)
+    const response = yield call(fetch, `http://54.235.226.192:8000/api/users`)
     responseBody = yield response.json()
   } catch (e) {
     yield put(actions.getUsersFailure(e))

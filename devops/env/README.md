@@ -1,9 +1,10 @@
 // tagging image
-
+sudo docker-compose -f xword/ui/docker/docker-compose.yml build --no-cache
 docker tag xword-ui:latest 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-ui
 $(aws ecr get-login --no-include-email --region us-east-1)
 docker push 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-ui
 
+sudo docker-compose -f xword/api/docker/docker-compose.yml build --no-cache
 docker tag xword-api:latest 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-api
 $(aws ecr get-login --no-include-email --region us-east-1)
 docker push 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-api
@@ -12,10 +13,11 @@ docker push 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-api
 // pull docker imagess
 
 
-docker run -d -p 8000:8000 --network="xword" --restart=always -e MARIA_HOST='production-database.ch9ebjggqecu.us-east-1.rds.amazonaws.com' -e MARIA_DB='xword' -e MARIA_USER='xword_writer' -e MARIA_PW='INSERT PASS' 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-api:latest
+docker run -d -p 8000:8000 --network="xword" --restart=always -e MARIA_HOST=${MARIA_HOST} -e MARIA_DB=${MARIA_DB} -e MARIA_USER=${MARIA_USER} -e MARIA_PW=${MARIA_PW} 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-api:latest
 
 
 docker run -d -p 80:80 --network="xword" --restart=always  -e API_HOST=${API_HOST} 432883629663.dkr.ecr.us-east-1.amazonaws.com/xword-ui:latest
+
 
 
 // install

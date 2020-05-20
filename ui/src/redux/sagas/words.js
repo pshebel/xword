@@ -13,7 +13,7 @@ export function* fetchPostWord(action, args) {
     wordLength: args.wordLen,
   }
   const strBody = JSON.stringify(body)
-  const response = yield call(fetch, `http://3.87.2.137:8000/api/word`, {
+  const response = yield call(fetch, `http://54.235.226.192:8000/api/word`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
