@@ -12,6 +12,7 @@ div.leaderboard {
   background-color: white;
   font-size: 20px;
   font-family: Arial;
+  overflow-y: scroll;
   /* background-color:rgba(255, 255, 255, .5); */
 }
 
