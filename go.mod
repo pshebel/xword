@@ -12,9 +12,7 @@ require (
 	github.com/go-openapi/validate v0.19.6
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/jessevdk/go-flags v1.4.0
-	github.com/prometheus/common v0.9.1 // indirect
 	github.com/rs/cors v1.7.0
-	github.com/t1cg/util v0.0.0-20190207182120-e7defade2454
-	golang.org/x/net v0.0.0-20200202094626-16171245cfb2
+	golang.org/x/net v0.23.0
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )
