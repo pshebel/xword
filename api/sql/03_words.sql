@@ -1,7 +1,0 @@
-CREATE TABLE xword.words (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  word VARCHAR(250) NOT NULL,
-  word_len INT NOT NULL,
-  definition VARCHAR(500) NOT NULL,
-  submitter VARCHAR(3) NOT NULL
-);
