@@ -31,13 +31,13 @@ variable "subnet_id" {
     type = string
 }
 
-variable "alb_sg_id" {
-    description = "id of the alb security group"
+variable "bastion_sg_id" {
+    description = "id of the bastion security group"
     type = string
 }
 
-variable "bastion_sg_id" {
-    description = "id of the bastion security group"
+variable "frontend_sg_id" {
+    description = "id of the frontend security group"
     type = string
 }
 
@@ -52,15 +52,8 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "frontend_http_listener_arn" {
-  description = "id for the previously created vpc"
-  type        = string
-}
-variable "frontend_https_listener_arn" {
-  description = "id for the previously created vpc"
-  type        = string
-}
-variable "alb_arn" {
-  description = "id for the previously created vpc"
-  type        = string
+
+variable "api_port" {
+  description = "port number to accept api requests"
+  type        = number
 }

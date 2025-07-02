@@ -31,10 +31,6 @@ variable "subnet_id" {
     type = string
 }
 
-variable "alb_sg_id" {
-    description = "id of the alb security group"
-    type = string
-}
 
 variable "bastion_sg_id" {
     description = "id of the bastion security group"
@@ -52,8 +48,3 @@ variable "vpc_id" {
   type        = string
 }
 
-
-variable "alb_arn" {
-  description = "id for the previously created vpc"
-  type        = string
-}

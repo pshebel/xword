@@ -12,3 +12,8 @@ output "private_subnets" {
     description = "private subnet"
     value = aws_subnet.private[*].id
 }
+
+output "private_rt" {
+    description = "private route table"
+    value = aws_route_table.private.id
+}

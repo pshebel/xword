@@ -32,75 +32,89 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
+data "aws_vpc" "man" {
+  filter {
+    name = "tag:Name"
+    values = ["xword-man-vpc"]
+  }
+}
+
+data "aws_security_group" "man-bastion-sg" {
+  filter {
+    name = "tag:Name"
+    values = ["xword-man-bastion-sg"]
+  }
+}
+
+locals {
+  vpc_cidr = "10.2.0.0/16"
+  man_cidr = "10.1.0.0/16"
+}
+
 # VPC
 module "vpc" {
   source = "../../modules/vpc"
 
-  name_prefix = "${var.project_name}-${var.environment}-vpc"
+  vpc_cidr = local.vpc_cidr
+
+  name_prefix = "xword-${var.environment}-vpc"
   region      = var.region
   environment = var.environment
 }
 
-# Bastion
-module "bastion" {
-  source = "../../modules/bastion"
+# VPC Peering
+module "vpc-peering" {
+  source = "../../modules/vpc-peering"
 
-  name_prefix         = "${var.project_name}-${var.environment}-bastion"
-  region              = var.region
-  environment         = var.environment
-  allowed_cidr_blocks = var.allowed_cidr_blocks
-  ami                 = data.aws_ami.amazon_linux.id
-  vpc_id              = module.vpc.vpc_id
-  subnet_id           = module.vpc.public_subnets[0]
-  size                = "t3.micro"
+  vpc_man = module.vpc.vpc_id
+  vpc_env = data.aws_vpc.man.id
+  vpc_man_cidr = local.man_cidr
+  vpc_env_cidr = local.vpc_cidr
+  region      = var.region
+  environment = var.environment
 }
 
-# ALB
-module "alb" {
-  source = "../../modules/alb"
+# NAT Gateway
+module "nat-gateway" {
+  source = "../../modules/nat-gateway"
 
-  name_prefix    = "${var.project_name}-${var.environment}-alb"
-  region         = var.region
-  environment    = var.environment
-  public_subnets = module.vpc.public_subnets
-  vpc_id              = module.vpc.vpc_id
-  
+  name_prefix = "xword-${var.environment}-nat-gateway"
+  region      = var.region
+  environment = var.environment
+  subnet_id = module.vpc.public_subnets[0]
+  private_subnets = module.vpc.private_subnets
+  private_rt = module.vpc.private_rt
+  vpc_id        = module.vpc.vpc_id
 }
+
 # frontend
 module "frontend" {
   source = "../../modules/frontend"
 
-  name_prefix   = "${var.project_name}-${var.environment}-frontend"
-  ami                 = data.aws_ami.amazon_linux.id
   size          = "t3.small"
-  alb_arn = module.alb.alb_arn
+  name_prefix   = "xword-${var.environment}-frontend"
+  ami           = data.aws_ami.amazon_linux.id
   region        = var.region
   environment   = var.environment
-  subnet_id     = module.vpc.public_subnets[1]
-  alb_sg_id     = module.alb.alb_sg_id
-  bastion_sg_id = module.bastion.bastion_sg_id
+  subnet_id     = module.vpc.public_subnets[0]
+  bastion_sg_id = data.aws_security_group.man-bastion-sg.id
   vpc_id        = module.vpc.vpc_id
-  
 }
-
 
 # Backend
 module "backend" {
   source = "../../modules/backend"
 
   size          = "t3.small"
-  name_prefix   = "${var.project_name}-${var.environment}-backend"
-  ami                 = data.aws_ami.amazon_linux.id
-  alb_arn = module.alb.alb_arn
+  api_port      = 3000
+  name_prefix   = "xword-${var.environment}-backend"
+  ami           = data.aws_ami.amazon_linux.id
 
+  frontend_sg_id = module.frontend.frontend_sg_id
   region        = var.region
   environment   = var.environment
   subnet_id     = module.vpc.private_subnets[0]
-  alb_sg_id     = module.alb.alb_sg_id
-  bastion_sg_id = module.bastion.bastion_sg_id
-  vpc_id              = module.vpc.vpc_id
-  frontend_http_listener_arn = module.frontend.frontend_http_listener_arn
-  frontend_https_listener_arn = module.frontend.frontend_https_listener_arn
-
+  bastion_sg_id = data.aws_security_group.man-bastion-sg.id
+  vpc_id        = module.vpc.vpc_id
 }
 
