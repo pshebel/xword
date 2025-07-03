@@ -1,0 +1,5 @@
+DROP TABLE IF NOT EXISTS words;
+
+DROP TABLE IF NOT EXISTS puzzles;
+
+DROP TABLE IF NOT EXISTS puzzle_words;
