@@ -10,8 +10,5 @@ main.go handles the server init. sets up db connection and router before serving
 /check
     takes a json and returns true or false
 /{id}
-    returns a specific puzzle with id
-/blog
-    returns a list of blog titles and ids
-/blog/{id}
-    returns a blog with id
+    returns a puzzle with id
+
