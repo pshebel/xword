@@ -1,12 +1,4 @@
-#todo
-
-Bastion
-    adding users to bastion
-    jenkins setup
-
-Frontend
+Monolith
     nginx
-
-Backend
     golang
-    mount sqlite 
+    sqlite

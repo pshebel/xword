@@ -1,0 +1,7 @@
+# set SELinux enforcement
+
+# create dir and set ownership
+
+# copy nginx conf
+
+# copy ssl certs

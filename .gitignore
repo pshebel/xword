@@ -1,8 +1,13 @@
 scraper/data/*
 backend/db/data/*
 
+frontend/node_modules/*
+frontend/build/*
+
+*inventory.yml
+
 # Local .terraform directories
-.terraform/
+*.terraform/
 
 # .tfstate files
 *.tfstate

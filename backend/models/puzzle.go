@@ -2,17 +2,13 @@ package models
 
 type Puzzle struct {
     ID		int `json:"id"`
-    Words   []Word `json:"words"`
+    Size int `json:"size"`
+    Across []Clue `json:"across"`
+    Down []Clue `json:"down"`
+    Hash string `json:"hash"`
 }
 
-type Word struct {
+type Clue struct {
     ID int `json:"id"`
-    Across bool `json:"across"`
-    Index int `json:"index"`
-    Clue string `json:"clue"`
-}
-
-type Check struct {
-    ID int `json:"id"`
-    Words []string `json:"words"`
+    Text string `json:"text"`
 }

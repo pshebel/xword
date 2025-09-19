@@ -1,0 +1,34 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfiles/dev
+    container_name: go-api
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend/db:/db
+    environment:
+      - DB_PATH=/db/data/database.db
+      - DB_MIGRATIONS=/db/migrations
+      - API_PATH=4000
+    networks:
+      - appnet
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfiles/dev
+    container_name: react-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      - backend
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge

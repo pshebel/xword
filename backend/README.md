@@ -7,8 +7,6 @@ main.go handles the server init. sets up db connection and router before serving
 
 /
     returns a random crossword puzzle
-/check
-    takes a json and returns true or false
 /{id}
     returns a puzzle with id
 

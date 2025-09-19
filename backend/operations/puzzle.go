@@ -11,10 +11,14 @@ import (
 
 
 func GetPuzzle() (models.Puzzle, error) {
-	db := utils.Open()
 	puzzle := models.Puzzle{}
+	db, err := utils.Open()
+	if err != nil {
+		log.Fatal(err)
+		return puzzle, err
+	}
 
-	query := `SELECT id
+	query := `SELECT id, size, hash
 			FROM puzzles
 			ORDER BY RANDOM()
 			LIMIT 1`
@@ -22,20 +26,24 @@ func GetPuzzle() (models.Puzzle, error) {
 	row := db.QueryRow(query)
 	var (
 		id int
+		size int
+		hash string
 	)
-	err := row.Scan(&id)
+	err = row.Scan(&id, &size, &hash)
 	if err != nil {
 		log.Fatal(err)
 		return puzzle, err
 	}
 
-	query = `SELECT w.id, pw.across, pw.index, w.clue
+	puzzle.ID = id
+	puzzle.Size = size
+	puzzle.Hash = hash
+
+	query = `SELECT w.id, pw.across, pw.idx, w.clue
 		FROM words AS w
 		JOIN puzzle_words AS pw ON pw.word_id = w.id
 		WHERE pw.puzzle_id = ?
-		`
-
-	puzzle.ID = id
+	`
 
 	rows, err := db.Query(query, id)
 	if err != nil {
@@ -44,18 +52,28 @@ func GetPuzzle() (models.Puzzle, error) {
 	}
 	defer rows.Close()
 
-	words := []models.Word{}
+	across := []models.Clue{}
+	down := []models.Clue{}
 	for rows.Next() {
-		word := models.Word{}
-		err := rows.Scan(&word.ID, &word.Across, &word.Index, &word.Clue)
+		var (
+			id int
+			isAcross bool
+			index int
+			text string
+		)
+		err := rows.Scan(&id, &isAcross, &index, &text)
 		if err != nil {
 			log.Fatal(err)
 			return puzzle, err
 		}
-
-		words = append(words, word)
-		
+		if (isAcross) {
+			across = append(across, models.Clue{index, text})
+		} else {
+			down = append(down, models.Clue{index, text})
+		}
 	}
-	puzzle.Words = words
+
+	puzzle.Across = across
+	puzzle.Down = down
 	return puzzle, nil
 }

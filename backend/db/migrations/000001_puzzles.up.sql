@@ -6,12 +6,13 @@ CREATE TABLE IF NOT EXISTS words (
 
 CREATE TABLE IF NOT EXISTS puzzles (
     id INT NOT NULL,
-    size INT NOT NULL
+    size INT NOT NULL,
+    hash TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS puzzle_words (
     puzzle_id INT NOT NULL,
     word_id INT NOT NULL,
     across BOOL NOT NULL,
-    index INT NOT NULL
+    idx INT NOT NULL
 );
