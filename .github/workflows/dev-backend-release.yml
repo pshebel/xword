@@ -1,12 +1,13 @@
 name: Deploy Backend
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - master
+      - main
     paths:
       - backend/**
-      
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
