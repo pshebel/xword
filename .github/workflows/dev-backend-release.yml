@@ -41,9 +41,9 @@ jobs:
       env:
         GOOS: linux
         GOARCH: amd64
-        CGO_ENABLED: 0
+        CGO_ENABLED: 1
       run: |
-        go build -ldflags="-s -w" -o xword ./cmd/main.go
+        go build -a -installsuffix cgo -o xword .
     
     - name: Setup SSH key
       uses: webfactory/ssh-agent@v0.8.0
