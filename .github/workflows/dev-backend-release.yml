@@ -1,4 +1,4 @@
-name: Deploy Backend
+name: Deploy Dev Backend
 
 on:
   workflow_dispatch:

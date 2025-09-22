@@ -1,7 +1,39 @@
-# set SELinux enforcement
+---
+- name: Setup frontend
+  hosts: all
+  become: yes
+  tasks:
+  - name: Copy nginx config
+    copy:
+      src: "{{ playbook_dir }}/nginx.conf"
+      dest: /etc/nginx
+      owner: nginx
+      group: nginx
+      mode: '0755'
+  - name: Create a new directory
+    file:
+      path:  /var/www/html
+      state: directory
+      owner: nginx
+      group: nginx
+      mode: '0755'
+      recurse: yes
+  # set SELinux enforcement
+  - name: Set httpd_can_network_connect flag on and keep it persistent across reboots
+    seboolean:
+      name: httpd_can_network_connect
+      state: yes
+      persistent: yes
+  - name: Set httpd_read_user_content on and keep it persistent across reboots
+    seboolean:
+      name: httpd_read_user_content
+      state: yes
+      persistent: yes
 
-# create dir and set ownership
-
-# copy nginx conf
-
-# copy ssl certs
+  - name: Ensure /var/www/html has httpd_exec_t context
+    community.general.sefcontext:
+      target: "/var/www/html/*"
+      setype: httpd_exec_t
+      state: present
+      reload: true
+  # copy ssl certs

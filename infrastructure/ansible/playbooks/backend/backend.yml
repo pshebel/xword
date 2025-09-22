@@ -1,6 +1,5 @@
-# create user for backend
 ---
-- name: Create Users & Groups
+- name: Setup backend
   hosts: all
   become: yes
   tasks:
@@ -16,8 +15,7 @@
         password: "{{ 'tmp' | password_hash('sha512') }}"
         shell: /bin/bash
         group: xword
-      
-# copy service file
+
     - name: Copy Service file
       copy:
         src: "{{ playbook_dir }}/xword.service"
@@ -42,11 +40,43 @@
         owner: xword
         group: xword
         mode: '0600'
+
     - name: Apply new SELinux context to /etc/xword/xword.env
       command: restorecon -Rv /etc/xword/xword.env
       changed_when: true
 
+    - name: Format the EBS volume if not already formatted
+      filesystem:
+        fstype: ext4
+        dev: /dev/nvme1n1
+        force: no 
+    
+    - name: Create mount point directory
+      file:
+        path: /home/xword/data
+        state: directory
+        owner: xword
+        group: xword
+        mode: '0755'
+    
+    - name: Mount the EBS volume temporarily
+      mount:
+        path: /home/xword/data
+        src: /dev/nvme1n1
+        fstype: ext4
+        state: mounted
 
-# # selinux 
-# restorecon -v /usr/local/bin/xword
-# restorecon -v /etc/xword/xword.env
+    - name: Give xword ownership
+      file:
+        path: /home/xword/data
+        owner: xword
+        group: xword
+        recurse: yes 
+
+    # - name: Add entry to fstab for persistent mounting
+    #   mount:
+    #     path: /home/xword/data
+    #     src: "UUID={{ uuid_result.stdout }}"
+    #     fstype: ext4
+    #     opts: defaults,nofail
+    #     state: present

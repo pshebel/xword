@@ -12,11 +12,9 @@
       - sqlite
       - sqlite-devel
   tasks:
-
     - name: Update package cache
       yum:
         update_cache: yes
-
 
     - name: Install packages on RedHat
       yum:

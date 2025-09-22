@@ -1,6 +1,7 @@
-name: Deploy Frontend
+name: Deploy Dev Frontend
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -10,7 +11,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+    defaults:
+      run:
+        working-directory: ./frontend
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -18,6 +22,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
+        cache-dependency-path: frontend/package-lock.json
         node-version: '18'
         cache: 'npm'
     
@@ -38,12 +43,16 @@ jobs:
     
     - name: Copy files to server
       run: |
-        rsync -avz --delete \
-          --exclude '.git' \
-          --exclude 'node_modules' \
-          --exclude '.env' \
-          ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.DEPLOY_PATH }}
+        scp -r ./build/* ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }}:~/build
     
+    - name: Move binary and set permissions
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} \
+          "sudo mv ~/build/* ${{ secrets.FRONTEND_PATH }} && \ 
+           sudo chown -R nginx:nginx ${{ secrets.FRONTEND_PATH }} && \
+           sudo restorecon -v ${{ secrets.FRONTEND_PATH }}
+           "
+
     - name: Restart nginx
       run: |
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} \
