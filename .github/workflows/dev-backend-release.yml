@@ -1,0 +1,94 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - backend/**
+      
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    
+    - name: Download dependencies
+      run: go mod download
+    
+    # - name: Run tests
+    #   run: go test -v ./...
+    
+    - name: Build for Linux
+      env:
+        GOOS: linux
+        GOARCH: amd64
+        CGO_ENABLED: 0
+      run: |
+        go build -ldflags="-s -w" -o xword ./cmd/main.go
+    
+    - name: Setup SSH key
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    
+    - name: Add server to known hosts
+      run: |
+        ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+    
+    - name: Stop application service
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} \
+          "sudo systemctl stop ${{ secrets.SERVICE_NAME }}"
+    
+    - name: Backup current binary
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} \
+          "sudo cp ${{ secrets.DEPLOY_PATH }}/xword ${{ secrets.DEPLOY_PATH }}/xword.backup || true"
+    
+    - name: Copy binary to server
+      run: |
+        scp ./xword ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }}:~/xword-new
+    
+    - name: Move binary and set permissions
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} \
+          "sudo mv ~/xword-new ${{ secrets.DEPLOY_PATH }}/xword && \
+           sudo chmod +x ${{ secrets.DEPLOY_PATH }}/xword && \
+           sudo chown ${{ secrets.APP_USER }}:${{ secrets.APP_USER }} ${{ secrets.DEPLOY_PATH }}/xword && \
+           sudo restorecon -v ${{ secrets.DEPLOY_PATH }}/xword
+           "
+    
+    - name: Start application service
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} \
+          "sudo systemctl start ${{ secrets.SERVICE_NAME }}"
+    
+    - name: Verify deployment
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} \
+          "sudo systemctl status ${{ secrets.SERVICE_NAME }} --no-pager -l"
+    
+    # - name: Health check
+    #   run: |
+    #     sleep 5
+    #     ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} \
+    #       "curl -f http://localhost:${{ secrets.APP_PORT }}/health || exit 1"

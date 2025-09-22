@@ -1,0 +1,52 @@
+# create user for backend
+---
+- name: Create Users & Groups
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create group
+      group:
+        name: xword
+        state: present
+
+    - name: Create Users Task
+      user:
+        name: xword
+        state: present
+        password: "{{ 'tmp' | password_hash('sha512') }}"
+        shell: /bin/bash
+        group: xword
+      
+# copy service file
+    - name: Copy Service file
+      copy:
+        src: "{{ playbook_dir }}/xword.service"
+        dest: /usr/lib/systemd/system/xword.service
+        owner: xword
+        group: xword
+        mode: '0600'
+
+    - name: Create a new directory
+      file:
+        path: /etc/xword/
+        state: directory
+        owner: xword
+        group: xword
+        mode: '0755'
+        recurse: yes
+
+    - name: Copy Env file
+      copy:
+        src: "{{ playbook_dir }}/xword.env"
+        dest: /etc/xword/xword.env
+        owner: xword
+        group: xword
+        mode: '0600'
+    - name: Apply new SELinux context to /etc/xword/xword.env
+      command: restorecon -Rv /etc/xword/xword.env
+      changed_when: true
+
+
+# # selinux 
+# restorecon -v /usr/local/bin/xword
+# restorecon -v /etc/xword/xword.env

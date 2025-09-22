@@ -1,0 +1,21 @@
+[Unit]
+Description=Xword
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/xword
+ExecStart=/usr/local/bin/xword
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=Xword
+User=xword
+Group=xword
+Environment=PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+EnvironmentFile=/etc/xword/xword.env
+
+[Install]
+WantedBy=multi-user.target
