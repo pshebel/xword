@@ -48,7 +48,8 @@ jobs:
     - name: Move binary and set permissions
       run: |
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} \
-          "sudo mv ~/build/* ${{ secrets.FRONTEND_PATH }} && \ 
+          "sudo rm -rf ${{ secrets.FRONTEND_PATH }}/* && \
+           sudo mv ~/build/* ${{ secrets.FRONTEND_PATH }} && \ 
            sudo chown -R nginx:nginx ${{ secrets.FRONTEND_PATH }} && \
            sudo restorecon -v ${{ secrets.FRONTEND_PATH }}
            "
