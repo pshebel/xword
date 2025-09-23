@@ -41,49 +41,84 @@ ul {
   content: '';
   display: table;
 } 
-
 .container {
-    display: grid;
-    grid-template-rows: 1fr 12fr 1fr;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: 
-        "header header"
-        "game info"
-        "footer footer";
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
-    gap: 1rem;
 }
 
 .header {
-    grid-area: header;
-    background-color: #FFA500;
-    color: white;
+    background-color: #ff8800;
+    color: black;
     padding: 1rem;
     text-align: center;
 }
 
-.sidebar {
-    grid-area: sidebar;
-    background-color: #ecf0f1;
+.header {
+    
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* logo on left, nav on right */
+  padding: 0.5rem 1rem;
+  background-color: #ff8800;
+  color: black;
+}
+
+/* Logo */
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Nav list */
+.nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem; /* space between items */
+  margin: 0;
+  padding: 0;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav a:hover {
+  color: #d3d6d8; /* highlight on hover */
+}
+
+.board-container {
+    /* allows board container to fill the space between header and footer */
+    flex-grow: 1;
+
+    /* create grid for board */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+        "game info";
+
+}
+
+.game {
+    grid-area: game;
+    padding: 1rem;
+
+    display: flex;
+    justify-content: center;
+}
+
+.info {
+    grid-area: info;
+ 
     padding: 1rem;
 }
 
-.main {
-    grid-area: main;
-    background-color: #ffffff;
-    padding: 1rem;
-    border: 1px solid #bdc3c7;
-}
-
-.aside {
-    grid-area: aside;
-    background-color: #f8f9fa;
-    padding: 1rem;
-}
 
 .footer {
-    grid-area: footer;
-    background-color: #FFA500;
+    background-color: #ff8800;
     color: white;
     padding: 1rem;
     text-align: center;
@@ -91,12 +126,10 @@ ul {
 
 /* Responsive design */
 @media (max-width: 768px) {
-    .container {
+    .board-container {
         grid-template-columns: 1fr;
-        grid-template-areas: 
-            "header"
+        grid-template-areas:
             "game"
-            "info"
-            "footer";
+            "info";
     }
 }

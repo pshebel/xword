@@ -217,28 +217,37 @@ export default function CrosswordGame() {
 
   return (
     <div className="container">
-      <div className="header">xword</div>
-      
-      <div className="game">
-        <Board 
-          size={data.size} 
-          squares={squares} 
-          onChange={handleSquareChange} 
-        />
+      <div className="header">
+        <div class="logo">xword.io</div>
+        <nav class="nav">
+          <ul>
+            <li><a href="#">About</a></li>
+          </ul>
+        </nav>
       </div>
-      
-      <div className="info">
-        <GameInfo 
-          data={data}
-          success={success}
-          onCheck={handleCheck}
-          onReset={handleReset}
-          showMessage={showMessage}
-          messageVariant={messageVariant}
-          messageText={messageText}
-        />
+      <div className="board-container">
+        <div className="game">
+          <Board 
+            size={data.size} 
+            squares={squares} 
+            onChange={handleSquareChange} 
+          />
+        </div>
+        
+        <div className="info">
+          <GameInfo 
+            data={data}
+            success={success}
+            onCheck={handleCheck}
+            onReset={handleReset}
+            showMessage={showMessage}
+            messageVariant={messageVariant}
+            messageText={messageText}
+          />
+        </div>
       </div>
-      <div className="footer">test</div>
+ 
+      {/* <div className="footer"><h1></h1></div> */}
     </div>
   );
 }

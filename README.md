@@ -1,11 +1,12 @@
 This project takes data from wikipedia and turns it into crossword puzzles.
 
 frontend:
-- typescript using react native as a framework
+- barebones react
 
 backend:
 - golang
 - sqlite
 
 infrastructure:
+- ansible
 - terraform
