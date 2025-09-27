@@ -23,10 +23,20 @@ const AlertMessage = ({ children, show = true, duration = 3000 }) => {
 };
 
 // Square Component
-const Square = ({ index, value, onChange }) => {
+const Square = ({ size, index, value, onChange }) => {
+  let name = "square"
+  if (index == 0) {
+    name = name + " top-left"
+  } else if (index == size-1) {
+    name = name + " top-right"
+  } else if (index == size*(size-1)) {
+    name = name + " bottom-left"
+  } else if (index == (size*size)-1) {
+    name = name + " bottom-right"
+  }
   return (
     <input 
-      className="square"
+      className={name}
       maxLength={1}
       value={value || ''}
       onChange={(e) => onChange(index, e.target.value.toUpperCase())}
@@ -39,6 +49,7 @@ const Board = ({ size, squares, onChange }) => {
   const renderSquare = (index) => (
     <Square 
       key={index}
+      size={size}
       index={index}
       value={squares[index]}
       onChange={onChange}
@@ -173,7 +184,7 @@ export default function CrosswordGame() {
   const handleCheck = () => {
     const userInput = squares.join("").toLowerCase();
     const userHash = btoa(userInput);
-
+    console.log(userHash, data.hash)
     if (userHash === data.hash) {
       setSuccess(true);
       showAlertMessage('success', 'Congratulations! You solved the puzzle!');
@@ -217,14 +228,14 @@ export default function CrosswordGame() {
 
   return (
     <div className="container">
-      <div className="header">
+      {/* <div className="header">
         <div class="logo">xword.io</div>
         <nav class="nav">
           <ul>
             <li><a href="#">About</a></li>
           </ul>
         </nav>
-      </div>
+      </div> */}
       <div className="board-container">
         <div className="game">
           <Board 
