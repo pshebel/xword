@@ -30,6 +30,12 @@ ul {
   padding: 0;
   text-align: center;
   width: 5vw;
+  outline: none;
+  caret-color: transparent;
+}
+
+.square:focus {
+  background-color: orange;
 }
 
 .square.top-left {
@@ -103,9 +109,15 @@ ul {
 
 /* Responsive design */
 @media (max-width: 1000px) {
-  .game {
-    padding-top: 10rem;
+  .container {
+    align-items: flex-start;
+    padding-top: 1rem;
+    height: auto;
+    min-height: 100vh;
   }
+  /* .game {
+    padding-top: 10rem;
+  } */
   .square {
     line-height: 16vw;
     height: 16vw;

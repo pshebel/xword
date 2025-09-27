@@ -22,6 +22,17 @@ const AlertMessage = ({ children, show = true, duration = 3000 }) => {
   );
 };
 
+
+// set focus
+// orientation
+// input: 
+//    across: index + 1
+//    down: (index + size > size*size) ? 
+// backspace:
+//    across: index - 1
+//    down: (index - size < 0) ? index - 1
+
+
 // Square Component
 const Square = ({ size, index, value, onChange }) => {
   let name = "square"
@@ -150,7 +161,7 @@ export default function CrosswordGame() {
     setError(null);
     
     try {
-      const response = await fetch('https://xword.io/api/puzzle');
+      const response = await fetch('http://localhost:4000/api/puzzle');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
