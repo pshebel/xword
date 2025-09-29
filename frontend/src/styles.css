@@ -6,6 +6,14 @@
     box-sizing: border-box;
 }
 
+@font-face {
+  font-family: "coopbl";
+  src: url("../public/assets/fonts/COOPBL.TTF") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 body {
     font-family: Arial, sans-serif;
     min-height: 100vh;
@@ -16,6 +24,30 @@ ul {
   padding-inline-start: 20px;
 }
 
+
+.container {
+  /* background-color: #FFFDD0; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;  /* full viewport height */
+  width: 100vw;
+}
+
+
+.header {
+  font-family: "coopbl", sans-serif;
+}
+
+.board-container {
+  border-radius: 20px;
+  /* background-color: #228B22; */
+  border: 1px solid #ccc;
+  display: flex;
+  gap: 5rem;              /* spacing between game and info */
+  align-items: flex-start;
+  padding: 5rem;
+}
 
 .square {
   background: #fff;
@@ -34,8 +66,12 @@ ul {
   caret-color: transparent;
 }
 
-.square:focus {
-  background-color: orange;
+.square.is-focus {
+  background-color: #C12C2C;
+}
+
+.square.in-focus {
+  background-color: #E9BCB7;
 }
 
 .square.top-left {
@@ -62,25 +98,6 @@ ul {
   clear: both;
   content: '';
   display: table;
-}
-
-.container {
-  /* background-color: #FFFDD0; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;  /* full viewport height */
-  width: 100vw;
-}
-
-.board-container {
-  border-radius: 20px;
-  /* background-color: #228B22; */
-  border: 1px solid #ccc;
-  display: flex;
-  gap: 5rem;              /* spacing between game and info */
-  align-items: flex-start;
-  padding: 5rem;
 }
 
 .game {

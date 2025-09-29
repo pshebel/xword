@@ -2,6 +2,10 @@
 - name: Setup frontend
   hosts: all
   become: yes
+  vars_prompt:
+    - name: private_key_passphrase
+      prompt: "Enter the password for the ssl private key"
+      private: yes
   tasks:
   - name: Copy nginx config
     copy:
@@ -10,6 +14,34 @@
       owner: nginx
       group: nginx
       mode: '0755'
+  - name: Create nginx pki dir
+    file:
+      path:  /etc/pki/nginx/private
+      state: directory
+      owner: nginx
+      group: nginx
+      mode: '0755'
+      recurse: yes
+  - name: Copy SSL Cert
+    copy:
+      src: "{{ playbook_dir }}/ssl/server.crt"
+      dest: /etc/pki/nginx
+      owner: nginx
+      group: nginx
+      mode: '0755'
+  - name: Copy ssl key
+    copy:
+      src: "{{ playbook_dir }}/ssl/key.txt"
+      dest: /etc/pki/nginx/private
+      owner: nginx
+      group: nginx
+      mode: '0755'
+  - name: decrypt key
+    community.crypto.openssl_privatekey_convert:
+      src_path: /etc/pki/nginx/private/key.txt
+      src_passphrase: '{{ private_key_passphrase }}'
+      dest_path: /etc/pki/nginx/private/server.key
+      format: pkcs8
   - name: Create a new directory
     file:
       path:  /var/www/html

@@ -1,145 +1,9 @@
 import { useState, useEffect } from 'react';
+import Game from './game';
+import Info from './info';
 
-// Alert Message Component
-const AlertMessage = ({ children, show = true, duration = 3000 }) => {
-  const [isVisible, setIsVisible] = useState(show);
-
-  useEffect(() => {
-    if (show && duration > 0) {
-      const timer = setTimeout(() => {
-        setIsVisible(false);
-      }, duration);
-      return () => clearTimeout(timer);
-    }
-  }, [show, duration]);
-
-  if (!isVisible) return null;
-
-  return (
-    <div className="alert">
-      {children}
-    </div>
-  );
-};
-
-
-// set focus
-// orientation
-// input: 
-//    across: index + 1
-//    down: (index + size > size*size) ? 
-// backspace:
-//    across: index - 1
-//    down: (index - size < 0) ? index - 1
-
-
-// Square Component
-const Square = ({ size, index, value, onChange }) => {
-  let name = "square"
-  if (index == 0) {
-    name = name + " top-left"
-  } else if (index == size-1) {
-    name = name + " top-right"
-  } else if (index == size*(size-1)) {
-    name = name + " bottom-left"
-  } else if (index == (size*size)-1) {
-    name = name + " bottom-right"
-  }
-  return (
-    <input 
-      className={name}
-      maxLength={1}
-      value={value || ''}
-      onChange={(e) => onChange(index, e.target.value.toUpperCase())}
-    />
-  );
-};
-
-// Board Component
-const Board = ({ size, squares, onChange }) => {
-  const renderSquare = (index) => (
-    <Square 
-      key={index}
-      size={size}
-      index={index}
-      value={squares[index]}
-      onChange={onChange}
-    />
-  );
-
-  const renderRow = (rowIndex) => {
-    const row = [];
-    for (let col = 0; col < size; col++) {
-      const squareIndex = rowIndex * size + col;
-      row.push(renderSquare(squareIndex));
-    }
-    return (
-      <div key={rowIndex} className="board-row">
-        {row}
-      </div>
-    );
-  };
-
-  const board = [];
-  for (let row = 0; row < size; row++) {
-    board.push(renderRow(row));
-  }
-
-  return <div className="board">{board}</div>;
-};
-
-// Clue List Component
-const ClueList = ({ title, clues }) => {
-  const sortedClues = [...clues].sort((a, b) => a.id - b.id);
-  
-  return (
-    <div className="clue-section">
-      <h3>{title}</h3>
-      <ol>
-        {sortedClues.map(clue => (
-          <li key={clue.id}>
-            {clue.text}
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-};
-
-// Game Info Component
-const GameInfo = ({ data, success, onCheck, onReset, showMessage, messageVariant, messageText }) => {
-  return (
-    <div className="game-info">
-      {showMessage && (
-        <AlertMessage variant={messageVariant}>
-          {messageText}
-        </AlertMessage>
-      )}
-      
-      {!success && data.across && data.down && (
-        <div className="clues-container">
-          <ClueList title="Across" clues={data.across} />
-          <ClueList title="Down" clues={data.down} />
-        </div>
-      )}
-      
-      <div className="controls">
-        {success ? (
-          <button onClick={onReset}>
-            Next Puzzle
-          </button>
-        ) : (
-          <button onClick={onCheck}>
-            Check Answer
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// Main Game Component
-export default function CrosswordGame() {
+// Main App Component
+export default function App() {
   const [data, setData] = useState({ id: 0, size: 3, across: [], down: [], hash: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -161,7 +25,7 @@ export default function CrosswordGame() {
     setError(null);
     
     try {
-      const response = await fetch('http://localhost:4000/api/puzzle');
+      const response = await fetch(`${process.env.API_URL}/api/puzzle`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -195,7 +59,7 @@ export default function CrosswordGame() {
   const handleCheck = () => {
     const userInput = squares.join("").toLowerCase();
     const userHash = btoa(userInput);
-    console.log(userHash, data.hash)
+    console.log(userHash, data.hash);
     if (userHash === data.hash) {
       setSuccess(true);
       showAlertMessage('success', 'Congratulations! You solved the puzzle!');
@@ -239,17 +103,10 @@ export default function CrosswordGame() {
 
   return (
     <div className="container">
-      {/* <div className="header">
-        <div class="logo">xword.io</div>
-        <nav class="nav">
-          <ul>
-            <li><a href="#">About</a></li>
-          </ul>
-        </nav>
-      </div> */}
+      {/* <div className="header">xword</div> */}
       <div className="board-container">
         <div className="game">
-          <Board 
+          <Game 
             size={data.size} 
             squares={squares} 
             onChange={handleSquareChange} 
@@ -257,7 +114,7 @@ export default function CrosswordGame() {
         </div>
         
         <div className="info">
-          <GameInfo 
+          <Info 
             data={data}
             success={success}
             onCheck={handleCheck}
@@ -268,8 +125,6 @@ export default function CrosswordGame() {
           />
         </div>
       </div>
- 
-      {/* <div className="footer"><h1></h1></div> */}
     </div>
   );
 }

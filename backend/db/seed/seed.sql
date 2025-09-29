@@ -21,7 +21,7 @@ INSERT INTO words (id, word, clue) VALUES
 (16, 'seers', 'they saw it coming'),
 (17,'taker', 'One who’s not a giver.'),
 (18, 'agave', 'Plant that’s always up for a shot.' ),
-(19, 'files', 'They smooth things over—or pile things up.'),
+(19, 'files', 'pile up'),
 (20, 'flint', 'Stone that really sparks.'),
 (21, 'yeats', 'Poet who made words dance to a Celtic beat.'),
 (22, 'taffy', 'Pulls no punches—just sugar.'),
@@ -31,8 +31,7 @@ INSERT INTO words (id, word, clue) VALUES
 (26, 'rests', 'Takes a break, musically or otherwise.');
 
 INSERT INTO puzzles (id, size, hash) VALUES 
-(2, 5, 'dGFtZXNpbWFnZXRpbmdlZW50ZXJyZWFycw=='),
-(3, 5, 'test');
+(2, 5, 'dGFtZXNpbWFnZXRpbmdlZW50ZXJyZWFycw==');
 
 INSERT INTO puzzle_words (puzzle_id, word_id, across, idx) VALUES
 (1, 1, 1, 0),

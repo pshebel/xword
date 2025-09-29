@@ -1,8 +1,10 @@
-scraper/data/*
 backend/db/data/*
 
 frontend/node_modules/*
 frontend/build/*
+
+*ssl
+*xword.env
 
 *inventory.yml
 
