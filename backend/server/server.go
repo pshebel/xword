@@ -3,11 +3,14 @@ package server
 import (
 	"log"
 	"net/http"
+	"fmt"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/handlers"
 	"github.com/pshebel/xword/backend/transport"
+	"github.com/pshebel/xword/backend/env"
+
 )
 
 var startTime = time.Now()
@@ -31,8 +34,9 @@ func InitServer() (*http.Server) {
 	r.HandleFunc("/api/puzzle", transport.GetPuzzleHandler).Methods("GET")
 	r.HandleFunc("/api/check", transport.PostCheckHandler).Methods("POST")
 
+	fmt.Println(env.AllowedOrigins)
 	cors := handlers.CORS(
-        handlers.AllowedOrigins([]string{"http://localhost:3000"}), // React dev server
+        handlers.AllowedOrigins(env.AllowedOrigins), // React dev server
         handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"}),
         handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
     )
