@@ -25,6 +25,7 @@ body {
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
+  min-width: 100vw;
 }
 .header {
   /* display: flex;
@@ -76,8 +77,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-
-
 }
 
 .square {
@@ -252,9 +251,14 @@ ul {
 @media (max-width: 1000px) {
   .container {
     align-items: flex-start;
-    padding-top: 1rem;
-    height: auto;
-    min-height: 100vh;
+
+    /* min-height: 100vh; */
+  }
+  .header {
+    min-width: 100vw;
+  }
+  .footer {
+    min-width: 100vw;
   }
   /* .game {
     padding-top: 10rem;
