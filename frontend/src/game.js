@@ -1,23 +1,25 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react'
 
 // Square Component
-const Square = ({ size, index, inFocus, isFocus, value, onChange, onClick, inputRef }) => {
-    let name = "square";
-    if (isFocus) {
-        name += " is-focus";
+const Square = ({ size, block, index, inFocus, isFocus, value, onChange, onClick, inputRef }) => {
+    let name = "square"
+    if (block) {
+        name += " block "
+    } else if (isFocus) {
+        name += " is-focus"
     } else {
         if (inFocus) {
             name += " in-focus"
         }
     }
     if (index === 0) {
-        name = name + " top-left";
+        name = name + " top-left"
     } else if (index === size - 1) {
-        name = name + " top-right";
+        name = name + " top-right"
     } else if (index === size * (size - 1)) {
-        name = name + " bottom-left";
+        name = name + " bottom-left"
     } else if (index === (size * size) - 1) {
-        name = name + " bottom-right";
+        name = name + " bottom-right"
     }
     
     return (
@@ -25,107 +27,135 @@ const Square = ({ size, index, inFocus, isFocus, value, onChange, onClick, input
             ref={inputRef}
             className={name}
             maxLength={1}
+            readOnly={block}
             value={value || ''}
             onClick={(e) => onClick(index, e)}
             onChange={() => {}} // Prevents React warning, actual logic in onKeyDown
             onKeyDown={(e) => onChange(index, e)}
         />
-    );
-};
+    )
+}
 
 // Board Component
-const Board = ({ size, squares, onChange }) => {
-    const inputRefs = useRef([]);
-    const [focus, setFocus] = useState(0);
+const Board = ({ size, block, squares, onChange }) => {
+    const inputRefs = useRef([])
+    const [focus, setFocus] = useState(0)
     const [orientation, setOrientation] = useState(true); // true = across, false = down
-
+    // console.log("SQUARES",squares)
     useEffect(() => {
         if (inputRefs.current[0]) {
-            inputRefs.current[0].focus();
-            setFocus(0);
+            inputRefs.current[0].focus()
+            setFocus(0)
         }
-    }, [size]);
+    }, [size])
 
-    
     const move = (index) => {
-        console.log('move to ',index)
-        inputRefs.current[index]?.focus();
-        setFocus(index);
+        inputRefs.current[index]?.focus()
+        setFocus(index)
     }
     
     const forward = (index) => {
-        console.log('move forward');
         if (index !== size*size -1) {
             if (orientation) {
-                move(index+1);
+                if (block.includes(index+1)) {
+                    forward(index+1)
+                    return
+                }
+                move(index+1)
             } else {
                 const row = Math.floor(index/size)
-                const col = index - (row*size);
+                const col = index - (row*size)
                 if (row < size-1) {
-                    move((row+1)*size + col);
+                    if (block.includes((row+1)*size + col)) {
+                        forward((row+1)*size + col)
+                        return
+                    }
+                    move((row+1)*size + col)
                 } else {
-                    move(col+1);
+                    if (block.includes(col+1)) {
+                        forward(col + 1)
+                        return
+                    }
+                    move(col+1)
                 }
             }
+        } else {
+            setOrientation(!orientation)
+            if (block.includes(0)) {
+                forward(0)
+                return
+            }
+            move(0)
         }
     }
 
     const back = (index) => {
-        console.log('move back');
         if (index !== 0) {
             if (orientation) {
-                move(index-1);
+                if (block.includes(index-1)){
+                    back(index-1)
+                    return
+                }
+                move(index-1)
             } else {
                 const row = Math.floor(index/size)
-                const col = index - (row*size);
+                const col = index - (row*size)
                 if (row > 0) {
-                    move((row-1)*size + col);
+                    if (block.includes((row-1)*size + col)) {
+                        back((row-1)*size + col)
+                        return
+                    }
+                    move((row-1)*size + col)
                 } else {
-                    move((size-1)*size + col-1);
+                    if (block.indcludes((size-1)*size + col-1)) {
+                        back((size-1)*size + col-1)
+                        return
+                    }
+                    move((size-1)*size + col-1)
                 }
             }
         }
     }
 
     const handleSquareChange = (index, e) => {
-        console.log(e)
-
         if (e.key === 'Backspace') {
             if (squares[index] === '') {
                 back(index)
             } else {
-                onChange(index, '');
+                onChange(index, '')
             }
         }
         if (e.key === 'Tab') {
             e.preventDefault()
-            forward(index);
+            forward(index)
         }
         // input can only be alphabetical
         if (RegExp(/^\p{L}$/,'u').test(e.key)) {
             const value = e.key.toUpperCase()
-            onChange(index, value);
-            forward(index);
+            onChange(index, value)
+            forward(index)
         }
-    };
+    }
 
     const handleSquareClick = (index, e) => {
-        console.log(e)
-        console.log('switching ', orientation)
         // on a double click, switch orientation
         if (index === focus) {
-            setOrientation(!orientation);
+            setOrientation(!orientation)
         } else {
-            setFocus(index);
+            setFocus(index)
         }
-    };
+    }
     
     const renderSquare = (index) => {
-        const inFocus = (orientation) ? Math.floor(focus/size) === Math.floor(index/size) : focus % size === index % size;  
+        const inFocus = (orientation) ? Math.floor(focus/size) === Math.floor(index/size) : focus % size === index % size;
+        const isBlock = block.includes(index) ? true : false;
+
+        // console.log(index, block, isBlock)
         return (
             <Square 
                 key={index}
                 size={size}
+                block={isBlock}
                 index={index}
                 inFocus={inFocus}
                 isFocus={index === focus}
@@ -135,36 +165,37 @@ const Board = ({ size, squares, onChange }) => {
                 inputRef={(el) => (inputRefs.current[index] = el)}
             />
         )
-    };
+    }
 
     const renderRow = (rowIndex) => {
-        const row = [];
+        const row = []
         for (let col = 0; col < size; col++) {
-            const squareIndex = rowIndex * size + col;
-            row.push(renderSquare(squareIndex));
+            const squareIndex = rowIndex * size + col
+            row.push(renderSquare(squareIndex))
         }
         return (
             <div key={rowIndex} className="board-row">
                 {row}
             </div>
-        );
-    };
-
-    const board = [];
-    for (let row = 0; row < size; row++) {
-        board.push(renderRow(row));
+        )
     }
 
-    return <div className="board">{board}</div>;
-};
+    const board = []
+    for (let row = 0; row < size; row++) {
+        board.push(renderRow(row))
+    }
+
+    return <div className="board">{board}</div>
+}
 
 // Game Component (default export)
-export default function Game({ size, squares, onChange }) {
+export default function Game({ size, block, squares, onChange }) {
     return (
         <Board 
-            size={size} 
+            size={size}
+            block={block}
             squares={squares} 
             onChange={onChange} 
         />
-    );
+    )
 }

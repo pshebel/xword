@@ -2,61 +2,57 @@
 -- uno
 -- bot
 
-INSERT INTO words (id, word, clue) VALUES
-(1, 'bug', 'lives in code'),
-(2, 'bot', 'twitter user'),
-(3, 'got', 'Sean Bean dies'),
-(4, 'uno', 'shitty card game'),
-(5, 'bub', 'rude greating'),
-(6, 'uno', 'lowest tier pizza place'),
-(7, 'tames', 'makes less wild'),
-(8, 'image', 'visual representation'),
-(9, 'tinge', 'a faint hint'),
-(10, 'enter', 'go in'),
-(11, 'rears', 'multiple hindquarters'),
-(12, 'titer', 'lab dilution result'),
-(13, 'amine', 'Nitrogen-containing organic base'),
-(14, 'manta', 'large ray'),
-(15, 'egger', 'someone who supplies fowl products'),
-(16, 'seers', 'they saw it coming'),
-(17,'taker', 'One who’s not a giver.'),
-(18, 'agave', 'Plant that’s always up for a shot.' ),
-(19, 'files', 'pile up'),
-(20, 'flint', 'Stone that really sparks.'),
-(21, 'yeats', 'Poet who made words dance to a Celtic beat.'),
-(22, 'taffy', 'Pulls no punches—just sugar.'),
-(23, 'agile', 'Quick on its feet, not fragile.'),
-(24, 'kalia', 'of the Vast'),
-(25, 'event', 'Something worth noting'),
-(26, 'rests', 'Takes a break, musically or otherwise.');
+INSERT INTO puzzles (id, size) VALUES 
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", 5),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", 5);
 
-INSERT INTO puzzles (id, size, hash) VALUES 
-(2, 5, 'dGFtZXNpbWFnZXRpbmdlZW50ZXJyZWFycw==');
+INSERT INTO words (id, text) VALUES
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a00", "zooms"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a01", "arson"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a02", "prada"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a03", "**ker"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a04", "**asl"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a05", "zap**"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a06", "orr**"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a07", "osaka"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a08", "modes"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a09", "snarl"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a10", "**ase"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a11", "snare");
 
-INSERT INTO puzzle_words (puzzle_id, word_id, across, idx) VALUES
-(1, 1, 1, 0),
-(1, 2, 1, 2),
-(1, 3, 0, 2),
-(1, 4, 1, 1),
-(1, 5, 0, 0),
-(1, 6, 0, 1),
-(2, 7, 1, 0),
-(2, 8, 1, 1),
-(2, 9, 1, 2),
-(2, 10, 1, 3),
-(2, 11, 1, 4),
-(2, 12, 0, 0),
-(2, 13, 0, 1),
-(2, 14, 0, 2),
-(2, 15, 0, 3),
-(2, 16, 0, 4),
-(3, 17, 1, 0),
-(3, 18, 1, 1),
-(3, 19, 1, 2),
-(3, 20, 1, 3),
-(3, 21, 1, 4),
-(3, 22, 0, 0),
-(3, 23, 0, 1),
-(3, 24, 0, 2),
-(3, 25, 0, 3),
-(3, 26, 0, 4);
+INSERT INTO clues (id, word_id, text) VALUES
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a00", "Speeds up rapidly"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a01", "Set fire to intentionally"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b02", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a02", "Luxury fashion brand"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b03", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a03", "Sound a goat makes"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b04", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a04", "Sign language abbreviation"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b05", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a05", "Electric shock or sudden burst"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b06", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a06", "Irish mythical creature"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b07", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a07", "City in Japan famous for food"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b08", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a08", "styles or fashions"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b09", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a09", "Growls with displeasure"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b10", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a10", "Abbreviation for art student"),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b11", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a11", "Trap or catch unawares");
+
+
+INSERT INTO puzzle_words (puzzle_id, word_id, across, idx) VALUES 
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a00", 1, 0),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a01", 1, 1),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a02", 1, 2),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a03", 1, 3),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a04", 1, 4),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a05", 0, 0),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a06", 0, 1),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a07", 0, 2),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a08", 0, 3),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a09", 0, 4),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a00", 1, 0),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a01", 1, 1),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a02", 1, 2),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a03", 1, 3),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a10", 1, 4),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a05", 0, 0),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a06", 0, 1),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a07", 0, 2),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a08", 0, 3),
+("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a11", 0, 4);

@@ -1,0 +1,7 @@
+.container {
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: flex-start;
+    padding: 5rem;
+}

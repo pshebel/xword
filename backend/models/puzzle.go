@@ -1,14 +1,25 @@
 package models
 
 type Puzzle struct {
-    ID		int `json:"id"`
+    ID		string `json:"id"`
     Size int `json:"size"`
-    Across []Clue `json:"across"`
-    Down []Clue `json:"down"`
-    Hash string `json:"hash"`
+    Block []int `json:"block"`
+    Clues []Clue `json:"clues"`
 }
 
 type Clue struct {
-    ID int `json:"id"`
+    Index int `json:"index"`
+    Across bool `json:"across"`
     Text string `json:"text"`
 }
+
+type CheckRequest struct {
+    ID string `json:"id"`
+    Words map[int]string `json:"words"`
+}
+
+type CheckResponse struct {
+    ID string `json:"id"`
+    Success bool `json:"success"`
+}
+

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import Game from './game';
 import Info from './info';
+import Success from './success';
 
 // Main App Component
 export default function App() {
-  const [data, setData] = useState({ id: 0, size: 3, across: [], down: [], hash: "" });
+  const [data, setData] = useState({ id: 0, size: 3, across: [], down: [], block: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [squares, setSquares] = useState([]);
@@ -23,7 +24,9 @@ export default function App() {
   const fetchData = async () => {
     setLoading(true);
     setError(null);
-    
+    setData({ id: 0, size: 3, across: [], down: [], block: [] });
+    setSquares([]);
+
     try {
       const response = await fetch(`${process.env.API_URL}/api/puzzle`);
       if (!response.ok) {
@@ -31,6 +34,13 @@ export default function App() {
       }
       const result = await response.json();
       setData(result);
+      let tmp = Array(result.size * result.size).fill("")
+      // console.log(result.block)
+      result.block.forEach((b) => {
+        // console.log("setting ", b, " to *")
+        tmp[b] = "*"
+      })
+      setSquares(tmp)
     } catch (err) {
       setError(err.message);
       showAlertMessage('error', 'Failed to load puzzle. Please try again.');
@@ -56,21 +66,59 @@ export default function App() {
     setSquares(newSquares);
   };
 
-  const handleCheck = () => {
-    const userInput = squares.join("").toLowerCase();
-    const userHash = btoa(userInput);
-    console.log(userHash, data.hash);
-    if (userHash === data.hash) {
-      setSuccess(true);
-      showAlertMessage('success', 'Congratulations! You solved the puzzle!');
-    } else {
-      showAlertMessage('error', 'Not quite right. Keep trying!');
+  const handleCheck = async () => {
+    console.log("checking answer")
+    const userInput = {}
+    // todo: the squares block elements will occasionally be empty instead of *
+    let tmp = squares.slice()
+    data.block.forEach((b) => {
+        if (b !== "*") {
+          console.log("BUG STILL EXISTS")
+        }
+        // console.log("setting ", b, " to *")
+        tmp[b] = "*"
+      })
+    
+    for (let i=0;i<data.size;i++){
+      userInput[i] = tmp.slice(i*data.size, (i+1)*data.size).join("").toLowerCase();
     }
+    const req = {id: data.id, words: userInput}
+    try {
+      const response = await fetch(`${process.env.API_URL}/api/check`,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(req),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      if (result.success) {
+        showAlertMessage('success', 'Congratulations! You solved the puzzle!');
+        setSuccess(true);
+      } else {
+        showAlertMessage('error', 'Not quite right. Keep trying!');
+      }
+    } catch (err) {
+      setError(err.message);
+      showAlertMessage('error', 'Failed to load puzzle. Please try again.');
+    }
+    // const userHash = btoa(userInput);
+    // console.log(userHash, data.hash);
+    // if (userHash === data.hash) {
+    //   setSuccess(true);
+    //   showAlertMessage('success', 'Congratulations! You solved the puzzle!');
+    // } else {
+    //   showAlertMessage('error', 'Not quite right. Keep trying!');
+    // }
   };
 
   const handleReset = () => {
     setSuccess(false);
     setSquares([]);
+    setData({ id: 0, size: 3, across: [], down: [], block: [] });
     setShowMessage(false);
     fetchData();
   };
@@ -103,26 +151,40 @@ export default function App() {
 
   return (
     <div className="container">
-      {/* <div className="header">xword</div> */}
-      <div className="board-container">
-        <div className="game">
-          <Game 
-            size={data.size} 
-            squares={squares} 
-            onChange={handleSquareChange} 
-          />
+      <div className="header">
+        <div class="logo">xword.io</div>
+      </div>
+      {success ? (
+        <Success onReset={handleReset} />
+      ):(
+        <div className="board-container">
+          <div className="game">
+            <Game 
+              size={data.size} 
+              block={data.block}
+              squares={squares} 
+              onChange={handleSquareChange} 
+            />
+          </div>
+          <div className="info">
+            <Info 
+              data={data}
+              success={success}
+              onCheck={handleCheck}
+              onReset={handleReset}
+              showMessage={showMessage}
+              messageVariant={messageVariant}
+              messageText={messageText}
+            />
+          </div>
         </div>
-        
-        <div className="info">
-          <Info 
-            data={data}
-            success={success}
-            onCheck={handleCheck}
-            onReset={handleReset}
-            showMessage={showMessage}
-            messageVariant={messageVariant}
-            messageText={messageText}
-          />
+      )}
+      
+      <div className="footer">
+        <div className="footer-container">
+          <span class="footer-text">Contact Me: phil.shebel@gmail.com</span>
+          <span class="footer-text">Last Updated: {}</span>
+          <span class="footer-text">Version: {}</span>
         </div>
       </div>
     </div>

@@ -29,11 +29,17 @@ func InitServer() (*http.Server) {
 	r.Use(loggingMiddleware)
 
 	r.HandleFunc("/api/puzzle", transport.GetPuzzleHandler).Methods("GET")
+	r.HandleFunc("/api/check", transport.PostCheckHandler).Methods("POST")
 
-	corsObj := handlers.AllowedOrigins([]string{"*"})
+	cors := handlers.CORS(
+        handlers.AllowedOrigins([]string{"http://localhost:3000"}), // React dev server
+        handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"}),
+        handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
+    )
+
 
 	srv := &http.Server{
-		Handler:      handlers.CORS(corsObj)(r),
+		Handler:      cors(r),
 		Addr:         ":4000",
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
