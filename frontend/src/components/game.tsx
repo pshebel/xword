@@ -37,7 +37,7 @@ const Square = ({size, index, inFocus, onClick, onChange, inputRefs}: SquareProp
 
   return (
     <Pressable disabled={isBlock} onPressIn={() => onClick(index)}>
-      <TextInput 
+      <TextInput
         style={squareStyles}
         ref={el => { inputRefs.current[index] = el; }}
         maxLength={1}

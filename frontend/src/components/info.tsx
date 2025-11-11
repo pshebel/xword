@@ -1,15 +1,32 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
+import { Platform, FlatList, StyleSheet, Text, TouchableOpacity, View, Dimensions, Alert } from 'react-native';
 import {useMutation } from '@tanstack/react-query';
 import { useGameStore } from '@store/game';
-import {useStatusStore} from '@store/status'
 import { CheckRequest, CheckResponse } from '@types/api';
 import Button from '@components/button';
 
 export default function Info({ puzzle }) {
   const {squares, setSuccess} = useGameStore();
-  const {timedText} = useStatusStore();
   const across = [...puzzle.clues].filter((clue) => clue.across).sort((a, b) => a.index - b.index)
   const down = [...puzzle.clues].filter((clue) => !clue.across).sort((a, b) => a.index - b.index)
+
+
+
+  const fail = () => {
+    if (Platform.OS === 'web') {
+      return window.confirm('Not quite right. Keep Trying!')
+    } else {
+      return Alert.alert('Alert Title', 'My Alert Msg', [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ])
+    }
+   
+  }
+  
 
   const mutation = useMutation({
     mutationFn: async (req: CheckRequest) => {
@@ -26,11 +43,13 @@ export default function Info({ puzzle }) {
       if (data.success) {
         setSuccess(true);
       } else {
-        timedText("Not quite right. Keep trying!");
+        fail()
+        // timedText("Not quite right. Keep trying!");
       }
     },
     onError: (err: any) => {
-      timedText(err.message);
+      Alert.alert(err.message);
+      // timedText(err.message);
     }
   });
 
@@ -74,13 +93,14 @@ export default function Info({ puzzle }) {
 const { width, height } = Dimensions.get('window');
 const mobile = StyleSheet.create({
   info: {
-    maxWidth:  width  - 50 // same width as puzzle
+    maxWidth:  width - 50 // same width as puzzle
   }
 })
 
 const web = StyleSheet.create({
   info: {
     maxHeight: width / 4, // same height as puzzle
+    maxWidth: width / 4
   }
 })
 

@@ -48,7 +48,7 @@ const mobile = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
-    minHeight: height - 150,
+    minHeight: height - 100,
     minWidth: '100%',
     gap: 20,
   }

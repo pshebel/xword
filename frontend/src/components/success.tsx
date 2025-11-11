@@ -1,6 +1,5 @@
 import { useGameStore } from '@/store/game';
 import { usePuzzleStore } from '@/store/puzzle';
-import { useStatusStore } from '@/store/status';
 import { getPuzzle } from '@hooks/puzzles';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '@components/button';
@@ -8,13 +7,11 @@ import Button from '@components/button';
 
 export default function Success() {
     const {reset: resetGame} = useGameStore();
-    const  {reset: resetStatus} = useStatusStore();
     const {reset: resetPuzzle} = usePuzzleStore();
     const { refetch } = getPuzzle();
     
     const handleClick = async () => {
         resetGame();
-        resetStatus();
         resetPuzzle();
         await refetch();
     }

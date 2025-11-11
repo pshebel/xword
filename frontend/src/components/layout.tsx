@@ -10,7 +10,6 @@ export default function Layout() {
     <ScrollView style={styles.layout} contentContainerStyle={{ flexGrow: 1 }}>
       <Header />
       <Container />
-      <Status />
       <Footer />
     </ScrollView>
   );
