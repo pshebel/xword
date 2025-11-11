@@ -1,39 +1,250 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { useEffect } from 'react';
+import { StyleSheet, Pressable, TextInput, View, Dimensions } from 'react-native';
+import { useRef, useEffect, KeyboardEvent } from 'react';
 import { useGameStore } from '@store/game';
 import { Puzzle } from '@types/api';
 
-
-export default function Game({puzzle}) {
-  const {squares} = useGameStore()
-  const board = []
-  for (let i=0;i<puzzle.size;i++) {
-    const row = []
-    for (let j=0;j<puzzle.size;j++) {
-      const index = i*puzzle.size + j;
-      row.push(<Text style={styles.square}>{index}</Text>)
+type SquareProps = {
+  size: number,
+  index: number,
+  inFocus: boolean,
+  onClick: (index: number) => void,
+  onChange: (index: number, e: any) => void,
+  inputRefs: React.RefObject<Array<TextInput | null>>;
+}
+const Square = ({size, index, inFocus, onClick, onChange, inputRefs}: SquareProps) => {
+  const {squares, focus} = useGameStore();
+  const isBlock = squares[index] === '*'
+  let squareStyles = [styles.square]
+  if (isBlock) {
+    squareStyles.push(styles.block)
+  } else if (focus === index) {
+    squareStyles.push(styles.isFocus)
+  } else {
+    if (inFocus) {
+      squareStyles.push(styles.inFocus)
     }
-    board.push(<View style={styles.row}>{row}</View>)
+  }
+
+  if (index === 0) {
+    squareStyles.push(styles.topLeft)
+  } else if (index === size - 1) {
+    squareStyles.push(styles.topRight)
+  } else if (index === size * (size - 1)) {
+    squareStyles.push(styles.bottomLeft)
+  } else if (index === (size * size) - 1) {
+    squareStyles.push(styles.bottomRight)
+  }
+
+  return (
+    <Pressable disabled={isBlock} onPressIn={() => onClick(index)}>
+      <TextInput 
+        style={squareStyles}
+        ref={el => { inputRefs.current[index] = el; }}
+        maxLength={1}
+        editable={!isBlock}
+        value={squares[index] || ''}
+        onKeyPress={(e) => onChange(index, e)}
+      />
+    </Pressable>
+  )
+}
+
+type GameProps = {
+  puzzle: Puzzle
+}
+
+export default function Game({puzzle}: GameProps) {
+  const inputRefs = useRef<Array<TextInput | null>>([]);
+  const {squares, orientation, focus, setSquares, setOrientation, setFocus} = useGameStore()
+  useEffect(() => {
+    if (puzzle.size > 0) {
+      let tmp = Array(puzzle.size * puzzle.size).fill("")
+      puzzle.block.forEach((b: number) => {
+        tmp[b] = "*"
+      })
+      setSquares(tmp);
+      inputRefs.current[focus]?.focus()
+    }
+  }, [puzzle.id]);
+
+  const move = (index: number) => {
+      inputRefs.current[index]?.focus()
+      setFocus(index)
+  }
+  
+  const forward = (index: number) => {
+    if (index !== puzzle.size*puzzle.size -1) {
+      if (orientation) {
+        if (puzzle.block.includes(index+1)) {
+            forward(index+1)
+            return
+        }
+        move(index+1)
+      } else {
+        const row = Math.floor(index/puzzle.size)
+        const col = index - (row*puzzle.size)
+        if (row < puzzle.size-1) {
+            if (puzzle.block.includes((row+1)*puzzle.size + col)) {
+                forward((row+1)*puzzle.size + col)
+                return
+            }
+            move((row+1)*puzzle.size + col)
+        } else {
+            if (puzzle.block.includes(col+1)) {
+                forward(col + 1)
+                return
+            }
+            move(col+1)
+        }
+      }
+    } else {
+      setOrientation()
+      if (puzzle.block.includes(0)) {
+          forward(0)
+          return
+      }
+      move(0)
+    }
+  }
+
+  const back = (index: number) => {
+    if (index !== 0) {
+        if (orientation) {
+            if (puzzle.block.includes(index-1)){
+                back(index-1)
+                return
+            }
+            move(index-1)
+        } else {
+            const row = Math.floor(index/puzzle.size)
+            const col = index - (row*puzzle.size)
+            if (row > 0) {
+                if (puzzle.block.includes((row-1)*puzzle.size + col)) {
+                    back((row-1)*puzzle.size + col)
+                    return
+                }
+                move((row-1)*puzzle.size + col)
+            } else {
+                if (puzzle.block.includes((puzzle.size-1)*puzzle.size + col-1)) {
+                    back((puzzle.size-1)*puzzle.size + col-1)
+                    return
+                }
+                move((puzzle.size-1)*puzzle.size + col-1)
+            }
+        }
+    }
+  }
+
+  const handleSquareChange = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      if (squares[index] === '') {
+          back(index)
+      } else {
+          let tmp = squares
+          tmp[index] = ''
+          setSquares(tmp)
+      }
+    }
+    if (e.key === 'Tab') {
+      e.preventDefault()
+      forward(index)
+    }
+    // input can only be alphabetical
+    if (RegExp(/^\p{L}$/,'u').test(e.key)) {
+      const value = e.key.toUpperCase()
+      let tmp = squares
+      tmp[index] = value
+      setSquares(tmp)
+      forward(index)
+    }
+  }
+
+  const handleSquareClick = (index: number) => {
+    // on a double click, switch orientation
+    if (index === focus) {
+        setOrientation()
+    } else {
+        setFocus(index)
+    }
+  }
+  const renderSquare = (index: number) => {
+    const inFocus = (orientation) ? Math.floor(focus/puzzle.size) === Math.floor(index/puzzle.size) : focus % puzzle.size === index % puzzle.size;
+
+    return (
+      <Square
+        size={puzzle.size}
+        index={index}
+        inFocus={inFocus}
+        onClick={handleSquareClick}
+        onChange={handleSquareChange}
+        inputRefs={inputRefs}
+      />
+    )
+  }
+
+  let rows = []
+  for (let i: number=0;i < puzzle.size;i++) {
+    let row = []
+    for (let j: number=0; j<puzzle.size;j++) {
+      const index = i*puzzle.size+j;
+      row.push(renderSquare(index))
+    }
+    rows.push(<View key={i} style={styles.row}>{row}</View>)
   }
   return (
     <View style={styles.game}>
-      {board}
+      {rows}
     </View>
-  );
+  )
 }
 
-
+const { width, height } = Dimensions.get('window');
+const size = (height > width) ? (width / 5) - 10 : width / 20;
 const styles = StyleSheet.create({
   game: {
-    flex: 1,
+    // flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
   row: {
+    // flex: 1,
     display: 'flex',
     flexDirection: 'row',
   },
   square: {
-    flex: 1,
+    width: size,
+    height: size,
+    fontSize: 32,
+    textAlign: 'center',
+    backgroundColor: '#fff',
+    borderColor: '#999',
+    borderWidth: 1,
+    marginRight: -1,
+    marginTop: -1,
+    outlineStyle: 'none',
+    fontFamily: 'Cooper-Black',
+  },
+  block: {
+    backgroundColor: '#000'
+  },
+  isFocus: {
+    backgroundColor: '#C12C2C',
+  },
+  inFocus: {
+    backgroundColor: '#E9BCB7',
+  },
+  topLeft: {
+    borderTopLeftRadius: 20,
+  },
+  topRight: {
+    borderTopRightRadius: 20,
+  },
+  bottomLeft: {
+    borderBottomLeftRadius: 20,
+  },
+  bottomRight: {
+    borderBottomRightRadius: 20,
   }
 });

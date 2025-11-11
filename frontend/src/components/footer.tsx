@@ -12,8 +12,9 @@ export default function Footer() {
 
 const styles = StyleSheet.create({
   footer: {
-    flex: 1,
-    flexShrink: 0,
+    // flex: 1,
+    width: '100%',
+    height: 50,
     backgroundColor: '#000',
     display: 'flex',
     flexDirection: 'row',

@@ -16,23 +16,6 @@ services:
     networks:
       - appnet
 
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: dockerfiles/dev
-  #   container_name: react-app
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./frontend/src:/app/src
-  #     - ./frontend/public:/app/public
-  #   environment:
-  #     - API_URL=http://localhost:4000
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - appnet
-
 networks:
   appnet:
     driver: bridge

@@ -11,9 +11,10 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   header: {
-    flex: 1,
+    // flex: 1,
+    width: '100%',
+    height: 50,
     backgroundColor: '#000',
-    flexShrink: 0,  
     alignItems: 'flex-start',
     justifyContent: 'center',
   },

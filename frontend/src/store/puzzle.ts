@@ -4,16 +4,21 @@ import { Puzzle } from '@types/api';
 interface PuzzleState {
   puzzle: Puzzle;
   setPuzzle: (puzzle: Puzzle) => void;
+  reset: () => void;
 }
-
-export const usePuzzleStore = create<PuzzleState>((set) => ({
+const initialState = {
   puzzle: {
     id: '0',
     size: 0,
     block: [],
     clues: []
   },
-  setPuzzle: (puzzle) => set({ puzzle })
+}
+
+export const usePuzzleStore = create<PuzzleState>((set) => ({
+  ...initialState,
+  setPuzzle: (puzzle) => set({ puzzle }),
+  reset: () => set(initialState),
 }));
 // import { create } from 'zustand';
 // import { persist, createJSONStorage } from 'zustand/middleware';

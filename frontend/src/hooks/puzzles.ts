@@ -1,22 +1,15 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { setPuzzle } from '@store/puzzle';
-import { setSquares } from '@store/game';
+import { useQuery, UseQueryResult, useMutation } from '@tanstack/react-query';
 import { Puzzle, CheckRequest, CheckResponse } from '@types/api';
+import { useGameStore } from '@/store/game';
+import { useStatusStore } from '@/store/status';
+
 
 export const getPuzzle = (): UseQueryResult<Puzzle> => {
     return useQuery({
-        queryKey: ['puzzles'],
+        queryKey: ['puzzle'],
         queryFn: async (): Promise<Puzzle> => {
             const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/puzzle`);
             return await response.json()
-        },
-        onSuccess: data => {
-            setPuzzle(data)
-            const squares = Array(data.size * data.size).fill("");
-            data.block.forEach((b: number) => {
-                squares[b] = "*";
-            });
-            setSquares(squares)
         }
     })
 }

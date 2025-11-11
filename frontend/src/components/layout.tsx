@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import Header from './header';
 import Status from './status';
@@ -7,20 +7,22 @@ import Footer from './footer';
 
 export default function Layout() {
   return (
-    <View style={styles.layout}>
-        <Header />
-        <Status />
-        <Container />
-        <Footer />
-    </View>
+    <ScrollView style={styles.layout} contentContainerStyle={{ flexGrow: 1 }}>
+      <Header />
+      <Container />
+      <Status />
+      <Footer />
+    </ScrollView>
   );
 }
 
 
 const styles = StyleSheet.create({
   layout: {
-    flex: 1,
+    flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
+    // minWidth: '100%',
+    // minHeight: '100%'
   },
 });
