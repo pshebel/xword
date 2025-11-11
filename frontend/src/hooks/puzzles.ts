@@ -1,7 +1,5 @@
-import { useQuery, UseQueryResult, useMutation } from '@tanstack/react-query';
-import { Puzzle, CheckRequest, CheckResponse } from '@types/api';
-import { useGameStore } from '@/store/game';
-import { useStatusStore } from '@/store/status';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { Puzzle } from '@types/api';
 
 
 export const getPuzzle = (): UseQueryResult<Puzzle> => {

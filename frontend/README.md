@@ -1,1 +1,0 @@
-held off as long as possible adding a bundler, but added metro to allow zustand which uses an ESM bundler that requires specific resolver

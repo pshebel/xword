@@ -19,7 +19,7 @@ export default function Container() {
   if (error) {
     return (
       <View style={styles.error}>
-        <Text>Error</Text>
+        <Text>Error: {error.message}</Text>
       </View>
     )
   }
@@ -67,7 +67,22 @@ const web = StyleSheet.create({
 
 const styles = StyleSheet.create({
   container: (height>width) ? mobile.container : web.container,
-  loading: {},
-  error: {},
-  refetch: {},
+  loading: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    fontFamily: 'Cooper-Black',
+    fontSize: 32,
+  },
+  error: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    fontFamily: 'Cooper-Black',
+    fontSize: 32,
+  },
 });

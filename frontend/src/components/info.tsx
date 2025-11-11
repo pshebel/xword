@@ -2,8 +2,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View, Dimensions } from '
 import {useMutation } from '@tanstack/react-query';
 import { useGameStore } from '@store/game';
 import {useStatusStore} from '@store/status'
-import { checkPuzzle } from '@hooks/puzzles';
-import { Clue, CheckRequest, CheckResponse } from '@types/api';
+import { CheckRequest, CheckResponse } from '@types/api';
 import Button from '@components/button';
 
 export default function Info({ puzzle }) {
@@ -40,16 +39,7 @@ export default function Info({ puzzle }) {
     for (let i=0;i<puzzle.size;i++){
       userInput.set(i, squares.slice(i*puzzle.size, (i+1)*puzzle.size).join("").toLowerCase());
     }
-    // const req = {id: puzzle.id, words: userInput}
     mutation.mutate({ id: puzzle.id, words: Object.fromEntries(userInput) });
-    // const {data, error} = checkPuzzle(req)
-    // if (error) {
-    //   timedText(error.message)
-    // } else if (data?.success) {
-    //   setSuccess(true)
-    // } else {
-    //   timedText('Not quite right. Keep trying!')
-    // }
   }
 
   return (
@@ -64,7 +54,7 @@ export default function Info({ puzzle }) {
               <Text style={styles.clue} >{item.index+1}: {item.text}</Text>
           )}
         />
-        <Text style={styles.infoHeader}>Down</Text>
+          <Text style={styles.infoHeader}>Down</Text>
         <FlatList
           data={down}
           style={styles.infoList}
@@ -73,10 +63,6 @@ export default function Info({ puzzle }) {
             <Text style={styles.clue}>{item.index+1}: {item.text}</Text>
           )}
         />
-      
-        {/* <TouchableOpacity style={styles.buttonContainer} onPress={() => handleCheck()}>
-          <Text style={styles.button}>Check</Text>
-        </TouchableOpacity> */}
         <Button text={"Check"} onClick={handleCheck}/>
       </View>
     </View>
@@ -102,13 +88,6 @@ const styles = StyleSheet.create({
   infoContainer: (height > width) ? mobile.info : web.info,
   info: {
     flexGrow: 1,
-    // flex: 1,
-    // display: 'flex',
-    // flexDirection: 'column',
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
-    // overflow: 'scroll',
-    // maxWidth: size,
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 20,

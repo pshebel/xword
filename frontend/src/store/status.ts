@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 
-
 type Status = {
   text: string;
   timedText: (message: string) => void;

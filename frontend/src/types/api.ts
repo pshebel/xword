@@ -11,7 +11,6 @@ export interface Clue {
     text: string;
 }
 
-
 export interface CheckRequest {
     id: string;
     // words: Map<number, string>;

@@ -30,9 +30,9 @@ jobs:
       run: npm ci
     
     - name: Build project
-      run: npm run build
+      run: npx expo export --platform web
       env:
-        API_URL: ${{ secrets.API_URL }}
+        EXPO_PUBLIC_API_URL: ${{ secrets.API_URL }}
     
     - name: Setup SSH key
       uses: webfactory/ssh-agent@v0.8.0
@@ -45,7 +45,7 @@ jobs:
     
     - name: Copy files to server
       run: |
-        scp -r ./build/* ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }}:~/build
+        scp -r ./dist/* ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }}:~/build
     
     - name: Move binary and set permissions
       run: |
