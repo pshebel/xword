@@ -10,10 +10,9 @@ import (
 	"github.com/pshebel/xword/backend/utils"
 )
 
-
 func GetPuzzle() (models.Puzzle, error) {
 	puzzle := models.Puzzle{}
-	db, err := utils.Open()
+	db, err := utils.GetDB()
 	if err != nil {
 		log.Fatal(err)
 		return puzzle, err
@@ -38,15 +37,25 @@ func GetPuzzle() (models.Puzzle, error) {
 	puzzle.ID = id
 	puzzle.Size = size
 	query = `
+		WITH random_prompt AS (
+			SELECT id AS prompt_id
+			FROM prompts
+			ORDER BY RANDOM()
+			LIMIT 1
+		)
 		SELECT
-			w.text AS word_text,
+			pdw.text AS padded_word_text,
 			c.text AS clue_text,
 			pw.across,
 			pw.idx
 		FROM puzzle_words pw
-		JOIN words w ON pw.word_id = w.id
-		JOIN clues c ON w.id = c.word_id
-		WHERE pw.puzzle_id = ?
+		JOIN puzzles p ON p.id = $1
+		JOIN padded_words pdw ON pdw.id = pw.padded_word_id
+		JOIN words w ON w.id = pdw.word_id
+		JOIN random_prompt rp ON TRUE
+		JOIN clues c ON c.word_id = w.id AND c.prompt_id = rp.prompt_id
+		WHERE pw.puzzle_id = p.id
+		ORDER BY pw.idx;
 	`
 
 	rows, err := db.Query(query, id)
@@ -84,15 +93,15 @@ func GetPuzzle() (models.Puzzle, error) {
 
 func CheckPuzzle(req models.CheckRequest) (models.CheckResponse, error) {
 	res := models.CheckResponse{ID: req.ID}
-	db, err := utils.Open()
+	db, err := utils.GetDB()
 	if err != nil {
 		log.Fatal(err)
 		return res, err
 	}
 
 	query := `SELECT pw.idx, w.text
-		FROM puzzle_words AS pw LEFT JOIN words as w ON pw.word_id = w.id
-		WHERE puzzle_id = ? AND across = true
+		FROM puzzle_words AS pw LEFT JOIN padded_words as w ON pw.padded_word_id = w.id
+		WHERE pw.puzzle_id = $1 AND across = TRUE
 	`
 	rows, err := db.Query(query, req.ID)
 	if err != nil {

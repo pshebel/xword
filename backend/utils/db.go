@@ -1,56 +1,48 @@
 package utils
 
 import (
-	"log"
+	"time"
 	"database/sql"
 	"fmt"
-	_ "github.com/mattn/go-sqlite3"
-	// "github.com/golang-migrate/migrate/v4"
-    // "github.com/golang-migrate/migrate/v4/database/sqlite3"
-	// _ "github.com/golang-migrate/migrate/v4/source/file"
+
 	"github.com/pshebel/xword/backend/env"
+
+	_ "github.com/lib/pq"
 )
 
-// For when we need to start handling db migrations programatically
+var pool *sql.DB
 
-// func InitDB() (*sql.DB, error) {
-// 	db, err := sql.Open("sqlite3", env.DbPath)
-// 	if err != nil {
-// 		log.Fatal("failed to open sqlite3 file: ", err)
-// 		return nil, err
-// 	}
-// 	defer db.Close()
+func ConnectPostgres() error {
+	dsn := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		env.PGHOST, env.PGPORT, env.PGUSER, env.PGPASSWORD, env.PGDATABASE, env.PGSSLMODE,
+	)
 
-// 	config := sqlite3.Config{}
-
-// 	// migrate
-// 	driver, err := sqlite3.WithInstance(db, &config)
-// 	if err != nil {
-// 		log.Fatal("failed to initialize sqlite3 driver: ", err)
-// 		return nil, err
-// 	}
-	
-// 	m, err := migrate.NewWithDatabaseInstance(env.DbMigrations,"ql", driver)
-// 	if err != nil {
-// 		log.Fatal("failed to migrate database: ", err)
-// 		return nil, err
-// 	}
-
-//     err = m.Up() 
-// 	if err != nil && err != migrate.ErrNoChange {
-// 		log.Fatal("failed migrate up: ", err)
-// 		return nil, err
-// 	}
-
-// 	return db, nil
-// }
-
-func Open() (*sql.DB, error) {
-	fmt.Println("env dbpath", env.DbPath)
-	db, err := sql.Open("sqlite3", env.DbPath)
+	// Open does not establish a connection immediately
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
-		log.Fatal("failed to open sqlite3 file: ", err)
-		return nil, err
+		return fmt.Errorf("failed to open connection: %w", err)
 	}
-	return db, nil
+
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(5)
+	db.SetConnMaxIdleTime(5 * time.Minute)
+	db.SetConnMaxLifetime(1 * time.Hour)
+
+	// Verify the connection
+	if err := db.Ping(); err != nil {
+		db.Close()
+		return fmt.Errorf("failed to ping database: %w", err)
+	}
+
+	pool = db
+
+	return nil
+}
+
+func GetDB() (*sql.DB, error) {
+	if pool == nil {
+		return nil, fmt.Errorf("failed to get connection")
+	}
+	return pool, nil
 }

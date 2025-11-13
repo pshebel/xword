@@ -1,58 +1,55 @@
--- bug
--- uno
--- bot
 
 INSERT INTO puzzles (id, size) VALUES 
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", 5),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", 5);
+(0, 5);
 
 INSERT INTO words (id, text) VALUES
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a00", "zooms"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a01", "arson"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a02", "prada"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a03", "**ker"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a04", "**asl"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a05", "zap**"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a06", "orr**"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a07", "osaka"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a08", "modes"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a09", "snarl"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a10", "**ase"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98a11", "snare");
+(0, 'zooms'),
+(1, 'arson'),
+(2, 'prada'),
+(3, 'ker'),
+(4, 'asl'),
+(5, 'zap'),
+(6, 'orr'),
+(7, 'osaka'),
+(8, 'modes'),
+(9, 'snarl');
 
-INSERT INTO clues (id, word_id, text) VALUES
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a00", "Speeds up rapidly"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a01", "Set fire to intentionally"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b02", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a02", "Luxury fashion brand"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b03", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a03", "Sound a goat makes"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b04", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a04", "Sign language abbreviation"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b05", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a05", "Electric shock or sudden burst"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b06", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a06", "Irish mythical creature"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b07", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a07", "City in Japan famous for food"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b08", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a08", "styles or fashions"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b09", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a09", "Growls with displeasure"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b10", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a10", "Abbreviation for art student"),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98b11", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a11", "Trap or catch unawares");
+INSERT INTO padded_words (id, word_id, text) VALUES 
+(0, 0, 'zooms'),
+(1,1,'arson'),
+(2,2,'prada'),
+(3,3,'**ker'),
+(4,4,'**asl'),
+(5,5,'zap**'),
+(6,6,'orr**'),
+(7,7,'osaka'),
+(8,8,'modes'),
+(9,9,'snarl');
+
+INSERT INTO prompts (id, label) VALUES
+(0, 'gpt-5-nano low low generic clue');
 
 
-INSERT INTO puzzle_words (puzzle_id, word_id, across, idx) VALUES 
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a00", 1, 0),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a01", 1, 1),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a02", 1, 2),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a03", 1, 3),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a04", 1, 4),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a05", 0, 0),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a06", 0, 1),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a07", 0, 2),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a08", 0, 3),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c00", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a09", 0, 4),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a00", 1, 0),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a01", 1, 1),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a02", 1, 2),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a03", 1, 3),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a10", 1, 4),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a05", 0, 0),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a06", 0, 1),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a07", 0, 2),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a08", 0, 3),
-("9f46ddbb-0eb3-4f6e-93b6-cffd24d98c01", "9f46ddbb-0eb3-4f6e-93b6-cffd24d98a11", 0, 4);
+INSERT INTO clues (id, word_id, prompt_id, text) VALUES
+(0,0,0, 'Speeds up rapidly'),
+(1,1,0, 'Set fire to intentionally'),
+(2,2,0, 'Luxury fashion brand'),
+(3,3,0, 'Sound a goat makes'),
+(4,4,0, 'Sign language abbreviation'),
+(5,5,0, 'Electric shock or sudden burst'),
+(6,6,0, 'Irish mythical creature'),
+(7,7,0, 'City in Japan famous for food'),
+(8,8,0, 'styles or fashions'),
+(9,9,0, 'Growls with displeasure');
+
+INSERT INTO puzzle_words (puzzle_id, padded_word_id, across, idx) VALUES 
+(0, 0, TRUE, 0),
+(0, 1, TRUE, 1),
+(0, 2, TRUE, 2),
+(0, 3, TRUE, 3),
+(0, 4, TRUE, 4),
+(0, 5, FALSE, 0),
+(0, 6, FALSE, 1),
+(0, 7, FALSE, 2),
+(0, 8, FALSE, 3),
+(0, 9, FALSE, 4);
