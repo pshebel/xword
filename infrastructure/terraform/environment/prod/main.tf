@@ -8,7 +8,7 @@ terraform {
   }
   backend "s3" {
     bucket = "xword-tfstate"
-    key    = "dev/terraform.tfstate"
+    key    = "prod/terraform.tfstate"
     region = "us-east-1"
   }
 }
@@ -47,7 +47,7 @@ data "aws_security_group" "man-bastion-sg" {
 }
 
 locals {
-  vpc_cidr = "10.2.0.0/16"
+  vpc_cidr = "10.3.0.0/16"
   man_cidr = "10.1.0.0/16"
 }
 
@@ -57,7 +57,7 @@ module "vpc" {
 
   vpc_cidr = local.vpc_cidr
 
-  name_prefix = "xword-${var.environment}-vpc"
+  project_name = "xword"
   region      = var.region
   environment = var.environment
 }
@@ -66,55 +66,84 @@ module "vpc" {
 module "vpc-peering" {
   source = "../../modules/vpc-peering"
 
-  vpc_man = module.vpc.vpc_id
-  vpc_env = data.aws_vpc.man.id
+  vpc_man = data.aws_vpc.man.id
+  vpc_env = module.vpc.vpc_id
   vpc_man_cidr = local.man_cidr
   vpc_env_cidr = local.vpc_cidr
   region      = var.region
   environment = var.environment
 }
 
-# NAT Gateway
-module "nat-gateway" {
-  source = "../../modules/nat-gateway"
+# db
+module "rds" {
+  source = "../../modules/rds"
 
-  name_prefix = "xword-${var.environment}-nat-gateway"
-  region      = var.region
+  region = var.region
   environment = var.environment
-  subnet_id = module.vpc.public_subnets[0]
-  private_subnets = module.vpc.private_subnets
-  private_rt = module.vpc.private_rt
-  vpc_id        = module.vpc.vpc_id
-}
-
-# frontend
-module "frontend" {
-  source = "../../modules/frontend"
-
-  size          = "t3.small"
-  name_prefix   = "xword-${var.environment}-frontend"
-  ami           = data.aws_ami.amazon_linux.id
-  region        = var.region
-  environment   = var.environment
-  subnet_id     = module.vpc.public_subnets[0]
+  project_name = "xword"
   bastion_sg_id = data.aws_security_group.man-bastion-sg.id
-  vpc_id        = module.vpc.vpc_id
+  db_name = "xword"
+  db_username = "postgres"
+  db_password = "postgres"
+  vpc_id = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+  allowed_cidr_blocks = [local.vpc_cidr, local.man_cidr]
 }
 
-# Backend
-module "backend" {
-  source = "../../modules/backend"
+# # backend
+# module "alb" {
+#   source = "../../modules/"
+# }
 
-  size          = "t3.small"
-  api_port      = 3000
-  name_prefix   = "xword-${var.environment}-backend"
-  ami           = data.aws_ami.amazon_linux.id
 
-  frontend_sg_id = module.frontend.frontend_sg_id
-  region        = var.region
-  environment   = var.environment
-  subnet_id     = module.vpc.private_subnets[0]
-  bastion_sg_id = data.aws_security_group.man-bastion-sg.id
-  vpc_id        = module.vpc.vpc_id
-}
+# # DNS
+# module "route53" {
+#   source = "../../modules/route53"
+
+#   public_ip = module.monolith.public_ip
+# }
+
+# # NAT Gateway
+# module "nat-gateway" {
+#   source = "../../modules/nat-gateway"
+
+#   name_prefix = "xword-${var.environment}-nat-gateway"
+#   region      = var.region
+#   environment = var.environment
+#   subnet_id = module.vpc.public_subnets[0]
+#   private_subnets = module.vpc.private_subnets
+#   private_rt = module.vpc.private_rt
+#   vpc_id        = module.vpc.vpc_id
+# }
+
+# # frontend
+# module "frontend" {
+#   source = "../../modules/frontend"
+
+#   size          = "t3.small"
+#   name_prefix   = "xword-${var.environment}-frontend"
+#   ami           = data.aws_ami.amazon_linux.id
+#   region        = var.region
+#   environment   = var.environment
+#   subnet_id     = module.vpc.public_subnets[0]
+#   bastion_sg_id = data.aws_security_group.man-bastion-sg.id
+#   vpc_id        = module.vpc.vpc_id
+# }
+
+# # Backend
+# module "backend" {
+#   source = "../../modules/backend"
+
+#   size          = "t3.small"
+#   api_port      = 3000
+#   name_prefix   = "xword-${var.environment}-backend"
+#   ami           = data.aws_ami.amazon_linux.id
+
+#   frontend_sg_id = module.frontend.frontend_sg_id
+#   region        = var.region
+#   environment   = var.environment
+#   subnet_id     = module.vpc.private_subnets[0]
+#   bastion_sg_id = data.aws_security_group.man-bastion-sg.id
+#   vpc_id        = module.vpc.vpc_id
+# }
 

@@ -6,3 +6,10 @@ prereqs:
 - awscli access
 - your own ip address
 
+
+
+Non-Terraform resources
+- acm 
+- route53 hosted zone
+- lambda function layer
+- 

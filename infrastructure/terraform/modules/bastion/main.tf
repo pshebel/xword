@@ -22,7 +22,7 @@ resource "aws_security_group" "bastion" {
   }
 
   tags = {
-    Name        = "${var.name_prefix}-sg"
+    Name        = "${var.project_name}-bastion-sg"
     Environment = var.environment
   }
 }
@@ -38,7 +38,7 @@ resource "aws_instance" "bastion" {
   # user_data = "${file("setup.sh")}"
 
   tags = {
-    Name        = "${var.name_prefix}-host"
+    Name        = "${var.project_name}"
     Environment = var.environment
     Type        = "Bastion"
   }

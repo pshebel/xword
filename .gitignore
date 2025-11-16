@@ -1,4 +1,5 @@
 backend/db/data/*
+backend/layers/*
 
 frontend/.env
 frontend/.expo

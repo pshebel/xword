@@ -1,0 +1,12 @@
+# Core dependencies
+psycopg2-binary==2.9.9
+
+# For Docker/Flask deployment
+flask==3.0.0
+flask-cors==4.0.0
+
+# For Lambda deployment
+boto3==1.34.0
+
+# Optional: for local development
+python-dotenv==1.0.0

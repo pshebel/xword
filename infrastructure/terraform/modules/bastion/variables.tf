@@ -9,7 +9,7 @@ variable "environment" {
   default     = "dev"
 }
 
-variable "name_prefix" {
+variable "project_name" {
   description = "prefix for resources created for a project"
   type        = string
   default     = "xword"

@@ -3,48 +3,38 @@ variable "region" {
   type        = string
   default     = "us-east-1"
 }
+
+variable "project_name" {
+  description = "project name"
+  type        = string
+  default     = "xword"
+}
+
 variable "environment" {
   description = "environment"
   type        = string
   default     = "dev"
 }
 
-variable "name_prefix" {
-  description = "prefix for resources created for a project"
-  type        = string
-  default     = "xword"
-}
-
-variable "key_pair_name" {
-  description = "project name"
-  type        = string
-  default     = "xword"
-}
-
-variable "ami" {
-  description = "the id for the aws linux image"
+variable "bucket_name" {
+  description = "S3 bucket name (must be globally unique)"
   type        = string
 }
 
-variable "subnet_id" {
-    description = "private subnet id for backend"
-    type = string
-}
-
-
-variable "bastion_sg_id" {
-    description = "id of the bastion security group"
-    type = string
-}
-
-variable "size" {
-  description = "size of the ec2 instance used for the bastion"
+variable "domain_name" {
+  description = "Custom domain name (optional)"
   type        = string
-  default = "t3.micro"
+  default     = ""
 }
 
-variable "vpc_id" {
-  description = "id for the previously created vpc"
+variable "acm_certificate_arn" {
+  description = "ACM certificate ARN for custom domain (required if using custom domain)"
   type        = string
+  default     = ""
 }
 
+variable "route53_zone_id" {
+  description = "Route53 hosted zone ID (required if using custom domain)"
+  type        = string
+  default     = ""
+}

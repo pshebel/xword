@@ -38,7 +38,7 @@ module "vpc" {
 
   vpc_cidr = "10.1.0.0/16"
 
-  name_prefix = "xword-${var.environment}-vpc"
+  project_name = "xword"
   region      = var.region
   environment = var.environment
 }
@@ -47,7 +47,7 @@ module "vpc" {
 module "bastion" {
   source = "../../modules/bastion"
 
-  name_prefix   = "xword-${var.environment}-bastion"
+  project_name = "xword"
   ami           = data.aws_ami.amazon_linux.id
   size          = "t3.micro"
   allowed_cidr_blocks = var.allowed_cidr_blocks

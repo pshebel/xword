@@ -13,8 +13,7 @@ export interface Clue {
 
 export interface CheckRequest {
     id: string;
-    // words: Map<number, string>;
-    words: Object;
+    cert: string;
 }
 
 export interface CheckResponse {

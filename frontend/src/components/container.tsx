@@ -2,6 +2,7 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { getPuzzle } from '@hooks/puzzles';
 import Game from '@components/game'
 import Info from '@components/info'
+import ClueKeyboard from '@/components/keyboard'
 import Success from '@components/success'
 import { useGameStore } from '@/store/game';
 
@@ -29,13 +30,19 @@ export default function Container() {
       <Success/>
     )
   }
-
   return (
     <View style={styles.container}>
       <Game puzzle={data}/>
-      <Info puzzle={data}/>
+      <ClueKeyboard puzzle={data} />
     </View>
-  );
+  )
+
+  // return (
+  //   <View style={styles.container}>
+  //     <Game puzzle={data}/>
+  //     <Info puzzle={data}/>
+  //   </View>
+  // );
 }
 
 const { height, width } = Dimensions.get('window');

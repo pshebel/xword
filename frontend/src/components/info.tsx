@@ -9,8 +9,6 @@ export default function Info({ puzzle }) {
   const across = [...puzzle.clues].filter((clue) => clue.across).sort((a, b) => a.index - b.index)
   const down = [...puzzle.clues].filter((clue) => !clue.across).sort((a, b) => a.index - b.index)
 
-
-
   const fail = () => {
     if (Platform.OS === 'web') {
       return window.confirm('Not quite right. Keep Trying!')
@@ -31,6 +29,7 @@ export default function Info({ puzzle }) {
   const mutation = useMutation({
     mutationFn: async (req: CheckRequest) => {
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/check`, {
+      // const response = await fetch('https://r9cljvi9e9.execute-api.us-east-1.amazonaws.com/', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,11 +53,12 @@ export default function Info({ puzzle }) {
   });
 
   const handleCheck = async () => {
-    let userInput: Map<number, string> = new Map<number, string>();
+    let words = []
     for (let i=0;i<puzzle.size;i++){
-      userInput.set(i, squares.slice(i*puzzle.size, (i+1)*puzzle.size).join("").toLowerCase());
+      words.push(squares.slice(i*puzzle.size, (i+1)*puzzle.size).join("").toLowerCase())
     }
-    mutation.mutate({ id: puzzle.id, words: Object.fromEntries(userInput) });
+
+    mutation.mutate({ id: puzzle.id, cert: words.join(",")});
   }
 
   return (

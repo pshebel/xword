@@ -7,7 +7,7 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 
   tags = {
-    Name        = "${var.name_prefix}-nat-eip"
+    Name        = "${var.project_name}-nat-eip"
     Environment = var.environment
   }
 
@@ -20,7 +20,7 @@ resource "aws_nat_gateway" "main" {
   subnet_id     = var.subnet_id
 
   tags = {
-    Name        = "${var.name_prefix}"
+    Name        = "${var.project_name}"
     Environment = var.environment
   }
 
