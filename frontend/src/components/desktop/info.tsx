@@ -2,7 +2,7 @@ import { Platform, FlatList, StyleSheet, Text, TouchableOpacity, View, Dimension
 import {useMutation } from '@tanstack/react-query';
 import { useGameStore } from '@store/game';
 import { CheckRequest, CheckResponse } from '@types/api';
-import Button from '@components/button';
+import Button from '@/components/common/button';
 
 export default function Info({ puzzle }) {
   const {squares, setSuccess} = useGameStore();
@@ -64,24 +64,29 @@ export default function Info({ puzzle }) {
   return (
     <View style={styles.infoContainer}>
       <View style={styles.info}>
-        <Text style={styles.infoHeader}>Across</Text>
-        <FlatList
-          data={across}
-          style={styles.infoList}
-          keyExtractor={(item) => item.index}
-          renderItem={({item}) => (
-              <Text style={styles.clue} >{item.index+1}: {item.text}</Text>
-          )}
-        />
+        <View>
+          <Text style={styles.infoHeader}>Across</Text>
+          <FlatList
+            data={across}
+            style={styles.infoList}
+            keyExtractor={(item) => item.index}
+            renderItem={({item}) => (
+                <Text style={styles.clue} >{item.index+1}: {item.text}</Text>
+            )}
+          />
+        </View>
+        <View>
           <Text style={styles.infoHeader}>Down</Text>
-        <FlatList
-          data={down}
-          style={styles.infoList}
-          keyExtractor={(item) => item.index}
-          renderItem={({item}) => (
-            <Text style={styles.clue}>{item.index+1}: {item.text}</Text>
-          )}
-        />
+          <FlatList
+            data={down}
+            style={styles.infoList}
+            keyExtractor={(item) => item.index}
+            renderItem={({item}) => (
+              <Text style={styles.clue}>{item.index+1}: {item.text}</Text>
+            )}
+          />
+        </View>
+        <View style={styles.space}/>
         <Button text={"Check"} onClick={handleCheck}/>
       </View>
     </View>
@@ -91,21 +96,17 @@ export default function Info({ puzzle }) {
 
 
 const { width, height } = Dimensions.get('window');
-const mobile = StyleSheet.create({
-  info: {
-    maxWidth:  width - 50 // same width as puzzle
-  }
-})
-
-const web = StyleSheet.create({
-  info: {
-    maxHeight: width / 4, // same height as puzzle
-    maxWidth: width / 4
-  }
-})
 
 const styles = StyleSheet.create({
-  infoContainer: (height > width) ? mobile.info : web.info,
+  infoContainer: {
+    height: width / 2, // same height as puzzle
+    width: (width / 2) * 0.618,
+    maxHeight: 500,
+    maxWidth: 309,
+  },
+  space: {
+    flexGrow: 1,
+  },
   info: {
     flexGrow: 1,
     backgroundColor: '#fff',
@@ -119,10 +120,11 @@ const styles = StyleSheet.create({
   },
   clue: {
     flex: 1,
+    fontSize: 16,
   },
   infoHeader: {
     flex: 2,
-    fontSize: 32,
+    fontSize: 42,
     fontFamily: 'Cooper-Black',
   },
   buttonContainer: {

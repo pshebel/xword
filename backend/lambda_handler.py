@@ -1,5 +1,5 @@
 import json
-import api
+from src.api.handlers import get_puzzle, check_puzzle
 
 
 def lambda_handler(event, context):  
@@ -25,7 +25,7 @@ def lambda_handler(event, context):
 
     # Handle GET /api/puzzle
     if http_method == 'GET':
-        result, status_code = api.get_puzzle()
+        result, status_code = get_puzzle()
         return {
             'statusCode': status_code,
             'headers': cors_headers,
@@ -47,7 +47,7 @@ def lambda_handler(event, context):
                     'body': json.dumps({"error": "Missing id or cert"})
                 }
 
-            result, status_code = api.check_puzzle(puzzle_id, cert)
+            result, status_code = check_puzzle(puzzle_id, cert)
             return {
                 'statusCode': status_code,
                 'headers': cors_headers,

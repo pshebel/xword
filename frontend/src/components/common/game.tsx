@@ -8,10 +8,11 @@ type SquareProps = {
   index: number,
   inFocus: boolean,
   onClick: (index: number) => void,
-  onChange: (index: number, e: any) => void,
+  onKeyPress: (index: number, e: any) => void,
+  onChangeText: (index: number, text: string) => void,
   inputRefs: React.RefObject<Array<TextInput | null>>;
 }
-const Square = ({size, index, inFocus, onClick, onChange, inputRefs}: SquareProps) => {
+const Square = ({size, index, inFocus, onClick, onKeyPress,  inputRefs}: SquareProps) => {
   const {squares, focus} = useGameStore();
   const isBlock = squares[index] === '*'
   let squareStyles = [styles.square]
@@ -43,7 +44,7 @@ const Square = ({size, index, inFocus, onClick, onChange, inputRefs}: SquareProp
         maxLength={1}
         editable={!isBlock}
         value={squares[index] || ''}
-        onKeyPress={(e) => onChange(index, e)}
+        onKeyPress={(e) => onKeyPress(index, e)}
       />
     </Pressable>
   )
@@ -62,74 +63,82 @@ export default function Game({puzzle}: GameProps) {
       puzzle.block.forEach((b: number) => {
         tmp[b] = "*"
       })
+      
       setSquares(tmp);
-      inputRefs.current[focus]?.focus()
+      if (puzzle.block.includes(0)) {
+        forward(0, orientation)
+      } else {
+        move(0, orientation)
+      }
+      
+      // inputRefs.current[focus]?.focus()
     }
   }, [puzzle.id]);
 
-  const move = (index: number) => {
-      inputRefs.current[index]?.focus()
-      setFocus(index)
+  const move = (index: number, orientation: boolean) => {
+    inputRefs.current[index]?.focus()
+    setFocus(index)
+    setOrientation(orientation)
   }
   
-  const forward = (index: number) => {
+  const forward = (index: number, orientation: boolean) => {
     if (index !== puzzle.size*puzzle.size -1) {
       if (orientation) {
         if (puzzle.block.includes(index+1)) {
-            forward(index+1)
+            forward(index+1, orientation)
             return
         }
-        move(index+1)
+        move(index+1, orientation)
       } else {
         const row = Math.floor(index/puzzle.size)
-        const col = index - (row*puzzle.size)
+        const col = index % puzzle.size;
+
         if (row < puzzle.size-1) {
             if (puzzle.block.includes((row+1)*puzzle.size + col)) {
-                forward((row+1)*puzzle.size + col)
+                forward((row+1)*puzzle.size + col, orientation)
                 return
             }
-            move((row+1)*puzzle.size + col)
+            move((row+1)*puzzle.size + col, orientation)
         } else {
             if (puzzle.block.includes(col+1)) {
-                forward(col + 1)
+                forward(col + 1, orientation)
                 return
             }
-            move(col+1)
+            move(col+1, orientation)
         }
       }
     } else {
-      setOrientation()
       if (puzzle.block.includes(0)) {
-          forward(0)
+          forward(0, !orientation)
           return
       }
-      move(0)
+      move(0, !orientation)
     }
   }
 
-  const back = (index: number) => {
+  const back = (index: number, orientation: boolean) => {
     if (index !== 0) {
         if (orientation) {
             if (puzzle.block.includes(index-1)){
-                back(index-1)
+                back(index-1, orientation)
                 return
             }
-            move(index-1)
+            move(index-1, orientation)
         } else {
             const row = Math.floor(index/puzzle.size)
             const col = index - (row*puzzle.size)
             if (row > 0) {
                 if (puzzle.block.includes((row-1)*puzzle.size + col)) {
-                    back((row-1)*puzzle.size + col)
+                    back((row-1)*puzzle.size + col, orientation)
                     return
                 }
-                move((row-1)*puzzle.size + col)
+                move((row-1)*puzzle.size + col, orientation)
             } else {
                 if (puzzle.block.includes((puzzle.size-1)*puzzle.size + col-1)) {
-                    back((puzzle.size-1)*puzzle.size + col-1)
+                    back((puzzle.size-1)*puzzle.size + col-1, orientation)
                     return
                 }
-                move((puzzle.size-1)*puzzle.size + col-1)
+                move((puzzle.size-1)*puzzle.size + col-1, orientation)
             }
         }
     }
@@ -138,7 +147,7 @@ export default function Game({puzzle}: GameProps) {
   const handleSquareChange = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace') {
       if (squares[index] === '') {
-          back(index)
+          back(index, orientation)
       } else {
           let tmp = squares
           tmp[index] = ''
@@ -147,7 +156,7 @@ export default function Game({puzzle}: GameProps) {
     }
     if (e.key === 'Tab') {
       e.preventDefault()
-      forward(index)
+      forward(index, orientation)
     }
     // input can only be alphabetical
     if (RegExp(/^\p{L}$/,'u').test(e.key)) {
@@ -155,14 +164,14 @@ export default function Game({puzzle}: GameProps) {
       let tmp = squares
       tmp[index] = value
       setSquares(tmp)
-      forward(index)
+      forward(index, orientation)
     }
   }
 
   const handleSquareClick = (index: number) => {
     // on a double click, switch orientation
     if (index === focus) {
-        setOrientation()
+        setOrientation(!orientation)
     } else {
         setFocus(index)
     }
@@ -176,7 +185,7 @@ export default function Game({puzzle}: GameProps) {
         index={index}
         inFocus={inFocus}
         onClick={handleSquareClick}
-        onChange={handleSquareChange}
+        onKeyPress={handleSquareChange}
         inputRefs={inputRefs}
       />
     )
@@ -199,7 +208,17 @@ export default function Game({puzzle}: GameProps) {
 }
 
 const { width, height } = Dimensions.get('window');
-const size = (height > width) ? (width / 5) - 10 : width / 20;
+let size = 0
+if (height > width) {
+  size = (width / 5) - 10
+} else {
+  if ((width / 10) > 100) {
+    size = 100
+  } else {
+    size = width / 10
+  }
+}
+// const size = (height > width) ? (width / 5) - 10 : width / 10;
 const styles = StyleSheet.create({
   game: {
     // flex: 1,
@@ -216,7 +235,7 @@ const styles = StyleSheet.create({
   square: {
     width: size,
     height: size,
-    fontSize: 32,
+    fontSize: 36,
     textAlign: 'center',
     backgroundColor: '#fff',
     borderColor: '#999',

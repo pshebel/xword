@@ -1,11 +1,15 @@
-This project takes data from wikipedia and turns it into crossword puzzles.
+This project takes googles ngram data and turns it into crossword puzzles.
+
+### xword.io
 
 frontend:
-- barebones react
+- react native
 
 backend:
-- golang
-- sqlite
+- python 
+
+db:
+- postgres
 
 infrastructure:
 - ansible

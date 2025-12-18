@@ -6,7 +6,7 @@ interface GameState {
   squares: string[];
   success: boolean;
   setFocus: (index: number) => void;
-  setOrientation: () => void;
+  setOrientation: (newOrientation: boolean) => void;
   setSquares: (squares: string[]) => void;
   setSuccess: (result: boolean) => void;
   reset: () => void;
@@ -22,7 +22,7 @@ const initialState = {
 export const useGameStore = create<GameState>((set) => ({
   ...initialState,
   setFocus: (index) => set({ focus: index }),
-  setOrientation: () => set((state) => ({ orientation: !state.orientation})), 
+  setOrientation: (newOrientation) => set({orientation: newOrientation}), 
   setSquares: (squares) => set({ squares }),
   setSuccess: (result) => set({ success: result}),
   reset: () => set(initialState),

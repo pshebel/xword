@@ -1,12 +1,12 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, KeyboardAvoidingView } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { getPuzzle } from '@hooks/puzzles';
-import Game from '@components/game'
-import Info from '@components/info'
-import ClueKeyboard from '@/components/keyboard'
-import Success from '@components/success'
+import Game from '@/components/common/game'
+import Info from '@/components/mobile/info'
+import Success from '@/components/common/success'
 import { useGameStore } from '@/store/game';
 
-export default function Container() {
+export default function MobileContainer() {
   const { data, isLoading, error } = getPuzzle();
   const { success } = useGameStore();
 
@@ -31,18 +31,19 @@ export default function Container() {
     )
   }
   return (
-    <View style={styles.container}>
-      <Game puzzle={data}/>
-      <ClueKeyboard puzzle={data} />
-    </View>
+    <SafeAreaProvider>
+      <View style={styles.container}>
+          <SafeAreaView style={styles.container}>
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+            >
+              <Game puzzle={data}/>
+              <Info puzzle={data} />
+            </KeyboardAvoidingView>
+          </SafeAreaView>
+      </View>
+    </SafeAreaProvider>
   )
-
-  // return (
-  //   <View style={styles.container}>
-  //     <Game puzzle={data}/>
-  //     <Info puzzle={data}/>
-  //   </View>
-  // );
 }
 
 const { height, width } = Dimensions.get('window');

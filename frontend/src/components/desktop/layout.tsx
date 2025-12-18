@@ -1,17 +1,15 @@
-import { ScrollView, StyleSheet, Dimensions } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 
 import Header from '@/components/common/header';
-// import Footer from './common/footer';
-import DesktopContainer from './desktop/container';
-import MobileContainer from './mobile/container';
+import Container from './container';
+import Footer from './common/footer';
 
-const { height, width } = Dimensions.get('window');
 export default function Layout() {
   return (
     <ScrollView style={styles.layout} contentContainerStyle={{ flexGrow: 1 }}>
       <Header />
-      {width > height ? (<DesktopContainer/>) : (<MobileContainer/>)}
-      {/* <Footer /> */}
+      <Container />
+      <Footer />
     </ScrollView>
   );
 }

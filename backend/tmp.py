@@ -128,7 +128,7 @@ def api_check_puzzle(event):
     try:
         body = json.loads(event["body"])
         puzzle_id = body["id"]
-        cert = body["cert"]  # array index → string guess
+        cert = body["cert"]
 
         # SQL identical to Go
         query = """
@@ -137,8 +137,9 @@ def api_check_puzzle(event):
             WHERE id = %s;
         """
 
-        row = run_query(query, params=(puzzle_id,), fetch=True)
-
+        rows = run_query(query, params=(puzzle_id,), fetch=True)
+        row = rows[0][0]
+        print(row, cert, row == cert)
         success = row == cert
 
         result = {

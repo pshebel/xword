@@ -2,7 +2,7 @@ import { useGameStore } from '@/store/game';
 import { usePuzzleStore } from '@/store/puzzle';
 import { getPuzzle } from '@hooks/puzzles';
 import { StyleSheet, Text, View } from 'react-native';
-import Button from '@components/button';
+import Button from '@/components/common/button';
 
 
 export default function Success() {
