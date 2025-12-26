@@ -12,22 +12,6 @@ def api_get_puzzle():
     result, status_code = get_puzzle()
     return jsonify(result), status_code
 
-
-@app.route('/api/check', methods=['POST'])
-def api_check_puzzle():
-    """Check puzzle solution"""
-    data = request.get_json()
-    
-    if not data or 'id' not in data or 'cert' not in data:
-        return jsonify({"error": "Missing id or cert"}), 400
-    
-    puzzle_id = data['id']
-    cert = data['cert']
-    
-    result, status_code = check_puzzle(puzzle_id, cert)
-    return jsonify(result), status_code
-
-
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint"""

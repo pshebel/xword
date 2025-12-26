@@ -6,14 +6,14 @@ def get_puzzle():
     try:
         # SELECT a random puzzle
         row = run_query(
-            "SELECT id, size FROM puzzles ORDER BY RANDOM() LIMIT 1;",
+            "SELECT id, size, cert FROM puzzles ORDER BY RANDOM() LIMIT 1;",
             fetch=True
         )
 
         if not row:
             return {"error": "No puzzle found"}, 404
 
-        puzzle_id, size = row[0]
+        puzzle_id, size, cert = row[0]
 
         # FULL SQL identical to Go version
         query = """
@@ -59,6 +59,7 @@ def get_puzzle():
 
         result = {
             "id": puzzle_id,
+            "cert": cert,
             "size": size,
             "block": block,
             "clues": clues
@@ -67,33 +68,4 @@ def get_puzzle():
         return result, 200
 
     except Exception as e:
-        return {"error": str(e)}, 500
-
-
-def check_puzzle(puzzle_id, cert):
-    """Check if puzzle solution is correct"""
-    try:
-        # SQL identical to Go
-        query = """
-            SELECT cert
-            FROM puzzles
-            WHERE id = %s;
-        """
-
-        row = run_query(query, params=(puzzle_id,), fetch=True)
-
-        if not row:
-            return {"error": "Puzzle not found"}, 404
-
-        success = row[0][0] == cert
-
-        result = {
-            "id": puzzle_id,
-            "success": success,
-        }
-
-        return result, 200
-
-    except Exception as e:
-        print("Exception:", e)
         return {"error": str(e)}, 500

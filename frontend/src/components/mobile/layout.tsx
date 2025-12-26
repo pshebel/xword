@@ -1,16 +1,18 @@
-import { ScrollView, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 import Header from '@/components/common/header';
 import Container from './container';
 import Footer from '@/components/common/footer';
 
 export default function Layout() {
+  
   return (
-    <ScrollView style={styles.layout} contentContainerStyle={{ flexGrow: 1 }}>
-      <Header />
+    <View style={styles.layout}>
+      {/* <Header /> */}
       <Container />
-      <Footer />
-    </ScrollView>
+      {/* <Footer /> */}
+    </View>
   );
 }
 

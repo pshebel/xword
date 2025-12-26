@@ -209,14 +209,10 @@ export default function Game({puzzle}: GameProps) {
 
 const { width, height } = Dimensions.get('window');
 let size = 0
-if (height > width) {
-  size = (width / 5) - 10
+if ((width / 10) > 100) {
+  size = 100
 } else {
-  if ((width / 10) > 100) {
-    size = 100
-  } else {
-    size = width / 10
-  }
+  size = width / 10
 }
 // const size = (height > width) ? (width / 5) - 10 : width / 10;
 const styles = StyleSheet.create({

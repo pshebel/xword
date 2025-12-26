@@ -1,56 +1,103 @@
-import { Dimensions, StyleSheet, Text, View, KeyboardAvoidingView } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import {useState, useEffect} from 'react';
 import { getPuzzle } from '@hooks/puzzles';
-import Game from '@/components/common/game'
-import Info from '@/components/mobile/info'
+import Game from './game'
+import Info from './info'
 import Success from '@/components/common/success'
+import Button from '@/components/common/button'
+import Keyboard from './keyboard';
 import { useGameStore } from '@/store/game';
+import {checkPuzzle} from '@/hooks/puzzles';
+import { usePuzzleStore } from '@/store/puzzle';
+import {check} from '@/game/check';
+
+import Header from '@/components/common/header';
+import Footer from '@/components/common/footer';
 
 export default function MobileContainer() {
   const { data, isLoading, error } = getPuzzle();
-  const { success } = useGameStore();
+  const { squares, success, setSuccess } = useGameStore();
+  const {puzzle, setPuzzle} = usePuzzleStore();
+
+  const [play, setPlay] = useState(false);
+
+  useEffect(() => {
+    if (data) {
+      setPuzzle(data);
+    }
+  }, [data, setPuzzle]);
 
   if (isLoading) {
     return (
-      <View style={styles.loading}>
-        <Text>Loading...</Text>
+      
+      <View style={styles.layout}>
+        <Header/>
+        <View style={styles.loading}>
+          <Text style={styles.loading}>Loading...</Text>
+        </View>
+        <Footer/>
       </View>
     )
   }
   if (error) {
     return (
-      <View style={styles.error}>
-        <Text>Error: {error.message}</Text>
+      <View style={styles.layout}>
+        <Header/>
+        <View style={styles.error}>
+          <Text>Error: {error.message}</Text>
+        </View>
+        <Footer/>
       </View>
     )
   }
 
   if (success) {
     return (
-      <Success/>
+      <View style={styles.layout}>
+        <Header/>
+        <Success/>
+        <Footer/>
+      </View>
     )
   }
-  return (
-    <SafeAreaProvider>
+
+  // play
+  if (play) {
+    return (
       <View style={styles.container}>
-          <SafeAreaView style={styles.container}>
-            <KeyboardAvoidingView
-              style={{ flex: 1 }}
-            >
-              <Game puzzle={data}/>
-              <Info puzzle={data} />
-            </KeyboardAvoidingView>
-          </SafeAreaView>
+        <Game puzzle={data}/>
+        <Info />
+        <Keyboard puzzle={data}/>
       </View>
-    </SafeAreaProvider>
+    )
+  }
+
+  return (
+    <View style={styles.layout}>
+      <Header/>
+      <View style={styles.container}>
+        <Text style={styles.header}>Random Puzzle</Text>
+        <Button onClick={() => setPlay(true)} text="play"/>
+      </View>
+      <Footer/>
+    </View>
   )
 }
 
 const { height, width } = Dimensions.get('window');
-const mobile = StyleSheet.create({
+
+const styles = StyleSheet.create({
+    layout: {
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    // minWidth: '100%',
+    // minHeight: '100%'
+  },
   container: {
-    paddingTop: 20,
-    paddingBottom: 20,
+    padding: 10,
+    // paddingTop: 20,
+    // paddingBottom: 20,
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
@@ -59,22 +106,11 @@ const mobile = StyleSheet.create({
     minHeight: height - 100,
     minWidth: '100%',
     gap: 20,
-  }
-})
-const web = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
-    gap: 20,
-  }
-})
-
-const styles = StyleSheet.create({
-  container: (height>width) ? mobile.container : web.container,
+  },
+  header: {
+    fontFamily: 'Cooper-Black',
+    fontSize: 32,
+  },
   loading: {
     flex: 1,
     display: 'flex',

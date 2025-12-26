@@ -9,6 +9,7 @@ interface PuzzleState {
 const initialState = {
   puzzle: {
     id: '0',
+    cert: '',
     size: 0,
     block: [],
     clues: []
@@ -20,3 +21,37 @@ export const usePuzzleStore = create<PuzzleState>((set) => ({
   setPuzzle: (puzzle) => set({ puzzle }),
   reset: () => set(initialState),
 }));
+
+// import { create } from 'zustand';
+// import { persist, createJSONStorage } from 'zustand/middleware';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { Puzzle } from '@types/api';
+
+// interface PuzzleState {
+//   puzzle: Puzzle;
+//   setPuzzle: (puzzle: Puzzle) => void;
+//   reset: () => void;
+// }
+
+// const initialState = {
+//   puzzle: {
+//     id: '0',
+//     size: 0,
+//     block: [],
+//     clues: [],
+//   },
+// };
+
+// export const usePuzzleStore = create<PuzzleState>()(
+//   persist(
+//     (set) => ({
+//       ...initialState,
+//       setPuzzle: (puzzle) => set({ puzzle }),
+//       reset: () => set(initialState),
+//     }),
+//     {
+//       name: 'puzzle-store',
+//       storage: createJSONStorage(() => AsyncStorage),
+//     }
+//   )
+// );

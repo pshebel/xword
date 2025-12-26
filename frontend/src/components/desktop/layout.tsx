@@ -1,16 +1,16 @@
-import { ScrollView, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import Header from '@/components/common/header';
 import Container from './container';
-import Footer from './common/footer';
+import Footer from '@components/common/footer';
 
 export default function Layout() {
   return (
-    <ScrollView style={styles.layout} contentContainerStyle={{ flexGrow: 1 }}>
+    <View style={styles.layout} contentContainerStyle={{ flexGrow: 1 }}>
       <Header />
       <Container />
       <Footer />
-    </ScrollView>
+    </View>
   );
 }
 
