@@ -1,228 +1,228 @@
-# name: Backend Release
+name: Backend Release
 
-# on:
-#   workflow_dispatch:
-#   push:
-#     branches:
-#       - main
-#     paths:
-#       - backend/**
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - backend/**
 
-# env:
-#   AWS_REGION: us-east-1
-#   PYTHON_VERSION: '3.11'
+env:
+  AWS_REGION: us-east-1
+  PYTHON_VERSION: '3.11'
 
-# jobs:
-#   build:
-#     name: Build Lambda Package
-#     needs: test
-#     runs-on: ubuntu-latest
+jobs:
+  build:
+    name: Build Lambda Package
+    needs: test
+    runs-on: ubuntu-latest
     
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-#       - name: Set up Python
-#         uses: actions/setup-python@v5
-#         with:
-#           python-version: ${{ env.PYTHON_VERSION }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
-#       - name: Install dependencies
-#         run: |
-#           mkdir -p package
-#           pip install -r requirements.txt -t package/
-#           cp -r src/* package/
-#           cp lambda_handler.py package/
+      - name: Install dependencies
+        run: |
+          mkdir -p package
+          pip install -r requirements.txt -t package/
+          cp -r src/* package/
+          cp lambda_handler.py package/
 
-#       - name: Create deployment package
-#         run: |
-#           cd package
-#           zip -r ../lambda_deployment.zip .
-#           cd ..
+      - name: Create deployment package
+        run: |
+          cd package
+          zip -r ../lambda_deployment.zip .
+          cd ..
           
-#       - name: Upload artifact
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: lambda-package
-#           path: lambda_deployment.zip
-#           retention-days: 5
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lambda-package
+          path: lambda_deployment.zip
+          retention-days: 5
 
-#   deploy-prod:
-#     name: Deploy to Production
-#     needs: build
-#     runs-on: ubuntu-latest
-#     if: github.ref == 'refs/heads/main'
-#     environment: 
-#       name: production
-#       url: ${{ secrets.API_ENDPOINT_PROD }}
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: 
+      name: dev
+      url: ${{ vars.API_URL }}
     
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-#       - name: Download artifact
-#         uses: actions/download-artifact@v4
-#         with:
-#           name: lambda-package
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lambda-package
 
-#       - name: Configure AWS credentials
-#         uses: aws-actions/configure-aws-credentials@v4
-#         with:
-#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-#       - name: Create function version
-#         id: create-version
-#         run: |
-#           # Update function code
-#           aws lambda update-function-code \
-#             --function-name xword-prod-api \
-#             --zip-file fileb://lambda_deployment.zip
+      - name: Create function version
+        id: create-version
+        run: |
+          # Update function code
+          aws lambda update-function-code \
+            --function-name xword-dev-api \
+            --zip-file fileb://lambda_deployment.zip
           
-#           # Wait for update
-#           aws lambda wait function-updated \
-#             --function-name xword-prod-api
+          # Wait for update
+          aws lambda wait function-updated \
+            --function-name xword-dev-api
           
-#           # Publish new version
-#           VERSION=$(aws lambda publish-version \
-#             --function-name xword-prod-api \
-#             --description "Deploy from commit ${{ github.sha }}" \
-#             --query 'Version' \
-#             --output text)
+          # Publish new version
+          VERSION=$(aws lambda publish-version \
+            --function-name xword-dev-api \
+            --description "Deploy from commit ${{ github.sha }}" \
+            --query 'Version' \
+            --output text)
           
-#           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-#       - name: Update alias to new version
-#         run: |
-#           aws lambda update-alias \
-#             --function-name xword-prod-api \
-#             --name prod \
-#             --function-version ${{ steps.create-version.outputs.version }}
+      - name: Update alias to new version
+        run: |
+          aws lambda update-alias \
+            --function-name xword-dev-api \
+            --name dev \
+            --function-version ${{ steps.create-version.outputs.version }}
 
-#       - name: Update environment variables
-#         run: |
-#           aws lambda update-function-configuration \
-#             --function-name xword-prod-api \
-#             --environment Variables="{
-#               SECRET_NAME=${{ secrets.SECRET_NAME }},
-#               ENVIRONMENT=production,
-#               BUILD_VERSION=${{ github.sha }},
-#               DEPLOYED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-#             }"
+      - name: Update environment variables
+        run: |
+          aws lambda update-function-configuration \
+            --function-name xword-dev-api \
+            --environment Variables="{
+              SECRET_NAME=${{ secrets.SECRET_NAME }},
+              ENVIRONMENT=dev,
+              BUILD_VERSION=${{ github.sha }},
+              DEPLOYED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+            }"
 
-#       - name: Create API Gateway deployment
-#         run: |
-#           aws apigateway create-deployment \
-#             --rest-api-id ${{ secrets.API_GATEWAY_ID }} \
-#             --stage-name prod \
-#             --description "Production deployment from commit ${{ github.sha }}"
+      - name: Create API Gateway deployment
+        run: |
+          aws apigateway create-deployment \
+            --rest-api-id ${{ secrets.API_GATEWAY_ID }} \
+            --stage-name dev \
+            --description "Development deployment from commit ${{ github.sha }}"
 
-#       - name: Run smoke tests
-#         run: |
-#           sleep 10
+      - name: Run smoke tests
+        run: |
+          sleep 10
           
-#           response=$(curl -s -o /dev/null -w "%{http_code}" \
-#             ${{ secrets.API_ENDPOINT_PROD }}/data)
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            ${{ secrets.API_URL }}/health)
           
-#           if [ $response -eq 200 ]; then
-#             echo "✅ Production endpoint is healthy"
-#           else
-#             echo "❌ Production endpoint returned $response"
-#             exit 1
-#           fi
+          if [ $response -eq 200 ]; then
+            echo "✅ Development endpoint is healthy"
+          else
+            echo "❌ Development endpoint returned $response"
+            exit 1
+          fi
 
-#       - name: Create GitHub release
-#         uses: actions/create-release@v1
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#         with:
-#           tag_name: v${{ github.run_number }}
-#           release_name: Release v${{ github.run_number }}
-#           body: |
-#             ## Changes
-#             Deployed from commit ${{ github.sha }}
-#             Lambda Version: ${{ steps.create-version.outputs.version }}
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            ## Changes
+            Deployed from commit ${{ github.sha }}
+            Lambda Version: ${{ steps.create-version.outputs.version }}
             
-#             **Commit Message:** ${{ github.event.head_commit.message }}
-#           draft: false
-#           prerelease: false
+            **Commit Message:** ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
 
-#       - name: Notify deployment
-#         if: always()
-#         run: |
-#           if [ "${{ job.status }}" == "success" ]; then
-#             echo "🚀 Production deployment successful!"
-#           else
-#             echo "❌ Production deployment failed!"
-#           fi
+      - name: Notify deployment
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "🚀 Development deployment successful!"
+          else
+            echo "❌ Development deployment failed!"
+          fi
 
-#   # deploy-dev:
-#   #   name: Deploy to Development
-#   #   needs: build
-#   #   runs-on: ubuntu-latest
-#   #   if: github.ref == 'refs/heads/develop'
-#   #   environment: dev
+  # deploy-dev:
+  #   name: Deploy to Development
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/develop'
+  #   environment: dev
     
-#   #   steps:
-#   #     - name: Checkout code
-#   #       uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-#   #     - name: Download artifact
-#   #       uses: actions/download-artifact@v4
-#   #       with:
-#   #         name: lambda-package
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: lambda-package
 
-#   #     - name: Configure AWS credentials
-#   #       uses: aws-actions/configure-aws-credentials@v4
-#   #       with:
-#   #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#   #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#   #         aws-region: ${{ env.AWS_REGION }}
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ env.AWS_REGION }}
 
-#   #     - name: Deploy to Lambda
-#   #       run: |
-#   #         aws lambda update-function-code \
-#   #           --function-name xword-prod-api-dev \
-#   #           --zip-file fileb://lambda_deployment.zip
+  #     - name: Deploy to Lambda
+  #       run: |
+  #         aws lambda update-function-code \
+  #           --function-name xword-dev-api-dev \
+  #           --zip-file fileb://lambda_deployment.zip
 
-#   #     - name: Wait for update to complete
-#   #       run: |
-#   #         aws lambda wait function-updated \
-#   #           --function-name xword-prod-api-dev
+  #     - name: Wait for update to complete
+  #       run: |
+  #         aws lambda wait function-updated \
+  #           --function-name xword-dev-api-dev
 
-#   #     - name: Update environment variables
-#   #       run: |
-#   #         aws lambda update-function-configuration \
-#   #           --function-name xword-prod-api-dev \
-#   #           --environment Variables="{
-#   #             SECRET_NAME=${{ secrets.SECRET_NAME }},
-#   #             ENVIRONMENT=development,
-#   #             BUILD_VERSION=${{ github.sha }},
-#   #             DEPLOYED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-#   #           }"
+  #     - name: Update environment variables
+  #       run: |
+  #         aws lambda update-function-configuration \
+  #           --function-name xword-dev-api-dev \
+  #           --environment Variables="{
+  #             SECRET_NAME=${{ secrets.SECRET_NAME }},
+  #             ENVIRONMENT=development,
+  #             BUILD_VERSION=${{ github.sha }},
+  #             DEPLOYED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  #           }"
 
-#   #     - name: Create API Gateway deployment
-#   #       run: |
-#   #         aws apigateway create-deployment \
-#   #           --rest-api-id ${{ secrets.API_GATEWAY_ID_DEV }} \
-#   #           --stage-name dev \
-#   #           --description "Deployed from commit ${{ github.sha }}"
+  #     - name: Create API Gateway deployment
+  #       run: |
+  #         aws apigateway create-deployment \
+  #           --rest-api-id ${{ secrets.API_GATEWAY_ID_DEV }} \
+  #           --stage-name dev \
+  #           --description "Deployed from commit ${{ github.sha }}"
 
-#   #     - name: Run smoke tests
-#   #       run: |
-#   #         # Wait for deployment to propagate
-#   #         sleep 10
+  #     - name: Run smoke tests
+  #       run: |
+  #         # Wait for deployment to propagate
+  #         sleep 10
           
-#   #         # Test GET endpoint
-#   #         response=$(curl -s -o /dev/null -w "%{http_code}" \
-#   #           ${{ secrets.API_ENDPOINT_DEV }}/data)
+  #         # Test GET endpoint
+  #         response=$(curl -s -o /dev/null -w "%{http_code}" \
+  #           ${{ secrets.API_ENDPOINT_DEV }}/data)
           
-#   #         if [ $response -eq 200 ]; then
-#   #           echo "✅ GET endpoint is healthy"
-#   #         else
-#   #           echo "❌ GET endpoint returned $response"
-#   #           exit 1
-#   #         fi
+  #         if [ $response -eq 200 ]; then
+  #           echo "✅ GET endpoint is healthy"
+  #         else
+  #           echo "❌ GET endpoint returned $response"
+  #           exit 1
+  #         fi
 
   

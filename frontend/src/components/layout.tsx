@@ -1,19 +1,20 @@
 import { ScrollView, StyleSheet, Dimensions } from 'react-native';
-
+import { useEffect } from 'react';
 import Header from '@/components/common/header';
 // import Footer from './common/footer';
-import DesktopContainer from './desktop/container';
-import MobileContainer from './mobile/container';
+// import DesktopContainer from './desktop/container';
+// import MobileContainer from './mobile/container';
+import DesktopLayout from './desktop/layout';
+import MobileLayout from './mobile/layout';
+import { usePuzzleStore } from '@/store/puzzle';
 
 const { height, width } = Dimensions.get('window');
 export default function Layout() {
-  return (
-    <ScrollView style={styles.layout} contentContainerStyle={{ flexGrow: 1 }}>
-      <Header />
-      {width > height ? (<DesktopContainer/>) : (<MobileContainer/>)}
-      {/* <Footer /> */}
-    </ScrollView>
-  );
+  if (width > height) {
+    return (<DesktopLayout/>)
+  } else {
+    return (<MobileLayout/>)
+  }
 }
 
 

@@ -1,5 +1,6 @@
 export interface Puzzle {
     id: string;
+    cert: string;
     size: number;
     block: number[];
     clues: Clue[];
