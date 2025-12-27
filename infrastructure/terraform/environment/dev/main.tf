@@ -115,7 +115,6 @@ module "lambda" {
 }
 
 
-
 module "frontend" {
   source = "../../modules/frontend"
 
@@ -128,6 +127,18 @@ module "frontend" {
   route53_zone_id = data.aws_route53_zone.xword.zone_id
 }
 
+
+
+module "oidc" {
+  source = "../../modules/OIDC"
+
+  region = var.region
+  environment = var.environment
+  account_id = "432883629663"
+  github_owner = "pshebel"
+  github_repo = "xword"
+  api_gateway_id = "r9cljvi9e9"
+}
 # DNS
 # module "route53" {
 #   source = "../../modules/route53"

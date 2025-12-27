@@ -1,5 +1,5 @@
 import json
-from src.api.handlers import get_puzzle, check_puzzle
+from src.api.handlers import get_puzzle
 
 
 def lambda_handler(event, context):  
@@ -31,35 +31,6 @@ def lambda_handler(event, context):
             'headers': cors_headers,
             'body': json.dumps(result)
         }
-
-    # Handle POST /api/check
-    elif http_method == 'POST':
-        print("calling api_check_puzzle")
-        try:
-            body = json.loads(event.get("body", "{}"))
-            puzzle_id = body.get("id")
-            cert = body.get("cert")
-
-            if not puzzle_id or cert is None:
-                return {
-                    'statusCode': 400,
-                    'headers': cors_headers,
-                    'body': json.dumps({"error": "Missing id or cert"})
-                }
-
-            result, status_code = check_puzzle(puzzle_id, cert)
-            return {
-                'statusCode': status_code,
-                'headers': cors_headers,
-                'body': json.dumps(result)
-            }
-        except Exception as e:
-            print("Exception:", e)
-            return {
-                'statusCode': 500,
-                'headers': cors_headers,
-                'body': json.dumps({"error": str(e)})
-            }
 
     # Unsupported method
     else:

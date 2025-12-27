@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from src.api import get_puzzle, check_puzzle
+from src.api import get_puzzle
 
 app = Flask(__name__)
 CORS(app)
