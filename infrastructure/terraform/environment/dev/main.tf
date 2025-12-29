@@ -138,6 +138,9 @@ module "oidc" {
   github_owner = "pshebel"
   github_repo = "xword"
   api_gateway_id = "r9cljvi9e9"
+
+  s3_bucket_name = module.frontend.s3_bucket_name
+  cloudfront_distribution_id = module.frontend.cloudfront_distribution_id
 }
 # DNS
 # module "route53" {

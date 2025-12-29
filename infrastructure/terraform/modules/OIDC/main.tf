@@ -100,6 +100,35 @@ data "aws_iam_policy_document" "github_actions_permissions" {
     ]
   }
 
+  # S3 (frontend)
+  statement {
+    actions = [
+      "s3:ListBucket",
+      "s3:GetBucketLocation"
+    ]
+    resources = ["arn:aws:s3:::${var.s3_bucket_name}"]
+  }
+
+  statement {
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject",
+      "s3:DeleteObject"
+    ]
+    resources = ["arn:aws:s3:::${var.s3_bucket_name}/*"]
+  }
+
+  statement {
+    actions   = ["cloudfront:ListDistributions"]
+    resources = ["*"]
+  }
+
+  # 3. Permission to clear the cache
+  statement {
+    actions   = ["cloudfront:CreateInvalidation"]
+    resources = ["*"] 
+  }
+
   # CloudWatch Logs permissions (if needed for debugging)
   statement {
     sid    = "CloudWatchLogs"
@@ -126,6 +155,7 @@ data "aws_iam_policy_document" "github_actions_permissions" {
     resources = ["*"]
   }
 }
+
 
 resource "aws_iam_policy" "github_actions" {
   name        = "${var.role_name}-policy"

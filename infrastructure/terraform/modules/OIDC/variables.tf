@@ -47,3 +47,14 @@ variable "api_gateway_id" {
   description = "ID of the API Gateway REST API"
   type        = string
 }
+
+
+variable "s3_bucket_name" {
+  description = "frontend s3 bucket name"
+  type        = string
+}
+
+variable "cloudfront_distribution_id" {
+  description = "frontend ID of the CloudFront distribution"
+  type        = string
+}
