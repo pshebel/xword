@@ -18,32 +18,8 @@ env:
   PYTHON_VERSION: '3.11'
 
 jobs:
-  # test:
-  #   name: Run Tests
-  #   runs-on: ubuntu-latest
-    
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: ${{ env.PYTHON_VERSION }}
-
-  #     - name: Install dependencies
-  #       run: |
-  #         pip install -r backend/requirements.txt
-  #         pip install pytest pytest-cov
-
-  #     - name: Run tests
-  #       run: |
-  #         cd backend
-  #         pytest tests/ -v --cov=src
-
   build:
     name: Build Lambda Package
-    # needs: test
     runs-on: ubuntu-latest
     
     steps:
@@ -94,15 +70,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: lambda-package
-      - name: Debug GitHub context
-        run: |
-          echo "Repository: ${{ github.repository }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "SHA: ${{ github.sha }}"
-          echo "Run ID: ${{ github.run_id }}"
-          echo "Actor: ${{ github.actor }}"
-          echo "Event: ${{ github.event_name }}"
-
 
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@v4
@@ -147,7 +114,7 @@ jobs:
           aws lambda update-function-configuration \
             --function-name xword-dev-api \
             --environment Variables="{
-              SECRET_NAME=${{ secrets.SECRET_NAME }},
+              DB_SECRET_NAME=${{ secrets.DB_SECRET_NAME }},
               ENVIRONMENT=dev,
               BUILD_VERSION=${{ github.sha }},
               DEPLOYED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)

@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS puzzles (
     CONSTRAINT unique_cert UNIQUE (cert)
 );
 
-
 CREATE TABLE IF NOT EXISTS padded_words (
     id INTEGER PRIMARY KEY,
     word_id INTEGER NOT NULL REFERENCES words(id) ON DELETE CASCADE,

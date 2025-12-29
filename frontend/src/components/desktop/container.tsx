@@ -14,7 +14,7 @@ export default function DesktopContainer() {
   if (isLoading) {
     return (
       <View style={styles.loading}>
-        <Text>Loading...</Text>
+        <Text style={styles.loading}>Loading...</Text>
       </View>
     )
   }

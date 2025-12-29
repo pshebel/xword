@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/api/puzzle', methods=['GET'])
+@app.route('/', methods=['GET'])
 def api_get_puzzle():
     """Get a random puzzle"""
     result, status_code = get_puzzle()
