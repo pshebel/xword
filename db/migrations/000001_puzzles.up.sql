@@ -3,11 +3,6 @@ CREATE TABLE IF NOT EXISTS words (
     text TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS prompts (
-    id INTEGER PRIMARY KEY,
-    label TEXT NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS puzzles (
     id INTEGER PRIMARY KEY,
     size INTEGER NOT NULL,
@@ -17,21 +12,18 @@ CREATE TABLE IF NOT EXISTS puzzles (
 
 CREATE TABLE IF NOT EXISTS padded_words (
     id INTEGER PRIMARY KEY,
-    word_id INTEGER NOT NULL REFERENCES words(id) ON DELETE CASCADE,
-    text TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS clues (
-    id INTEGER PRIMARY KEY,
-    word_id INTEGER NOT NULL REFERENCES words(id) ON DELETE CASCADE,
-    prompt_id INTEGER NOT NULL REFERENCES prompts(id) ON DELETE CASCADE,
-    text TEXT NOT NULL
+    word_id INTEGER NOT NULL,
+    text TEXT NOT NULL,
+    FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS puzzle_words (
-    puzzle_id INTEGER NOT NULL REFERENCES puzzles(id) ON DELETE CASCADE,
-    padded_word_id INTEGER NOT NULL REFERENCES padded_words(id) ON DELETE CASCADE,
+    id INTEGER PRIMARY KEY,
+    puzzle_id INTEGER NOT NULL,
+    padded_word_id INTEGER NOT NULL,
     across BOOLEAN NOT NULL,
+    clue TEXT NOT NULL,
     idx INTEGER NOT NULL,
-    PRIMARY KEY (puzzle_id, padded_word_id)
+    FOREIGN KEY (puzzle_id) REFERENCES puzzles(id) ON DELETE CASCADE,
+    FOREIGN KEY (padded_word_id) REFERENCES padded_words(id) ON DELETE CASCADE
 );

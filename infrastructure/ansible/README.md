@@ -1,4 +1,0 @@
-Monolith
-    nginx
-    golang
-    sqlite
