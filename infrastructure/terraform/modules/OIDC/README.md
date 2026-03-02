@@ -1,1 +1,0 @@
-creates short lived credentials for things like github actions to access resources in our env. 

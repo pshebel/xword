@@ -47,50 +47,24 @@ INSERT INTO padded_words (id, word_id, text) VALUES
 (18,18,'nas**'),
 (19,19,'ert**');
 
-INSERT INTO prompts (id, label) VALUES
-(0, 'gpt-5-nano low low generic clue');
-
-
-INSERT INTO clues (id, word_id, prompt_id, text) VALUES
-(0,0,0, 'Speeds up rapidly'),
-(1,1,0, 'Set fire to intentionally'),
-(2,2,0, 'Luxury fashion brand'),
-(3,3,0, 'Sound a goat makes'),
-(4,4,0, 'Sign language abbreviation'),
-(5,5,0, 'Electric shock or sudden burst'),
-(6,6,0, 'Irish mythical creature'),
-(7,7,0, 'City in Japan famous for food'),
-(8,8,0, 'styles or fashions'),
-(9,9,0, 'Growls with displeasure'),
-(10,10,0, 'source of ruin'),
-(11,11,0, 'Arab given name'),
-(12,12,0, 'Thin coating on plants in cold weather'),
-(13,13,0, 'Turkish for sweat'),
-(14,14,0, 'sound of distress'),
-(15,15,0, 'U.S. regulator of advertising and consumer protection'),
-(16,16,0, 'insect that tunnels through wood'),
-(17,17,0, 'archaic term for love'),
-(18,18,0, 'abbr. for National Academy of Sciences'),
-(19,19,0, 'Disaster-response team, abbr.');
-
-INSERT INTO puzzle_words (puzzle_id, padded_word_id, across, idx) VALUES 
-(0, 0, TRUE, 0),
-(0, 1, TRUE, 1),
-(0, 2, TRUE, 2),
-(0, 3, TRUE, 3),
-(0, 4, TRUE, 4),
-(0, 5, FALSE, 0),
-(0, 6, FALSE, 1),
-(0, 7, FALSE, 2),
-(0, 8, FALSE, 3),
-(0, 9, FALSE, 4),
-(1, 10, TRUE, 0),
-(1, 11, TRUE, 1),
-(1, 12, TRUE, 2),
-(1, 13, TRUE, 3),
-(1, 14, TRUE, 4),
-(1, 15, FALSE, 0),
-(1, 16, FALSE, 1),
-(1, 17, FALSE, 2),
-(1, 18, FALSE, 3),
-(1, 19, FALSE, 4);
+INSERT INTO puzzle_words (puzzle_id, padded_word_id, clue, across, idx) VALUES 
+(0, 0, 'Speeds up rapidly', TRUE, 0),
+(0, 1, 'Set fire to intentionally',TRUE, 1),
+(0, 2, 'Luxury fashion brand',TRUE, 2),
+(0, 3, 'Sound a goat makes',TRUE, 3),
+(0, 4, 'Sign language abbreviation',TRUE, 4),
+(0, 5, 'Electric shock or sudden burst', FALSE, 0),
+(0, 6,  'Irish mythical creature',FALSE, 1),
+(0, 7, 'City in Japan famous for food', FALSE, 2),
+(0, 8, 'styles or fashions',FALSE, 3),
+(0, 9, 'Growls with displeasure', FALSE, 4),
+(1, 10, 'source of ruin', TRUE, 0),
+(1, 11, 'Arab given name', TRUE, 1),
+(1, 12, 'Thin coating on plants in cold weather', TRUE, 2),
+(1, 13, 'Turkish for sweat', TRUE, 3),
+(1, 14, 'sound of distress', TRUE, 4),
+(1, 15, 'U.S. regulator of advertising and consumer protection', FALSE, 0),
+(1, 16, 'insect that tunnels throug wood',  FALSE, 1),
+(1, 17, 'archaic term for love', FALSE, 2),
+(1, 18, 'abb. for Nation Academy of Sciences', FALSE, 3),
+(1, 19, 'Disaster-response team, abbr.', FALSE, 4);
