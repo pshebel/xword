@@ -5,29 +5,34 @@ import {useMutation } from '@tanstack/react-query';
 import { useGameStore } from '@store/game';
 import { usePuzzleStore } from '@store/puzzle';
 import { CheckRequest, CheckResponse, Puzzle } from '@types/api';
+import { getFocus, getOrientation } from '@/store/local';
 
 type InfoProps = {
   puzzle: Puzzle;
+  focus: number;
+  orientation: boolean;
 }
 
-export default function Info() {
-  const { puzzle } = usePuzzleStore();
-  const { focus, orientation } = useGameStore();
+export default function Info({puzzle, focus, orientation}: InfoProps) {
+  // const { puzzle } = usePuzzleStore();
+  // const { focus, orientation } = useGameStore();
 
+
+  
   console.log(puzzle)
 
   // Find the clue that corresponds to the current focus and orientation
   const getCurrentClue = () => {
-    if (!puzzle.clues || puzzle.clues.length === 0) return null;
+    if (!puzzle.words || puzzle.words.length === 0) return null;
     
     // Determine which clue index we're in based on focus position and orientation
 
     if (orientation) {
       const index = Math.floor(focus / puzzle.size);
-      return puzzle.clues.find(item => item.index === index && item.across === true)
+      return puzzle.words.find(item => item.index === index && item.across === true)
     } else {
       const index = focus % puzzle.size;
-      return puzzle.clues.find(item => item.index === index && item.across === false)
+      return puzzle.words.find(item => item.index === index && item.across === false)
     }
   };
   
@@ -40,7 +45,7 @@ export default function Info() {
       <Text style={styles.clueNumber}>
         {currentClue.index + 1} {orientation ? 'Across' : 'Down'}
       </Text>
-      <Text style={styles.clueText}>{currentClue.text}</Text>
+      <Text style={styles.clueText}>{currentClue.clue}</Text>
     </View>
   )
   

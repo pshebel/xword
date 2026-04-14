@@ -5,15 +5,22 @@ import { forward, back } from '@/game/move';
 import { Puzzle } from '@types/api';
 
 type InfoProps = {
-  puzzle: Puzzle;
+  puzzle: Puzzle,
+  squares: string[],
+  focus: number,
+  orientation: boolean,
+  handleSquares: (square: string[]) => void,
+  handleFocus: (focus: number) => void,
+  handleOrientation: (orientation: boolean) => void,
+  onSuccess: () => void,
 }
 
-export default function Keyboard({ puzzle }: InfoProps) {
-  const { squares, setSquares, setSuccess, focus, setFocus, orientation, setOrientation } = useGameStore();
+export default function Keyboard({ puzzle, squares, focus, orientation, handleSquares, handleFocus, handleOrientation,  onSuccess }: InfoProps) {
+  // const { squares, setSquares, setSuccess, focus, setFocus, orientation, setOrientation } = useGameStore();
 
   const move = (index: number, orientation: boolean) => {
-    setFocus(index)
-    setOrientation(orientation)
+    handleFocus(index)
+    handleOrientation(orientation)
   }
 
   const handleTab = () => {
@@ -22,13 +29,13 @@ export default function Keyboard({ puzzle }: InfoProps) {
   }
 
   const handleSwitch = () => {
-    setOrientation(!orientation)
+    handleOrientation(!orientation)
   }
 
   const handleBackspace = () => {
     const tmp = squares
     tmp[focus] = ''
-    setSquares(tmp)
+    handleSquares(tmp)
     const [newIndex, newOrientation] = back(puzzle.block, puzzle.size, focus, orientation)
     move(newIndex, newOrientation)
   }
@@ -36,7 +43,7 @@ export default function Keyboard({ puzzle }: InfoProps) {
   const handleKeyPress = (letter: string) => {
     const tmp = squares
     tmp[focus] = letter
-    setSquares(tmp)
+    handleSquares(tmp)
     const [newIndex, newOrientation] = forward(puzzle.block, puzzle.size, focus, orientation)
     move(newIndex, newOrientation)
   };
@@ -79,7 +86,7 @@ export default function Keyboard({ puzzle }: InfoProps) {
               <Text selectable={false} style={styles.buttonText}>{letter}</Text>
             </Pressable>
           ))}
-          <Pressable style={styles.button} onPressIn={() => check({squares, puzzle, setSuccess})}><Text selectable={false} style={styles.buttonDone}>✓</Text></Pressable>
+          <Pressable style={styles.button} onPressIn={() => check({onSuccess})}><Text selectable={false} style={styles.buttonDone}>✓</Text></Pressable>
         </View>
       </View>
     </View>
@@ -140,7 +147,12 @@ const styles = StyleSheet.create({
     width: buttonSize,
     height: buttonSize*1.25,
     padding: 5,
-
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    // Elevation for Android
+    elevation: 5,
   },
   buttonText: {
     alignContent: 'center',

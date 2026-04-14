@@ -22,7 +22,7 @@ func init() {
 	r.Use(loggingMiddleware)
 
 	r.HandleFunc("/api/health", transport.GetHealthHandler).Methods("GET")
-	// r.HandleFunc("/api/puzzle", transport.GetPuzzleHandler).Methods("GET")
+	r.HandleFunc("/api/puzzle", transport.GetPuzzleHandler).Methods("GET")
 	// r.HandleFunc("/api/puzzle", transport.PostPuzzleHandler).Methods("POST")
 
 	fmt.Println(env.AllowedOrigins)

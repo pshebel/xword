@@ -1,15 +1,27 @@
+export interface State {
+    puzzle: Puzzle;
+    date: string;
+    focus: number;
+    orientation: boolean;
+    success: boolean;
+    squares: string[];
+    start: Date;
+    finish: Date;
+}
+
 export interface Puzzle {
     id: string;
     cert: string;
     size: number;
     block: number[];
-    clues: Clue[];
+    words: Words[];
 }
 
-export interface Clue {
-    index: number;
+export interface Words {
+    id: number;
     across: boolean;
-    text: string;
+    index: number;
+    clue: string;
 }
 
 export interface CheckRequest {

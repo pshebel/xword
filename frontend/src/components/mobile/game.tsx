@@ -1,9 +1,11 @@
 import { StyleSheet, Pressable, TextInput, View, Dimensions, Text } from 'react-native';
-import { useRef, useEffect, KeyboardEvent } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import {forward, back} from '@/game/move';
 import { check } from '@/game/check';
 import { useGameStore } from '@store/game';
 import { Puzzle } from '@types/api';
+import { getSquares, getFocus, getOrientation, setSquares, setOrientation, setFocus } from '@/store/local';
+
 
 type SquareProps = {
   size: number,
@@ -13,7 +15,8 @@ type SquareProps = {
 }
 
 const Square = ({size, index, inFocus, onClick}: SquareProps) => {
-  const {squares, focus} = useGameStore();
+  const squares = getSquares()
+  const focus = getFocus()
   const isBlock = squares[index] === '*'
   let squareStyles = [styles.square]
   if (isBlock) {
@@ -36,6 +39,19 @@ const Square = ({size, index, inFocus, onClick}: SquareProps) => {
     squareStyles.push(styles.bottomRight)
   }
 
+  if (index >=0 && index <=4) {
+    squareStyles.push(styles.borderTop)
+  }
+  if (index >=20 && index <=24) {
+    squareStyles.push(styles.borderBottom)
+  }
+  if (index%5 === 0){
+    squareStyles.push(styles.borderLeft)
+  }
+  if (index%5 === 4) {
+    squareStyles.push(styles.borderRight)
+  }
+
   return (
     <Pressable disabled={isBlock} onPressIn={() => onClick(index)}>
       <Text style={squareStyles} maxLength={1}>
@@ -47,18 +63,29 @@ const Square = ({size, index, inFocus, onClick}: SquareProps) => {
 
 type GameProps = {
   puzzle: Puzzle,
+  squares: string[],
+  focus: number,
+  orientation: boolean,
+  handleSquares: (square: string[]) => void,
+  handleFocus: (focus: number) => void,
+  handleOrientation: (orientation: boolean) => void,
 }
 
-export default function Game({puzzle}: GameProps) {
-  const {squares, orientation, focus, setSquares, setOrientation, setFocus} = useGameStore()
+export default function Game({puzzle, squares, focus, orientation, handleSquares, handleFocus, handleOrientation}: GameProps) {
+  // const {squares, orientation, focus, setSquares, setOrientation, setFocus} = useGameStore()
+  // const [squares, setSquaresState] = useState<string[]>(() => getSquares());
+  // const [orientation, setOrientationState] = useState<boolean>(() => getOrientation());
+  // const [focus, setFocusState] = useState<number>(() => getFocus());
+
+
+
   useEffect(() => {
     if (puzzle.size > 0) {
       let tmp = Array(puzzle.size * puzzle.size).fill("")
       puzzle.block.forEach((b: number) => {
         tmp[b] = "*"
       })
-      
-      setSquares(tmp);
+      handleSquares(tmp);
       if (puzzle.block.includes(0)) {
         const [newIndex, newOrientation] = forward(puzzle.block, puzzle.size, 0, orientation)
         move(newIndex, newOrientation)
@@ -69,16 +96,18 @@ export default function Game({puzzle}: GameProps) {
   }, [puzzle.id]);
 
   const move = (index: number, orientation: boolean) => {
-    setFocus(index)
-    setOrientation(orientation)
+    handleFocus(index)
+    handleOrientation(orientation)
   }
 
   const handleSquareClick = (index: number) => {
     // on a double click, switch orientation
     if (index === focus) {
-        setOrientation(!orientation)
+        handleOrientation(!orientation)
+
+
     } else {
-        setFocus(index)
+      handleFocus(index)
     }
   }
 
@@ -164,5 +193,41 @@ const styles = StyleSheet.create({
   },
   bottomRight: {
     borderBottomRightRadius: 20,
+  },
+  borderTop: {
+    borderTopWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    // Elevation for Android
+    elevation: 5,
+  },
+  borderLeft: {
+    borderLeftWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    // Elevation for Android
+    elevation: 5,
+  },
+  borderRight: {
+    borderRightWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    // Elevation for Android
+    elevation: 5,
+  },
+  borderBottom: {
+    borderBottomWidth:0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    // Elevation for Android
+    elevation: 5,
   }
 });

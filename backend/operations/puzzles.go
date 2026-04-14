@@ -1,14 +1,14 @@
 package operations
 
 import (
+	"time"
 	"log/slog"
-	"database/sql"
 
-	"github.com/pshebel/partiburo/backend/models"
-	"github.com/pshebel/partiburo/backend/database"
+	"github.com/pshebel/xword/backend/models"
+	"github.com/pshebel/xword/backend/database"
 )
 
-func getEffectiveDate() time.Time {
+func getEffectiveDate() string {
 	// Load EST/EDT location
 	loc, _ := time.LoadLocation("America/New_York")
 	
@@ -27,16 +27,19 @@ func getEffectiveDate() time.Time {
 	return now.Format("2006-01-02")
 }
 
-func GetPuzzle() (models.Puzzle, error) {
+func GetPuzzle() (models.Puzzle, *models.Response) {
+	resp := models.Puzzle{}
 	db, err := database.GetDB()
 	if err != nil {
-		slog.Error("database connection failed", "error", err)
+		slog.Error("database connection failed", err)
 		return resp, &models.Response{Code: 500, Message: "Service Error"}
 	}	
-	time := getEffectiveDate()
+	// time := getEffectiveDate()
 
-	query := `SELECT id, size, cert FROM puzzle WHERE date=?`
-	row := db.QueryRow(query, time)
+	// query := `SELECT id, size, cert FROM puzzles WHERE date=? LIMIT 1`
+	// row := db.QueryRow(query, time)
+	query := `SELECT id, size, cert FROM puzzles LIMIT 1`
+	row := db.QueryRow(query)
 	var id, size int
 	var cert string
 	err = row.Scan(&id, &size, &cert)
@@ -45,6 +48,58 @@ func GetPuzzle() (models.Puzzle, error) {
 		return resp, &models.Response{Code: 404, Message: "Puzzle not found"}
 	}
 
+
+	rows, err := db.Query(`
+		SELECT
+			id,
+			clue, 
+			across, 
+			idx 
+		FROM puzzle_words
+		WHERE puzzle_id=?
+	`, id)
+	if err != nil {
+		slog.Error("query failed", err)
+		return resp, &models.Response{Code: 500, Message: "Service Error"}
+	}
+	defer rows.Close()
+
 	words := []models.Word{}
-	rows, err := Query(`SELECT id, 
+	for rows.Next() {
+		var clue string
+		var id, idx int
+		var across bool
+		err := rows.Scan(&id, &clue, &across, &idx)
+		if err != nil {
+			slog.Error("row scan failed", "error", err)
+			return resp, &models.Response{Code: 500, Message: "Service Error"}
+		}
+		word := models.Word{
+			ID: id,
+			Across: across,
+			Index: idx,
+			Clue: clue,
+		}
+		words = append(words, word)
+	}
+	block := []int{}
+	i := 0
+	for _, r := range cert {
+		if r == ',' {
+			continue
+		}
+		if r == '*' {
+			block = append(block, i)
+		}
+		i+=1
+	}
+
+	resp = models.Puzzle{
+		ID: id,
+		Size: size,
+		Cert: cert,
+		Words: words,
+		Block: block,
+	}
+	return resp, nil
 }

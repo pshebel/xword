@@ -2,17 +2,27 @@ import { useQuery, UseQueryResult, useMutation } from '@tanstack/react-query';
 import { Puzzle, CheckRequest, CheckResponse } from '@types/api';
 import {Alert} from '@/components/common/alert'
 
-
-export const getPuzzle = (): UseQueryResult<Puzzle> => {
+export const getPuzzle = (enabled: boolean = true): UseQueryResult<Puzzle> => {
     return useQuery({
         queryKey: ['puzzle'],
         queryFn: async (): Promise<Puzzle> => {
-            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}`);
-            // const response = await fetch('https://r9cljvi9e9.execute-api.us-east-1.amazonaws.com/');
-            return await response.json()
-        }
-    })
-}
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/puzzle`);
+            return await response.json();
+        },
+        enabled
+    });
+};
+
+// export const getPuzzle = (): UseQueryResult<Puzzle> => {
+//     return useQuery({
+//         queryKey: ['puzzle'],
+//         queryFn: async (): Promise<Puzzle> => {
+//             const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/puzzle`);
+//             // const response = await fetch('https://r9cljvi9e9.execute-api.us-east-1.amazonaws.com/');
+//             return await response.json()
+//         }
+//     })
+// }
 
 interface CheckPuzzleProps {
   puzzle: {

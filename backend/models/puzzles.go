@@ -1,15 +1,16 @@
 package models
 
 type Puzzle struct {
-	ID	string	`json:"id"`
+	ID		int		`json:"id"`
 	Cert	string	`json:"cert"`
+	Size	int		`json:"size"`
 	Words	[]Word	`json:"words"`
 	Block	[]int	`json:"block"`
 }
 
 type Word struct {
-	ID	string	`json:"id"`
+	ID		int		`json:"id"`
 	Across	bool	`json:"across"`
-	Index	string	`json:"index"`
-	Clue	string	`json:"text"`
+	Index	int		`json:"index"`
+	Clue	string	`json:"clue"`
 }

@@ -11,7 +11,7 @@ var (
 	Port = os.Getenv("API_PORT")
 	AllowedOriginsStr = os.Getenv("ALLOWED_ORIGINS")
 	AllowedOrigins = []string{}
-	DB = os.Getenv("DB_PATH")
+	DB = os.Getenv("XWORD_DB")
 )
 
 func init() {

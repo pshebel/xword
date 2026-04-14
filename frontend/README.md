@@ -1,5 +1,6 @@
 
 Web Deploy
-npx expo export -p web
-aws s3 sync ./dist s3://dev-xword --delete
-aws cloudfront create-invalidation --distribution-id E3PCPNL7FPFEPP --paths "/*"
+npx expo export -p web -c
+
+rm -rf ~/projects/infra/scripts/xword/frontend/dist/*
+cp -r dist/* ~/projects/infra/scripts/xword/frontend/dist

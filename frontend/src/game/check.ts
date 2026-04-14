@@ -1,19 +1,24 @@
 import { Puzzle } from "@/types/api"
-
+import {getState, setFinish} from '@/store/local';
 
 
 type CheckProps = {
-  squares: string[];
-  puzzle: Puzzle;
-  setSuccess: (value: boolean) => void;
+  // squares: string[];
+  // puzzle: Puzzle;
+  onSuccess: () => void;
 }
-export const check = ({squares, puzzle, setSuccess}: CheckProps) => {
+export const check = ({onSuccess}: CheckProps) => {
+    const state = getState()
+    const squares = state.squares
+    const size = state.puzzle.size
+    const cert = state.puzzle.cert
     let words = []
-    for (let i=0;i<puzzle.size;i++){
-      words.push(squares.slice(i*puzzle.size, (i+1)*puzzle.size).join("").toLowerCase())
+    for (let i=0;i<size;i++){
+      words.push(squares.slice(i*size, (i+1)*size).join("").toLowerCase())
     }
-    if (words.join(",") === puzzle.cert) {
-        setSuccess(true)
+    if (words.join(",") === cert) {
+      setFinish()
+      onSuccess()
     } else {
         window.confirm("Not quite right. Keep Trying!")
     }

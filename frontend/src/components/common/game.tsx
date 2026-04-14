@@ -1,7 +1,8 @@
 import { StyleSheet, Pressable, TextInput, View, Dimensions } from 'react-native';
-import { useRef, useEffect, KeyboardEvent } from 'react';
+import { useRef, useEffect, KeyboardEvent, useState } from 'react';
 import { useGameStore } from '@store/game';
 import { Puzzle } from '@types/api';
+import { getSquares, getFocus, getOrientation, setSquares, setOrientation, setFocus } from '@/store/local';
 
 type SquareProps = {
   size: number,
@@ -13,7 +14,10 @@ type SquareProps = {
   inputRefs: React.RefObject<Array<TextInput | null>>;
 }
 const Square = ({size, index, inFocus, onClick, onKeyPress,  inputRefs}: SquareProps) => {
-  const {squares, focus} = useGameStore();
+  // const {squares, focus} = useGameStore();
+  const squares = getSquares()
+  const focus = getFocus()
+
   const isBlock = squares[index] === '*'
   let squareStyles = [styles.square]
   if (isBlock) {
@@ -25,6 +29,20 @@ const Square = ({size, index, inFocus, onClick, onKeyPress,  inputRefs}: SquareP
       squareStyles.push(styles.inFocus)
     }
   }
+
+  if (index >=0 && index <=4) {
+    squareStyles.push(styles.borderTop)
+  }
+  if (index >=20 && index <=24) {
+    squareStyles.push(styles.borderBottom)
+  }
+  if (index%5 === 0){
+    squareStyles.push(styles.borderLeft)
+  }
+  if (index%5 === 4) {
+    squareStyles.push(styles.borderRight)
+  }
+
 
   if (index === 0) {
     squareStyles.push(styles.topLeft)
@@ -56,29 +74,45 @@ type GameProps = {
 
 export default function Game({puzzle}: GameProps) {
   const inputRefs = useRef<Array<TextInput | null>>([]);
-  const {squares, orientation, focus, setSquares, setOrientation, setFocus} = useGameStore()
+  // const {squares, orientation, focus, setSquares, setOrientation, setFocus} = useGameStore()
+
+  // const squares = getSquares()
+  // const orientation = getOrientation()
+  // const focus = getFocus()
+  const [squares, setSquaresState] = useState<string[]>(() => getSquares());
+  const [orientation, setOrientationState] = useState<boolean>(() => getOrientation());
+  const [focus, setFocusState] = useState<number>(() => getFocus());
+
   useEffect(() => {
-    if (puzzle.size > 0) {
-      let tmp = Array(puzzle.size * puzzle.size).fill("")
-      puzzle.block.forEach((b: number) => {
-        tmp[b] = "*"
-      })
-      
-      setSquares(tmp);
-      if (puzzle.block.includes(0)) {
-        forward(0, orientation)
-      } else {
-        move(0, orientation)
-      }
-      
-      // inputRefs.current[focus]?.focus()
-    }
+    move(focus, orientation)
+    inputRefs.current[focus]?.focus()
   }, [puzzle.id]);
+
+  // useEffect(() => {
+  //   if (puzzle.size > 0) {
+  //     let tmp = Array(puzzle.size * puzzle.size).fill("")
+  //     puzzle.block.forEach((b: number) => {
+  //       tmp[b] = "*"
+  //     })
+      
+  //     setSquares(tmp);
+  //     setSquaresState(tmp);
+  //     if (puzzle.block.includes(0)) {
+  //       forward(0, orientation)
+  //     } else {
+  //       move(0, orientation)
+  //     }
+      
+  //     // inputRefs.current[focus]?.focus()
+  //   }
+  // }, [puzzle.id]);
 
   const move = (index: number, orientation: boolean) => {
     inputRefs.current[index]?.focus()
     setFocus(index)
+    setFocusState(index)
     setOrientation(orientation)
+    setOrientationState(orientation)
   }
   
   const forward = (index: number, orientation: boolean) => {
@@ -152,6 +186,8 @@ export default function Game({puzzle}: GameProps) {
           let tmp = squares
           tmp[index] = ''
           setSquares(tmp)
+          setSquaresState(tmp)
+          back(index, orientation)
       }
     }
     if (e.key === 'Tab') {
@@ -161,9 +197,10 @@ export default function Game({puzzle}: GameProps) {
     // input can only be alphabetical
     if (RegExp(/^\p{L}$/,'u').test(e.key)) {
       const value = e.key.toUpperCase()
-      let tmp = squares
+      let tmp = getSquares()
       tmp[index] = value
       setSquares(tmp)
+      setSquaresState(tmp)
       forward(index, orientation)
     }
   }
@@ -172,8 +209,10 @@ export default function Game({puzzle}: GameProps) {
     // on a double click, switch orientation
     if (index === focus) {
         setOrientation(!orientation)
+        setOrientationState(!orientation)
     } else {
         setFocus(index)
+        setFocusState(index)
     }
   }
   const renderSquare = (index: number) => {
@@ -220,8 +259,8 @@ const styles = StyleSheet.create({
     // flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   row: {
     // flex: 1,
@@ -242,13 +281,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Cooper-Black',
   },
   block: {
-    backgroundColor: '#000'
+    backgroundColor: '#000',
+    opacity: .9
   },
   isFocus: {
     backgroundColor: '#C12C2C',
+    opacity: .9,
   },
   inFocus: {
     backgroundColor: '#E9BCB7',
+    opacity: .9,
   },
   topLeft: {
     borderTopLeftRadius: 20,
@@ -261,5 +303,42 @@ const styles = StyleSheet.create({
   },
   bottomRight: {
     borderBottomRightRadius: 20,
+  },
+  borderTop: {
+    borderTopWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    // Elevation for Android
+    elevation: 5,
+  },
+  borderLeft: {
+    borderLeftWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    // Elevation for Android
+    elevation: 5,
+  },
+  borderRight: {
+    borderRightWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    // Elevation for Android
+    elevation: 5,
+  },
+  borderBottom: {
+    borderBottomWidth:0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    // Elevation for Android
+    elevation: 5,
   }
+
 });

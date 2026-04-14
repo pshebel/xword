@@ -1,4 +1,5 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface GameState {
   focus: number;
@@ -19,11 +20,19 @@ const initialState = {
   success: false
 };
 
-export const useGameStore = create<GameState>((set) => ({
-  ...initialState,
-  setFocus: (index) => set({ focus: index }),
-  setOrientation: (newOrientation) => set({orientation: newOrientation}), 
-  setSquares: (squares) => set({ squares }),
-  setSuccess: (result) => set({ success: result}),
-  reset: () => set(initialState),
-}));
+export const useGameStore = create<GameState>()(
+  persist(
+    (set) => ({
+      ...initialState,
+      setFocus: (index) => set({ focus: index }),
+      setOrientation: (newOrientation) => set({ orientation: newOrientation }),
+      setSquares: (squares) => set({ squares }),
+      setSuccess: (result) => set({ success: result }),
+      reset: () => set(initialState),
+    }),
+    {
+      name: 'game-storage', // The key in localStorage
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);

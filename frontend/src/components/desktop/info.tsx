@@ -4,11 +4,20 @@ import { useGameStore } from '@store/game';
 import { check } from '@/game/check';
 import { CheckRequest, CheckResponse } from '@types/api';
 import Button from '@/components/common/button';
+import { Puzzle } from "@/types/api"
 
-export default function Info({ puzzle }) {
-  const {squares, setSuccess} = useGameStore();
-  const across = [...puzzle.clues].filter((clue) => clue.across).sort((a, b) => a.index - b.index)
-  const down = [...puzzle.clues].filter((clue) => !clue.across).sort((a, b) => a.index - b.index)
+import {getSquares, setSuccess} from '@/store/local';
+
+type InfoProps ={
+  puzzle: Puzzle,
+  onSuccess: () => void,
+}
+
+export default function Info({ puzzle, onSuccess }: InfoProps) {
+  const squares = getSquares()
+  // const {squares, setSuccess} = useGameStore();
+  const across = [...puzzle.words].filter((word) => word.across).sort((a, b) => a.index - b.index)
+  const down = [...puzzle.words].filter((word) => !word.across).sort((a, b) => a.index - b.index)
 
   // const fail = () => {
   //   if (Platform.OS === 'web') {
@@ -70,7 +79,7 @@ export default function Info({ puzzle }) {
             style={styles.infoList}
             keyExtractor={(item) => item.index}
             renderItem={({item}) => (
-                <Text style={styles.clue} >{item.index+1}: {item.text}</Text>
+                <Text style={styles.clue} >{item.index+1}: {item.clue}</Text>
             )}
           />
         </View>
@@ -81,12 +90,12 @@ export default function Info({ puzzle }) {
             style={styles.infoList}
             keyExtractor={(item) => item.index}
             renderItem={({item}) => (
-              <Text style={styles.clue}>{item.index+1}: {item.text}</Text>
+              <Text style={styles.clue}>{item.index+1}: {item.clue}</Text>
             )}
           />
         </View>
         <View style={styles.space}/>
-        <Button text={"Check"} onClick={() => check({squares, puzzle, setSuccess})}/>
+        <Button text={"Check"} onClick={() => check({onSuccess})}/>
       </View>
     </View>
    
@@ -111,8 +120,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 20,
-    borderColor: '#999',
-    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    // Elevation for Android
+    elevation: 5,
   },
   infoList: {
     paddingTop: 2,

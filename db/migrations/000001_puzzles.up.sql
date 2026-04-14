@@ -1,12 +1,15 @@
 CREATE TABLE IF NOT EXISTS words (
     id INTEGER PRIMARY KEY,
-    text TEXT NOT NULL
+    text TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS puzzles (
     id INTEGER PRIMARY KEY,
     size INTEGER NOT NULL,
     cert TEXT,
+    date DATE DEFAULT (CURRENT_DATE),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT unique_cert UNIQUE (cert)
 );
 
@@ -14,6 +17,7 @@ CREATE TABLE IF NOT EXISTS padded_words (
     id INTEGER PRIMARY KEY,
     word_id INTEGER NOT NULL,
     text TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE
 );
 
@@ -24,6 +28,7 @@ CREATE TABLE IF NOT EXISTS puzzle_words (
     across BOOLEAN NOT NULL,
     clue TEXT NOT NULL,
     idx INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (puzzle_id) REFERENCES puzzles(id) ON DELETE CASCADE,
     FOREIGN KEY (padded_word_id) REFERENCES padded_words(id) ON DELETE CASCADE
 );

@@ -10,22 +10,52 @@ import { useGameStore } from '@/store/game';
 import {checkPuzzle} from '@/hooks/puzzles';
 import { usePuzzleStore } from '@/store/puzzle';
 import {check} from '@/game/check';
-
-import Header from '@/components/common/header';
+import {getState, setState, setSuccess, setStart,  getSquares, getFocus, getOrientation, setSquares, setFocus, setOrientation} from '@/store/local';
+import {getDate} from '@/game/date'
+import {State} from '@/types/api'
+import Header from './header';
 import Footer from '@/components/common/footer';
 
 export default function MobileContainer() {
-  const { data, isLoading, error } = getPuzzle();
-  const { squares, success, setSuccess } = useGameStore();
-  const {puzzle, setPuzzle} = usePuzzleStore();
-
-  const [play, setPlay] = useState(false);
+  const date = getDate();
+  // const savedState = getState();
+  const [state, setStateState] = useState<State>(() => getState());
+  const [squares, setSquaresState] = useState<string[]>(() => getSquares());
+  const [orientation, setOrientationState] = useState<boolean>(() => getOrientation());
+  const [focus, setFocusState] = useState<number>(() => getFocus());
+  const isEmpty = !state?.puzzle || state.puzzle.id === '0';
+  const isStale = state?.date !== date;
+  console.log(isEmpty, isStale)
+  const { data, isLoading, error } = getPuzzle(isEmpty || isStale);
 
   useEffect(() => {
-    if (data) {
-      setPuzzle(data);
-    }
-  }, [data, setPuzzle]);
+      console.log("use effect", data, isEmpty, isStale)
+      if (data && (isEmpty || isStale)) {
+        setState(date, data);
+        setStateState(getState());
+        setStart()
+      }
+  }, [data]);
+
+  const onSuccess = () => {
+    setSuccess()
+    setStateState(getState())
+  }
+
+  const handleSquares = (squares: string[]) => {
+    setSquaresState(squares)
+    setSquares(squares)
+  }
+
+  const handleFocus = (focus: number) => {
+    setFocusState(focus)
+    setFocus(focus)
+  }
+
+  const handleOrientation = (orientation: boolean) => {
+    setOrientationState(orientation)
+    setOrientation(orientation)
+  }
 
   if (isLoading) {
     return (
@@ -51,7 +81,7 @@ export default function MobileContainer() {
     )
   }
 
-  if (success) {
+  if (state.success) {
     return (
       <View style={styles.layout}>
         <Header/>
@@ -62,24 +92,45 @@ export default function MobileContainer() {
   }
 
   // play
-  if (play) {
-    return (
-      <View style={styles.container}>
-        <Game puzzle={data}/>
-        <Info />
-        <Keyboard puzzle={data}/>
-      </View>
-    )
-  }
+  // if (play) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <Game puzzle={data}/>
+  //       <Info puzzle={data}/>
+  //       <Keyboard puzzle={data}/>
+  //     </View>
+  //   )
+  // }
 
   return (
     <View style={styles.layout}>
       <Header/>
       <View style={styles.container}>
-        <Text style={styles.header}>Random Puzzle</Text>
-        <Button onClick={() => setPlay(true)} text="play"/>
+        <Game 
+          puzzle={state.puzzle} 
+          squares={squares}
+          focus={focus}
+          orientation={orientation}
+          handleSquares={handleSquares} 
+          handleFocus={handleFocus} 
+          handleOrientation={handleOrientation}
+        />
+        <Info 
+          puzzle={state.puzzle} 
+          focus={focus} 
+          orientation={orientation}
+        />
+        <Keyboard 
+          puzzle={state.puzzle} 
+          squares={squares}
+          focus={focus}
+          orientation={orientation}
+          handleSquares={handleSquares} 
+          handleFocus={handleFocus} 
+          handleOrientation={handleOrientation}
+          onSuccess={onSuccess}
+        />
       </View>
-      <Footer/>
     </View>
   )
 }

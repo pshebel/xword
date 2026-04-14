@@ -8,6 +8,7 @@ export default function Layout() {
   return (
     <View style={styles.layout} contentContainerStyle={{ flexGrow: 1 }}>
       <Header />
+      <View style={styles.buffer}/>
       <Container />
       <Footer />
     </View>
@@ -23,4 +24,8 @@ const styles = StyleSheet.create({
     // minWidth: '100%',
     // minHeight: '100%'
   },
+  buffer: {
+    height: 30,
+    backgroundColor: '#f5f5f5',
+  }
 });
