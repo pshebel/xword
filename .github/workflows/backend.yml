@@ -60,7 +60,7 @@ jobs:
     - name: Copy file
       run: |
         # Update function code
-        aws s3 cp xwordio s3://xwordio/prod/backend/service/xword
+        aws s3 cp xword s3://divlab-prod/xword/prod/backend/service/xword
     
     - name: Restart
       run: | 
@@ -69,7 +69,7 @@ jobs:
         --instance-ids "${{ secrets.BACKEND_ID }}" \
         --parameters commands='[
           "sudo systemctl stop xword || true",
-          "sudo aws s3 cp s3://xwordio/prod/backend/service/partiburo /usr/local/bin/xword",
+          "sudo aws s3 cp s3://divlab-prod/xword/prod/backend/service/xword /usr/local/bin/xword",
           "sudo chmod +x /usr/local/bin/xword",
           "sudo chown xword:xword /usr/local/bin/xword",
           "sudo systemctl start xword"  
